@@ -1,0 +1,147 @@
+{
+  "common": {
+    "back": "Назад",
+    "next": "Далее",
+    "skip": "Пропустить",
+    "done": "Готово",
+    "save": "Сохранить",
+    "cancel": "Отмена",
+    "confirm": "Подтвердить",
+    "loading": "Загрузка...",
+    "error": "Ошибка",
+    "retry": "Повторить",
+    "search": "Поиск",
+    "filter": "Фильтр",
+    "sort": "Сортировка",
+    "price": "Цена",
+    "name": "Имя",
+    "email": "Email",
+    "password": "Пароль",
+    "phone": "Телефон",
+    "address": "Адрес"
+  },
+  "auth": {
+    "login": "Войти",
+    "register": "Регистрация",
+    "logout": "Выйти",
+    "forgotPassword": "Забыли пароль?",
+    "createAccount": "Создать аккаунт",
+    "confirmPassword": "Подтвердить пароль",
+    "fullName": "Полное имя",
+    "loginSuccess": "Успешный вход",
+    "registerSuccess": "Успешная регистрация",
+    "invalidCredentials": "Неверные данные",
+    "passwordMismatch": "Пароли не совпадают"
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Поиск и покупка товаров",
+      "description": "Открывайте удивительные корейские товары с удобным поиском и покупками"
+    },
+    "slide2": {
+      "title": "Быстрая доставка",
+      "description": "Получайте заказы быстро и безопасно прямо к вашей двери"
+    },
+    "slide3": {
+      "title": "Отслеживание заказа",
+      "description": "Отслеживайте заказы в реальном времени от склада до доставки"
+    },
+    "slide4": {
+      "title": "Безопасные платежи",
+      "description": "Безопасная обработка платежей для вашего спокойствия"
+    },
+    "getStarted": "Начать"
+  },
+  "home": {
+    "title": "Корейский магазин",
+    "searchPlaceholder": "Поиск товаров...",
+    "categories": "Категории",
+    "featured": "Рекомендуемые товары",
+    "newArrivals": "Новинки",
+    "bestSellers": "Бестселлеры"
+  },
+  "product": {
+    "details": "Детали товара",
+    "description": "Описание",
+    "addToCart": "Добавить в корзину",
+    "buyNow": "Купить сейчас",
+    "addToWishlist": "В избранное",
+    "share": "Поделиться",
+    "reviews": "Отзывы",
+    "specifications": "Характеристики"
+  },
+  "cart": {
+    "title": "Корзина",
+    "empty": "Ваша корзина пуста",
+    "subtotal": "Промежуточная сумма",
+    "shipping": "Доставка",
+    "total": "Итого",
+    "checkout": "Оформить заказ",
+    "remove": "Удалить",
+    "quantity": "Количество"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "shipping": "Информация о доставке",
+    "payment": "Способ оплаты",
+    "review": "Проверить заказ",
+    "placeOrder": "Разместить заказ",
+    "orderSuccess": "Заказ успешно размещен!",
+    "recipient": "Имя получателя",
+    "phoneNumber": "Номер телефона",
+    "shippingAddress": "Адрес доставки",
+    "comment": "Комментарий"
+  },
+  "orders": {
+    "title": "Мои заказы",
+    "empty": "Заказов пока нет",
+    "orderNumber": "Заказ №",
+    "status": "Статус",
+    "date": "Дата",
+    "total": "Сумма",
+    "track": "Отследить заказ",
+    "reorder": "Повторить заказ",
+    "statuses": {
+      "pending": "Ожидает",
+      "processing": "Обрабатывается",
+      "shipped": "Отправлен",
+      "delivered": "Доставлен",
+      "cancelled": "Отменен"
+    }
+  },
+  "profile": {
+    "title": "Профиль",
+    "editProfile": "Редактировать профиль",
+    "myOrders": "Мои заказы",
+    "settings": "Настройки",
+    "support": "Поддержка",
+    "about": "О приложении",
+    "logout": "Выйти"
+  },
+  "settings": {
+    "title": "Настройки",
+    "language": "Язык",
+    "theme": "Тема",
+    "notifications": "Уведомления",
+    "privacy": "Политика конфиденциальности",
+    "terms": "Условия использования",
+    "themeOptions": {
+      "light": "Светлая",
+      "dark": "Темная",
+      "system": "Системная"
+    }
+  },
+  "errors": {
+    "networkError": "Ошибка сетевого соединения",
+    "noProducts": "Товары не найдены",
+    "paymentFailed": "Ошибка платежа",
+    "orderNotFound": "Заказ не найден",
+    "tryAgain": "Попробовать снова"
+  },
+  "navigation": {
+    "home": "Главная",
+    "search": "Поиск",
+    "orders": "Заказы",
+    "profile": "Профиль"
+  }
+}

@@ -1,0 +1,191 @@
+{
+  "common": {
+    "back": "Back",
+    "next": "Next",
+    "skip": "Skip",
+    "done": "Done",
+    "save": "Save",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "loading": "Loading...",
+    "error": "Error",
+    "retry": "Retry",
+    "search": "Search",
+    "filter": "Filter",
+    "sort": "Sort",
+    "price": "Price",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "phone": "Phone",
+    "address": "Address",
+    "success": "Success",
+    "ok": "OK",
+    "seeAll": "See All",
+    "seller": "Seller"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "forgotPassword": "Forgot Password?",
+    "createAccount": "Create Account",
+    "confirmPassword": "Confirm Password",
+    "fullName": "Full Name",
+    "loginSuccess": "Login successful",
+    "registerSuccess": "Registration successful",
+    "invalidCredentials": "Invalid credentials",
+    "passwordMismatch": "Passwords do not match",
+    "welcomeBack": "Welcome Back",
+    "signInToContinue": "Sign in to your account to continue",
+    "emailRequired": "Email is required",
+    "emailInvalid": "Please enter a valid email",
+    "passwordRequired": "Password is required",
+    "passwordTooShort": "Password must be at least 6 characters",
+    "nameRequired": "Name is required",
+    "phoneRequired": "Phone number is required",
+    "dontHaveAccount": "Don't have an account?",
+    "emailPlaceholder": "Enter your email",
+    "passwordPlaceholder": "Enter your password",
+    "fullNamePlaceholder": "Enter your full name",
+    "phonePlaceholder": "Enter your phone number",
+    "confirmPasswordPlaceholder": "Confirm your password",
+    "fillInformation": "Please fill in your information",
+    "loginError": "Failed to login. Please try again.",
+    "registerError": "Failed to register. Please try again.",
+    "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "resetPasswordSent": "Password reset link sent to your email",
+    "resetPasswordError": "Failed to send reset link. Please try again."
+  },
+  "onboarding": {
+    "slide1": {
+      "title": "Find & Buy Products",
+      "description": "Discover amazing Korean products with easy search and purchase"
+    },
+    "slide2": {
+      "title": "Fast Delivery",
+      "description": "Get your orders delivered quickly and safely to your door"
+    },
+    "slide3": {
+      "title": "Track Your Order",
+      "description": "Real-time tracking of your orders from warehouse to delivery"
+    },
+    "slide4": {
+      "title": "Secure Payments",
+      "description": "Safe and secure payment processing for peace of mind"
+    },
+    "getStarted": "Get Started"
+  },
+  "home": {
+    "title": "Korean Shop",
+    "searchPlaceholder": "Search products...",
+    "categories": "Categories",
+    "featured": "Featured Products",
+    "newArrivals": "New Arrivals",
+    "bestSellers": "Best Sellers",
+    "welcomeBanner": "Discover Amazing Korean Products",
+    "seeAll": "See All"
+  },
+  "product": {
+    "details": "Product Details",
+    "description": "Description",
+    "addToCart": "Add to Cart",
+    "buyNow": "Buy Now",
+    "addToWishlist": "Add to Wishlist",
+    "share": "Share",
+    "reviews": "Reviews",
+    "specifications": "Specifications",
+    "inStock": "In Stock",
+    "outOfStock": "Out of Stock"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove",
+    "quantity": "Quantity"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "shipping": "Shipping Information",
+    "payment": "Payment Method",
+    "review": "Review Order",
+    "placeOrder": "Place Order",
+    "orderSuccess": "Order placed successfully!",
+    "recipient": "Recipient Name",
+    "phoneNumber": "Phone Number",
+    "shippingAddress": "Shipping Address",
+    "comment": "Comment"
+  },
+  "orders": {
+    "title": "My Orders",
+    "empty": "No orders yet",
+    "emptyDescription": "Start shopping to see your orders here",
+    "orderNumber": "Order #",
+    "status": "Status",
+    "date": "Date",
+    "total": "Total",
+    "track": "Track Order",
+    "reorder": "Reorder",
+    "trackingNumber": "Tracking Number",
+    "statuses": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    }
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "myOrders": "My Orders",
+    "settings": "Settings",
+    "support": "Support",
+    "about": "About",
+    "logout": "Logout",
+    "account": "Account",
+    "preferences": "App Preferences",
+    "addresses": "Shipping Addresses",
+    "paymentMethods": "Payment Methods",
+    "help": "Help & FAQ",
+    "contact": "Contact Support",
+    "logoutConfirmation": "Are you sure you want to logout?"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "notifications": "Notifications",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "themeOptions": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    }
+  },
+  "errors": {
+    "networkError": "Network connection error",
+    "noProducts": "No products found",
+    "paymentFailed": "Payment failed",
+    "orderNotFound": "Order not found",
+    "tryAgain": "Try again"
+  },
+  "navigation": {
+    "home": "Home",
+    "search": "Search",
+    "orders": "Orders",
+    "profile": "Profile"
+  },
+  "search": {
+    "startSearching": "Start searching for products",
+    "searchInstructions": "Enter keywords to find amazing Korean products",
+    "tryDifferentKeywords": "Try using different keywords or browse categories",
+    "resultsCount": "Found {{count}} results"
+  }
+}
