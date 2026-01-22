@@ -1,328 +1,289 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   FlatList,
-  TouchableOpacity,
-  StatusBar,
   RefreshControl,
+  Alert,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { useTailwind } from 'tailwind-rn';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { Order, OrderStatus } from '@/constants/types';
-import { MainTabScreenProps } from '@/navigation/types';
+import { useTheme } from '../contexts/ThemeContext';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  OrderHistory,
+  OrderFilter,
+  OrderSort,
+  OrderStats,
+  MOCK_ORDERS,
+} from '../types/order';
+import OrdersHeader from '../components/orders/OrdersHeader';
+import OrderCard from '../components/orders/OrderCard';
+import OrderDetailsModal from '../components/orders/OrderDetailsModal';
+import EmptyOrders from '../components/orders/EmptyOrders';
+import LoadingSpinner from '../components/common/LoadingSpinner';
+import { useNavigation } from '@react-navigation/native';
 
-type OrdersScreenProps = MainTabScreenProps<'Orders'>;
-
-const mockOrders: Order[] = [
-  {
-    id: 'ORD-2024-001',
-    items: [],
-    totalAmount: 89000,
-    shippingCost: 5000,
-    status: 'delivered',
-    shippingAddress: {
-      recipientName: 'John Doe',
-      phone: '+82 10-1234-5678',
-      address: 'Seoul, Gangnam-gu, 123 Street',
-    },
-    paymentMethod: 'Credit Card',
-    createdAt: '2024-01-15T10:30:00Z',
-    estimatedDelivery: '2024-01-18T18:00:00Z',
-    trackingNumber: 'KR123456789',
-  },
-  {
-    id: 'ORD-2024-002',
-    items: [],
-    totalAmount: 125000,
-    shippingCost: 5000,
-    status: 'shipped',
-    shippingAddress: {
-      recipientName: 'John Doe',
-      phone: '+82 10-1234-5678',
-      address: 'Seoul, Gangnam-gu, 123 Street',
-    },
-    paymentMethod: 'Credit Card',
-    createdAt: '2024-01-20T14:15:00Z',
-    estimatedDelivery: '2024-01-23T18:00:00Z',
-    trackingNumber: 'KR987654321',
-  },
-];
-
-export default function OrdersScreen() {
+const OrdersScreen: React.FC = () => {
+  const tailwind = useTailwind();
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
+  const navigation = useNavigation();
+
+  // Состояния
+  const [orders, setOrders] = useState<OrderHistory[]>([]);
+  const [filteredOrders, setFilteredOrders] = useState<OrderHistory[]>([]);
+  const [stats, setStats] = useState<OrderStats>({
+    totalOrders: 0,
+    totalSpent: 0,
+    averageOrder: 0,
+    pendingOrders: 0,
+    deliveredOrders: 0,
+    cancelledOrders: 0,
+    favouriteCategory: 'Cosmetics',
+    lastOrderDate: undefined,
+  });
   
-  const [orders, setOrders] = useState<Order[]>(mockOrders);
+  const [filter, setFilter] = useState<OrderFilter>({});
+  const [sort, setSort] = useState<OrderSort>({ field: 'date', direction: 'desc' });
+  const [selectedOrder, setSelectedOrder] = useState<OrderHistory | null>(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    header: {
-      backgroundColor: colors.header,
-      paddingHorizontal: Spacing.lg,
-      paddingBottom: Spacing.lg,
-      paddingTop: (StatusBar.currentHeight || 0) + Spacing.lg,
-    },
-    headerTitle: {
-      ...Typography.h2,
-      color: '#FFFFFF',
-      fontWeight: 'bold',
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Spacing.lg,
-    },
-    orderCard: {
-      backgroundColor: colors.card,
-      borderRadius: BorderRadius.lg,
-      padding: Spacing.lg,
-      marginVertical: Spacing.sm,
-      shadowColor: colors.shadow,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
-    },
-    orderHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'flex-start',
-      marginBottom: Spacing.md,
-    },
-    orderNumber: {
-      ...Typography.h3,
-      color: colors.text,
-      fontWeight: 'bold',
-    },
-    orderDate: {
-      ...Typography.caption,
-      color: colors.textSecondary,
-      marginTop: Spacing.xs,
-    },
-    statusContainer: {
-      alignItems: 'flex-end',
-    },
-    statusBadge: {
-      paddingHorizontal: Spacing.sm,
-      paddingVertical: Spacing.xs,
-      borderRadius: BorderRadius.sm,
-    },
-    statusText: {
-      ...Typography.caption,
-      fontWeight: '600',
-      color: '#FFFFFF',
-    },
-    orderDetails: {
-      marginBottom: Spacing.md,
-    },
-    detailRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginBottom: Spacing.xs,
-    },
-    detailLabel: {
-      ...Typography.body,
-      color: colors.textSecondary,
-    },
-    detailValue: {
-      ...Typography.body,
-      color: colors.text,
-      fontWeight: '500',
-    },
-    totalAmount: {
-      ...Typography.h3,
-      color: colors.text,
-      fontWeight: 'bold',
-    },
-    actionButtons: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    actionButton: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingVertical: Spacing.sm,
-      paddingHorizontal: Spacing.md,
-      borderRadius: BorderRadius.sm,
-      marginHorizontal: Spacing.xs,
-    },
-    trackButton: {
-      backgroundColor: colors.primary,
-    },
-    reorderButton: {
-      borderWidth: 1,
-      borderColor: colors.primary,
-    },
-    actionButtonText: {
-      ...Typography.body,
-      fontWeight: '600',
-      marginLeft: Spacing.xs,
-    },
-    trackButtonText: {
-      color: colors.navigation,
-    },
-    reorderButtonText: {
-      color: colors.primary,
-    },
-    emptyContainer: {
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: Spacing.xl,
-    },
-    emptyText: {
-      ...Typography.h3,
-      color: colors.textSecondary,
-      textAlign: 'center',
-      marginBottom: Spacing.sm,
-    },
-    emptySubtext: {
-      ...Typography.body,
-      color: colors.textSecondary,
-      textAlign: 'center',
-    },
-  });
+  // Загрузка данных
+  const loadOrders = useCallback(() => {
+    // В реальном приложении здесь будет API запрос
+    setTimeout(() => {
+      setOrders(MOCK_ORDERS);
+      setLoading(false);
+      setRefreshing(false);
+    }, 1000);
+  }, []);
 
-  const getStatusColor = (status: OrderStatus): string => {
-    switch (status) {
-      case 'pending':
-        return '#FFA500';
-      case 'processing':
-        return '#2196F3';
-      case 'shipped':
-        return '#FF9800';
-      case 'delivered':
-        return '#4CAF50';
-      case 'cancelled':
-        return colors.error;
-      default:
-        return colors.textSecondary;
+  useEffect(() => {
+    loadOrders();
+  }, [loadOrders]);
+
+  // Обновление статистики при изменении заказов
+  useEffect(() => {
+    if (orders.length === 0) {
+      setStats({
+        totalOrders: 0,
+        totalSpent: 0,
+        averageOrder: 0,
+        pendingOrders: 0,
+        deliveredOrders: 0,
+        cancelledOrders: 0,
+        favouriteCategory: 'None',
+        lastOrderDate: undefined,
+      });
+      return;
+    }
+
+    const totalSpent = orders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const pendingOrders = orders.filter(o => 
+      ['pending', 'confirmed', 'processing', 'packaged'].includes(o.status)
+    ).length;
+    const deliveredOrders = orders.filter(o => o.status === 'delivered').length;
+    const cancelledOrders = orders.filter(o => o.status === 'cancelled').length;
+    const lastOrder = [...orders].sort((a, b) => 
+      new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
+    )[0];
+
+    setStats({
+      totalOrders: orders.length,
+      totalSpent,
+      averageOrder: totalSpent / orders.length,
+      pendingOrders,
+      deliveredOrders,
+      cancelledOrders,
+      favouriteCategory: 'Cosmetics', // Здесь должна быть реальная логика
+      lastOrderDate: lastOrder?.orderDate,
+    });
+  }, [orders]);
+
+  // Фильтрация и сортировка заказов
+  useEffect(() => {
+    let result = [...orders];
+
+    // Применение фильтров
+    if (filter.status && filter.status.length > 0) {
+      result = result.filter(order => filter.status?.includes(order.status));
+    }
+
+    if (filter.searchQuery) {
+      const query = filter.searchQuery.toLowerCase();
+      result = result.filter(order =>
+        order.orderNumber.toLowerCase().includes(query) ||
+        order.items.some(item => item.name.toLowerCase().includes(query))
+      );
+    }
+
+    // Применение сортировки
+    result.sort((a, b) => {
+      let valueA, valueB;
+
+      switch (sort.field) {
+        case 'date':
+          valueA = new Date(a.orderDate).getTime();
+          valueB = new Date(b.orderDate).getTime();
+          break;
+        case 'amount':
+          valueA = a.totalAmount;
+          valueB = b.totalAmount;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sort.direction === 'asc') {
+        return valueA - valueB;
+      } else {
+        return valueB - valueA;
+      }
+    });
+
+    setFilteredOrders(result);
+  }, [orders, filter, sort]);
+
+  // Обработчики действий
+  const handleViewDetails = (orderId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      setSelectedOrder(order);
+      setIsModalVisible(true);
     }
   };
 
-  const formatDate = (dateString: string): string => {
-    return new Date(dateString).toLocaleDateString();
+  const handleTrackOrder = (orderId: string) => {
+    Alert.alert(
+      t('orders.trackOrder'),
+      t('orderDetails.trackingNotAvailable'),
+      [{ text: t('common.ok') }]
+    );
   };
 
-  const formatPrice = (price: number): string => {
-    return `₩${price.toLocaleString()}`;
+  const handleReorder = (orderId: string) => {
+    Alert.alert(
+      t('orders.reorder'),
+      t('orderDetails.reorderConfirm'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.confirm'),
+          onPress: () => {
+            // Здесь будет логика повторного заказа
+            Alert.alert(t('common.success'), t('orderDetails.reorderSuccess'));
+          },
+        },
+      ]
+    );
   };
 
-  const handleTrackOrder = (order: Order) => {
-    console.log('Track order:', order.id);
-    // Navigate to order tracking screen
+  const handleCancelOrder = (orderId: string) => {
+    setOrders(orders.map(order =>
+      order.id === orderId ? { ...order, status: 'cancelled' } : order
+    ));
+    Alert.alert(t('common.success'), t('orderDetails.cancelSuccess'));
   };
 
-  const handleReorder = (order: Order) => {
-    console.log('Reorder:', order.id);
-    // Add items to cart and navigate to checkout
+  const handleStartShopping = () => {
+    navigation.navigate('Home' as never);
   };
 
-  const handleRefresh = async () => {
+  const handleRefresh = () => {
     setRefreshing(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    setRefreshing(false);
+    loadOrders();
   };
 
-  const renderOrder = ({ item }: { item: Order }) => (
-    <View style={styles.orderCard}>
-      <View style={styles.orderHeader}>
-        <View>
-          <Text style={styles.orderNumber}>{item.id}</Text>
-          <Text style={styles.orderDate}>{formatDate(item.createdAt)}</Text>
-        </View>
-        <View style={styles.statusContainer}>
-          <View style={[styles.statusBadge, { backgroundColor: getStatusColor(item.status) }]}>
-            <Text style={styles.statusText}>
-              {t(`orders.statuses.${item.status}`)}
+  const renderOrderItem = ({ item }: { item: OrderHistory }) => (
+    <OrderCard
+      order={item}
+      onViewDetails={handleViewDetails}
+      onTrackOrder={handleTrackOrder}
+      onReorder={handleReorder}
+      onCancelOrder={handleCancelOrder}
+    />
+  );
+
+  const renderContent = () => {
+    if (loading) {
+      return <LoadingSpinner />;
+    }
+
+    if (orders.length === 0) {
+      return <EmptyOrders onStartShopping={handleStartShopping} />;
+    }
+
+    return (
+      <FlatList
+        data={filteredOrders}
+        renderItem={renderOrderItem}
+        keyExtractor={(item) => item.id}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.listContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={[theme.primary]}
+            tintColor={theme.primary}
+          />
+        }
+        ListEmptyComponent={
+          <View style={styles.emptyFilterContainer}>
+            <Text style={[styles.emptyFilterText, { color: theme.textSecondary }]}>
+              {t('orderDetails.noFilterResults')}
             </Text>
           </View>
-        </View>
-      </View>
-
-      <View style={styles.orderDetails}>
-        <View style={styles.detailRow}>
-          <Text style={styles.detailLabel}>{t('orders.total')}</Text>
-          <Text style={styles.totalAmount}>
-            {formatPrice(item.totalAmount + item.shippingCost)}
-          </Text>
-        </View>
-        {item.trackingNumber && (
-          <View style={styles.detailRow}>
-            <Text style={styles.detailLabel}>{t('orders.trackingNumber')}</Text>
-            <Text style={styles.detailValue}>{item.trackingNumber}</Text>
-          </View>
-        )}
-      </View>
-
-      <View style={styles.actionButtons}>
-        <TouchableOpacity
-          style={[styles.actionButton, styles.trackButton]}
-          onPress={() => handleTrackOrder(item)}
-        >
-          <Ionicons name="location-outline" size={16} color={colors.navigation} />
-          <Text style={[styles.actionButtonText, styles.trackButtonText]}>
-            {t('orders.track')}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={[styles.actionButton, styles.reorderButton]}
-          onPress={() => handleReorder(item)}
-        >
-          <Ionicons name="refresh-outline" size={16} color={colors.primary} />
-          <Text style={[styles.actionButtonText, styles.reorderButtonText]}>
-            {t('orders.reorder')}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </View>
-  );
-
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>{t('orders.empty')}</Text>
-      <Text style={styles.emptySubtext}>{t('orders.emptyDescription')}</Text>
-    </View>
-  );
+        }
+      />
+    );
+  };
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.header} />
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <OrdersHeader
+        stats={stats}
+        filter={filter}
+        sort={sort}
+        onFilterChange={setFilter}
+        onSortChange={setSort}
+        onSearch={(query) => setFilter(prev => ({ ...prev, searchQuery: query }))}
+      />
       
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('orders.title')}</Text>
-      </View>
+      {renderContent()}
 
-      <View style={styles.content}>
-        <FlatList
-          data={orders}
-          renderItem={renderOrder}
-          keyExtractor={(item) => item.id}
-          showsVerticalScrollIndicator={false}
-          ListEmptyComponent={renderEmptyState}
-          contentContainerStyle={
-            orders.length === 0 ? { flex: 1 } : { paddingTop: Spacing.md }
-          }
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-          }
-        />
-      </View>
-    </View>
+      <OrderDetailsModal
+        order={selectedOrder}
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onTrackOrder={handleTrackOrder}
+        onReorder={handleReorder}
+      />
+    </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  listContent: {
+    paddingTop: 16,
+    paddingBottom: 32,
+  },
+  emptyFilterContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 40,
+    marginTop: 60,
+  },
+  emptyFilterText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
+});
+
+export default OrdersScreen;

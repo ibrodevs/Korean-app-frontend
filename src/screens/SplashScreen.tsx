@@ -1,93 +1,169 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, Image, StatusBar, ActivityIndicator } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  ActivityIndicator,
+  StyleSheet,
+  StatusBar,
+} from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing } from '@/constants/theme';
-import { RootStackScreenProps } from '@/navigation/types';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTheme } from '../contexts/ThemeContext';
+import { RootStackParamList } from '../types/navigation';
 
-type SplashScreenProps = RootStackScreenProps<'Splash'>;
+type SplashNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Splash'>;
 
-export default function SplashScreen() {
-  const navigation = useNavigation<SplashScreenProps['navigation']>();
-  const { colors } = useTheme();
+interface SplashScreenProps {
+  onFinish?: () => Promise<void> | void;
+}
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.navigation,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    logoContainer: {
-      alignItems: 'center',
-      marginBottom: Spacing.xxl,
-    },
-    logo: {
-      width: 120,
-      height: 120,
-      marginBottom: Spacing.lg,
-      borderRadius: 60,
-      backgroundColor: colors.primary,
-    },
-    title: {
-      ...Typography.h1,
-      color: '#FFFFFF',
-      textAlign: 'center',
-      fontWeight: 'bold',
-    },
-    subtitle: {
-      ...Typography.body,
-      color: colors.primary,
-      textAlign: 'center',
-      marginTop: Spacing.sm,
-    },
-    loadingContainer: {
-      marginTop: Spacing.xxl,
-    },
-  });
+const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
+  const { t } = useTranslation();
+  const { theme, isDark } = useTheme();
+  const navigation = useNavigation<SplashNavigationProp>();
+  const hasNavigated = useRef(false);
 
   useEffect(() => {
-    checkInitialRoute();
-  }, []);
-
-  const checkInitialRoute = async () => {
-    try {
-      // Simulate loading time
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
-      // Check if user has seen onboarding
-      const hasSeenOnboarding = await AsyncStorage.getItem('hasSeenOnboarding');
-      
-      // Check if user is logged in
-      const userToken = await AsyncStorage.getItem('userToken');
-
-      if (!hasSeenOnboarding) {
-        navigation.replace('Onboarding');
-      } else if (!userToken) {
-        navigation.replace('Auth');
-      } else {
-        navigation.replace('Main');
+    const initializeApp = async () => {
+      // Предотвращаем двойную навигацию
+      if (hasNavigated.current) {
+        return;
       }
-    } catch (error) {
-      console.error('Error checking initial route:', error);
-      navigation.replace('Onboarding');
-    }
-  };
+
+      try {
+        // Минимальная задержка для инициализации (200ms)
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        hasNavigated.current = true;
+        
+        if (typeof onFinish === 'function') {
+          const result = onFinish();
+          if (result instanceof Promise) {
+            await result;
+          }
+        }
+
+        // Переходим на главный экран
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      } catch (error) {
+        console.error('Initialization error:', error);
+        hasNavigated.current = true;
+        
+        // Даже при ошибке переходим на главный экран
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
+      }
+    };
+
+    initializeApp();
+  }, [navigation]);
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.navigation} />
+    <View style={[
+      styles.container,
+      { backgroundColor: theme.background }
+    ]}>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={theme.background}
+      />
       
+      {/* Логотип приложения */}
       <View style={styles.logoContainer}>
-        <View style={styles.logo} />
-        <Text style={styles.title}>Korean Shop</Text>
-        <Text style={styles.subtitle}>Premium Korean Products</Text>
+        <View style={[
+          styles.logo,
+          { backgroundColor: theme.primary }
+        ]}>
+          <View style={[
+            styles.logoInner,
+            { backgroundColor: theme.secondary }
+          ]} />
+        </View>
+        
+        {/* Название приложения */}
+        <View style={styles.appNameContainer}>
+          <Text style={[
+            styles.appName,
+            { color: theme.heading }
+          ]}>
+            {t('appName')}
+          </Text>
+        </View>
       </View>
 
+      {/* Индикатор загрузки */}
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary} />
+        <ActivityIndicator
+          size="large"
+          color={theme.primary}
+          style={styles.indicator}
+        />
+        
+        {/* Текст загрузки */}
+        <Text style={[
+          styles.loadingText,
+          { color: theme.textSecondary }
+        ]}>
+          {t('splash.loading')}
+        </Text>
       </View>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    borderRadius: 60,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 8,
+  },
+  logoInner: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+  },
+  appNameContainer: {
+    marginTop: 24,
+  },
+  appName: {
+    fontSize: 32,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textAlign: 'center',
+  },
+  loadingContainer: {
+    position: 'absolute',
+    bottom: 80,
+    width: '80%',
+    alignItems: 'center',
+  },
+  indicator: {
+    marginBottom: 12,
+  },
+  loadingText: {
+    fontSize: 16,
+    fontWeight: '500',
+    letterSpacing: 0.5,
+  },
+});
+
+export default SplashScreen;

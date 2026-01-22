@@ -8,7 +8,7 @@
       "@/components/*": ["src/components/*"],
       "@/screens/*": ["src/screens/*"],
       "@/navigation/*": ["src/navigation/*"],
-      "@/theme/*": ["src/theme/*"],
+      "@/theme/*": ["src/themes/*"],
       "@/utils/*": ["src/utils/*"],
       "@/services/*": ["src/services/*"],
       "@/constants/*": ["src/constants/*"]

@@ -1,29 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing } from '@/constants/theme';
+import { View, Text } from 'react-native';
+import { useTailwind } from 'tailwind-rn';
+import { useTheme } from '../contexts/ThemeContext';
 
-export default function CartScreen() {
-  const { colors } = useTheme();
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: Spacing.xl,
-    },
-    title: {
-      ...Typography.h2,
-      color: colors.text,
-      textAlign: 'center',
-    },
-  });
+const CartScreen: React.FC = () => {
+  const tailwind = useTailwind();
+  const { theme } = useTheme();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Cart Screen - Coming Soon</Text>
+    <View style={[tailwind('flex-1 justify-center items-center'), { backgroundColor: theme.background }]}>
+      <Text style={{ color: theme.text }}>Cart Screen</Text>
     </View>
   );
-}
+};
+
+export default CartScreen;

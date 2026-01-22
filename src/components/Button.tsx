@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 import { BorderRadius, Spacing, Typography } from '@/constants/theme';
 
 interface ButtonProps {
@@ -97,7 +97,7 @@ export default function Button({
         baseStyle.color = colors.primary;
         break;
       default:
-        baseStyle.color = variant === 'primary' ? colors.navigation : colors.text;
+        baseStyle.color = variant === 'primary' ? colors.navBackground : colors.text;
     }
 
     return baseStyle;
@@ -113,7 +113,7 @@ export default function Button({
       {loading && (
         <ActivityIndicator
           size="small"
-          color={variant === 'outline' ? colors.primary : colors.navigation}
+          color={variant === 'outline' ? colors.primary : colors.navBackground}
           style={{ marginRight: Spacing.sm }}
         />
       )}

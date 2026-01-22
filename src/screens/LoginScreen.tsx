@@ -12,7 +12,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Typography, Spacing, BorderRadius } from '@/constants/theme';
 import { RootStackScreenProps } from '@/navigation/types';
 import Button from '@/components/Button';

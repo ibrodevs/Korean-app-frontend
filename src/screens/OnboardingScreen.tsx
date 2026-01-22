@@ -2,228 +2,251 @@ import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
+  TouchableOpacity,
   StyleSheet,
-  FlatList,
   Dimensions,
-  Image,
-  StatusBar,
+  FlatList,
+  Animated,
 } from 'react-native';
+import { useTailwind } from 'tailwind-rn';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
-import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { OnboardingSlide } from '@/constants/types';
-import { RootStackScreenProps } from '@/navigation/types';
-import Button from '@/components/Button';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-type OnboardingScreenProps = RootStackScreenProps<'Onboarding'>;
+// Компоненты
+import OnboardingSlide from '../components/onboarding/OnboardingSlide';
+import OnboardingPagination from '../components/onboarding/OnboardingPagination';
+import CustomIllustration from '../components/onboarding/CustomIllustration';
 
-const { width: screenWidth } = Dimensions.get('window');
+// Типы
+import { RootStackParamList } from '../types/navigation';
+import { OnboardingSlide as OnboardingSlideType } from '../types/onboarding';
 
-export default function OnboardingScreen() {
-  const navigation = useNavigation<OnboardingScreenProps['navigation']>();
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const OnboardingScreen: React.FC = () => {
+  const tailwind = useTailwind();
   const { t } = useTranslation();
-  const { colors } = useTheme();
-  const flatListRef = useRef<FlatList>(null);
+  const { theme } = useTheme();
+  const navigation = useNavigation<NavigationProp>();
+  
   const [currentIndex, setCurrentIndex] = useState(0);
+  const scrollX = useRef(new Animated.Value(0)).current;
+  const slidesRef = useRef<FlatList>(null);
+  const viewableItemsChanged = useRef(({ viewableItems }: any) => {
+    if (viewableItems[0]) {
+      setCurrentIndex(viewableItems[0].index);
+    }
+  }).current;
+  const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50 }).current;
 
-  const slides: OnboardingSlide[] = [
+  // Данные для слайдов
+  const slides: OnboardingSlideType[] = [
     {
-      id: 1,
-      title: t('onboarding.slide1.title'),
-      description: t('onboarding.slide1.description'),
-      image: 'https://via.placeholder.com/300x200/F8E9A1/374785?text=Search+%26+Buy',
+      id: '1',
+      title: t('onboarding.title1'),
+      description: t('onboarding.description1'),
+      illustration: <CustomIllustration type="search" />,
     },
     {
-      id: 2,
-      title: t('onboarding.slide2.title'),
-      description: t('onboarding.slide2.description'),
-      image: 'https://via.placeholder.com/300x200/A8D0E6/374785?text=Fast+Delivery',
+      id: '2',
+      title: t('onboarding.title2'),
+      description: t('onboarding.description2'),
+      illustration: <CustomIllustration type="delivery" />,
     },
     {
-      id: 3,
-      title: t('onboarding.slide3.title'),
-      description: t('onboarding.slide3.description'),
-      image: 'https://via.placeholder.com/300x200/F76C6C/FFFFFF?text=Track+Order',
+      id: '3',
+      title: t('onboarding.title3'),
+      description: t('onboarding.description3'),
+      illustration: <CustomIllustration type="tracking" />,
     },
     {
-      id: 4,
-      title: t('onboarding.slide4.title'),
-      description: t('onboarding.slide4.description'),
-      image: 'https://via.placeholder.com/300x200/374785/F8E9A1?text=Secure+Payment',
+      id: '4',
+      title: t('onboarding.title4'),
+      description: t('onboarding.description4'),
+      illustration: <CustomIllustration type="payment" />,
     },
   ];
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    slide: {
-      width: screenWidth,
-      flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      paddingHorizontal: Spacing.xl,
-    },
-    imageContainer: {
-      width: 300,
-      height: 200,
-      marginBottom: Spacing.xxl,
-      borderRadius: BorderRadius.lg,
-      overflow: 'hidden',
-    },
-    image: {
-      width: '100%',
-      height: '100%',
-    },
-    title: {
-      ...Typography.h1,
-      color: colors.text,
-      textAlign: 'center',
-      marginBottom: Spacing.lg,
-      fontWeight: 'bold',
-    },
-    description: {
-      ...Typography.body,
-      color: colors.textSecondary,
-      textAlign: 'center',
-      marginBottom: Spacing.xxl,
-      lineHeight: 24,
-    },
-    bottomContainer: {
-      paddingHorizontal: Spacing.xl,
-      paddingBottom: Spacing.xl,
-    },
-    pagination: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: Spacing.xl,
-    },
-    dot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
-      marginHorizontal: 4,
-    },
-    activeDot: {
-      backgroundColor: colors.primary,
-      width: 24,
-    },
-    inactiveDot: {
-      backgroundColor: colors.border,
-    },
-    buttonContainer: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    skipButton: {
-      flex: 1,
-      marginRight: Spacing.md,
-    },
-    nextButton: {
-      flex: 1,
-      marginLeft: Spacing.md,
-    },
-  });
+  const handleSkip = async () => {
+    await AsyncStorage.setItem('onboarding-completed', 'true');
+    navigation.replace('Auth'); // Или 'Main' если будет сразу авторизация
+  };
 
-  const goToNext = () => {
+  const handleNext = async () => {
     if (currentIndex < slides.length - 1) {
-      flatListRef.current?.scrollToIndex({
-        index: currentIndex + 1,
-        animated: true,
-      });
+      slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
-      handleGetStarted();
+      await AsyncStorage.setItem('onboarding-completed', 'true');
+      navigation.replace('Auth'); // Или 'Main' если будет сразу авторизация
     }
   };
 
-  const handleSkip = () => {
-    handleGetStarted();
+  const handleDotPress = (index: number) => {
+    slidesRef.current?.scrollToIndex({ index });
   };
 
-  const handleGetStarted = async () => {
-    try {
-      await AsyncStorage.setItem('hasSeenOnboarding', 'true');
-      navigation.replace('Auth');
-    } catch (error) {
-      console.error('Error saving onboarding status:', error);
-      navigation.replace('Auth');
-    }
+  const renderSlide = ({ item, index }: { item: OnboardingSlideType; index: number }) => {
+    return (
+      <OnboardingSlide
+        title={item.title}
+        description={item.description}
+        illustration={item.illustration}
+        index={index}
+        currentIndex={currentIndex}
+      />
+    );
   };
-
-  const renderSlide = ({ item }: { item: OnboardingSlide }) => (
-    <View style={styles.slide}>
-      <View style={styles.imageContainer}>
-        <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
-      </View>
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.description}>{item.description}</Text>
-    </View>
-  );
-
-  const renderPagination = () => (
-    <View style={styles.pagination}>
-      {slides.map((_, index) => (
-        <View
-          key={index}
-          style={[
-            styles.dot,
-            index === currentIndex ? styles.activeDot : styles.inactiveDot,
-          ]}
-        />
-      ))}
-    </View>
-  );
-
-  const onScroll = (event: any) => {
-    const slideSize = event.nativeEvent.layoutMeasurement.width;
-    const index = event.nativeEvent.contentOffset.x / slideSize;
-    const roundIndex = Math.round(index);
-    setCurrentIndex(roundIndex);
-  };
-
-  const isLastSlide = currentIndex === slides.length - 1;
 
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      
-      <FlatList
-        ref={flatListRef}
-        data={slides}
-        renderItem={renderSlide}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id.toString()}
-        onScroll={onScroll}
-        scrollEventThrottle={16}
+    <View style={[
+      styles.container,
+      { backgroundColor: theme.background }
+    ]}>
+      {/* Кнопка пропуска */}
+      <TouchableOpacity
+        style={styles.skipButton}
+        onPress={handleSkip}
+        activeOpacity={0.7}
+      >
+        <Text style={[
+          styles.skipText,
+          { color: theme.textSecondary }
+        ]}>
+          {t('onboarding.skip')}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Карусель слайдов */}
+      <View style={styles.carouselContainer}>
+        <FlatList
+          ref={slidesRef}
+          data={slides}
+          renderItem={renderSlide}
+          horizontal
+          pagingEnabled
+          bounces={false}
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.id}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { x: scrollX } } }],
+            { useNativeDriver: false }
+          )}
+          scrollEventThrottle={32}
+          onViewableItemsChanged={viewableItemsChanged}
+          viewabilityConfig={viewConfig}
+        />
+      </View>
+
+      {/* Пагинация */}
+      <OnboardingPagination
+        slides={slides}
+        currentIndex={currentIndex}
+        onDotPress={handleDotPress}
       />
 
-      <View style={styles.bottomContainer}>
-        {renderPagination()}
-        
-        <View style={styles.buttonContainer}>
-          {!isLastSlide && (
-            <Button
-              title={t('common.skip')}
-              onPress={handleSkip}
-              variant="outline"
-              style={styles.skipButton}
-            />
-          )}
-          
-          <Button
-            title={isLastSlide ? t('onboarding.getStarted') : t('common.next')}
-            onPress={goToNext}
-            style={isLastSlide ? { flex: 1 } : styles.nextButton}
+      {/* Кнопка Далее/Начать */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[
+            styles.nextButton,
+            { backgroundColor: theme.primary }
+          ]}
+          onPress={handleNext}
+          activeOpacity={0.8}
+        >
+          <Text style={[
+            styles.nextButtonText,
+            { color: theme.heading }
+          ]}>
+            {currentIndex === slides.length - 1 
+              ? t('onboarding.getStarted') 
+              : t('onboarding.next')
+            }
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Прогресс бар */}
+      <View style={styles.progressContainer}>
+        <View style={[
+          styles.progressBackground,
+          { backgroundColor: theme.border }
+        ]}>
+          <Animated.View
+            style={[
+              styles.progressFill,
+              {
+                width: scrollX.interpolate({
+                  inputRange: [
+                    0,
+                    SCREEN_WIDTH * (slides.length - 1),
+                    SCREEN_WIDTH * slides.length,
+                  ],
+                  outputRange: ['0%', '100%', '100%'],
+                }),
+                backgroundColor: theme.primary,
+              },
+            ]}
           />
         </View>
       </View>
     </View>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingTop: 60,
+  },
+  skipButton: {
+    position: 'absolute',
+    top: 60,
+    right: 24,
+    zIndex: 10,
+    padding: 8,
+  },
+  skipText: {
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  carouselContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
+  buttonContainer: {
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+  },
+  nextButton: {
+    borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: 'center',
+    elevation: 3,
+  },
+  nextButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  progressContainer: {
+    paddingHorizontal: 24,
+    paddingBottom: 20,
+  },
+  progressBackground: {
+    width: '100%',
+    height: 4,
+    borderRadius: 2,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 2,
+  },
+});
+
+export default OnboardingScreen;

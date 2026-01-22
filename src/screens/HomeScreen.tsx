@@ -12,21 +12,21 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { Product, Category } from '@/constants/types';
-import { MainTabScreenProps } from '@/navigation/types';
-import ProductCard from '@/components/ProductCard';
-import Input from '@/components/Input';
+import { useTheme } from '../contexts/ThemeContext';
+import { Product, Category } from '../types/product';
+import { BorderRadius, Spacing, Typography } from '../constants/theme';
+import { MainTabScreenProps } from '../types/navigation';
+import ProductCard from '../components/ProductCard';
+import Input from '../components/Input';
 
 type HomeScreenProps = MainTabScreenProps<'Home'>;
 
 // Mock data
 const mockCategories: Category[] = [
-  { id: '1', name: 'K-Beauty', icon: '✨', productsCount: 150 },
-  { id: '2', name: 'K-Food', icon: '🍜', productsCount: 89 },
-  { id: '3', name: 'K-Fashion', icon: '👗', productsCount: 200 },
-  { id: '4', name: 'Electronics', icon: '📱', productsCount: 75 },
+  { id: '1', name: 'K-Beauty', icon: '✨', color: '#F8E9A1', productCount: 150 },
+  { id: '2', name: 'K-Food', icon: '🍜', color: '#A8D0E6', productCount: 89 },
+  { id: '3', name: 'K-Fashion', icon: '👗', color: '#F76C6C', productCount: 200 },
+  { id: '4', name: 'Electronics', icon: '📱', color: '#24305E', productCount: 75 },
 ];
 
 const mockProducts: Product[] = [
@@ -34,39 +34,68 @@ const mockProducts: Product[] = [
     id: '1',
     name: 'Premium Korean Skincare Set',
     description: 'Complete 10-step Korean skincare routine with premium ingredients',
-    price: 89000,
-    discountPrice: 69000,
-    images: ['https://via.placeholder.com/300x300/F8E9A1/374785?text=Skincare'],
+    price: 69000,
+    originalPrice: 89000,
+    discount: 22,
+    currency: 'KRW',
     category: 'K-Beauty',
-    inStock: true,
+    images: ['https://via.placeholder.com/300x300/F8E9A1/374785?text=Skincare'],
     rating: 4.8,
     reviewCount: 245,
-    seller: { id: '1', name: 'Beauty Korea', rating: 4.9 },
+    stock: 50,
+    isNew: false,
+    isFeatured: true,
+    isBestSeller: true,
+    tags: ['skincare', 'korean', 'beauty'],
+    seller: {
+      id: 'seller1',
+      name: 'K-Beauty Store'
+    },
+    inStock: true,
   },
   {
     id: '2',
     name: 'Korean BBQ Sauce Collection',
     description: 'Authentic Korean BBQ sauces and marinades pack',
     price: 25000,
-    images: ['https://via.placeholder.com/300x300/A8D0E6/374785?text=BBQ+Sauce'],
+    currency: 'KRW',
     category: 'K-Food',
-    inStock: true,
+    images: ['https://via.placeholder.com/300x300/A8D0E6/374785?text=BBQ+Sauce'],
     rating: 4.6,
     reviewCount: 89,
-    seller: { id: '2', name: 'Korean Taste', rating: 4.7 },
+    stock: 100,
+    isNew: true,
+    isFeatured: true,
+    isBestSeller: false,
+    tags: ['food', 'korean', 'bbq'],
+    seller: {
+      id: 'seller2',
+      name: 'Seoul Foods'
+    },
+    inStock: true,
   },
   {
     id: '3',
     name: 'Hanbok Modern Style Dress',
     description: 'Modern interpretation of traditional Korean hanbok',
-    price: 150000,
-    discountPrice: 120000,
-    images: ['https://via.placeholder.com/300x300/F76C6C/FFFFFF?text=Hanbok'],
+    price: 120000,
+    originalPrice: 150000,
+    discount: 20,
+    currency: 'KRW',
     category: 'K-Fashion',
-    inStock: false,
+    images: ['https://via.placeholder.com/300x300/F76C6C/FFFFFF?text=Hanbok'],
     rating: 4.9,
     reviewCount: 156,
-    seller: { id: '3', name: 'Seoul Fashion', rating: 4.8 },
+    stock: 0,
+    isNew: false,
+    isFeatured: true,
+    isBestSeller: true,
+    tags: ['fashion', 'korean', 'traditional'],
+    seller: {
+      id: 'seller3',
+      name: 'Korean Traditional'
+    },
+    inStock: false,
   },
 ];
 
@@ -85,7 +114,7 @@ export default function HomeScreen() {
       backgroundColor: colors.background,
     },
     header: {
-      backgroundColor: colors.header,
+      backgroundColor: colors.heading,
       paddingTop: StatusBar.currentHeight || 0,
       paddingHorizontal: Spacing.lg,
       paddingBottom: Spacing.lg,
@@ -147,7 +176,7 @@ export default function HomeScreen() {
     },
     bannerText: {
       ...Typography.h2,
-      color: colors.navigation,
+      color: colors.heading,
       fontWeight: 'bold',
       textAlign: 'center',
     },
@@ -210,20 +239,20 @@ export default function HomeScreen() {
     setRefreshing(false);
   };
 
-  const handleSearch = () => {
-    navigation.navigate('Search', { query: searchQuery });
-  };
-
   const handleProductPress = (product: Product) => {
     navigation.navigate('ProductDetail', { product });
   };
 
+  const handleSearch = () => {
+    // Search is in MainTabNavigator
+  };
+  
   const handleCartPress = () => {
     navigation.navigate('Cart');
   };
 
   const handleCategoryPress = (category: Category) => {
-    navigation.navigate('Search', { category: category.id });
+    // Search is in MainTabNavigator
   };
 
   const renderCategory = ({ item }: { item: Category }) => (
@@ -236,7 +265,7 @@ export default function HomeScreen() {
         {item.name}
       </Text>
       <Text style={styles.categoryCount}>
-        {item.productsCount} items
+        {item.productCount} items
       </Text>
     </TouchableOpacity>
   );

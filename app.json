@@ -23,7 +23,8 @@
         "backgroundColor": "#24305E"
       }
     },
-    "web": {
-    }
+    "plugins": [
+      "expo-localization"
+    ]
   }
 }

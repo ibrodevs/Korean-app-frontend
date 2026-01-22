@@ -1,6 +1,6 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 
 import LoginScreen from '@/screens/LoginScreen';
 import RegisterScreen from '@/screens/RegisterScreen';

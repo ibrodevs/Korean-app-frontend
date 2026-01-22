@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Typography, Spacing } from '@/constants/theme';
 
 export default function ProductDetailScreen() {

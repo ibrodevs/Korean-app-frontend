@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Typography, Spacing } from '@/constants/theme';
 import { AuthStackParamList } from '@/navigation/types';
 import { StackNavigationProp } from '@react-navigation/stack';

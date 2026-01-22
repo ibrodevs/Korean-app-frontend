@@ -12,9 +12,9 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { MainTabScreenProps } from '@/navigation/types';
+import { useTheme } from '../contexts/ThemeContext';
+import { Typography, Spacing, BorderRadius } from '../constants/theme';
+import { MainTabScreenProps } from '../navigation/types';
 
 type ProfileScreenProps = MainTabScreenProps<'Profile'>;
 
@@ -29,7 +29,7 @@ interface MenuOption {
 export default function ProfileScreen() {
   const navigation = useNavigation<ProfileScreenProps['navigation']>();
   const { t } = useTranslation();
-  const { colors, theme, setTheme } = useTheme();
+  const { theme, isDark, toggleTheme, setTheme } = useTheme();
   
   const [userInfo] = useState({
     name: 'John Doe',
@@ -41,10 +41,10 @@ export default function ProfileScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.background,
+      backgroundColor: theme.background,
     },
     header: {
-      backgroundColor: colors.header,
+      backgroundColor: theme.heading,
       paddingHorizontal: Spacing.lg,
       paddingBottom: Spacing.xl,
       paddingTop: (StatusBar.currentHeight || 0) + Spacing.lg,
@@ -66,14 +66,14 @@ export default function ProfileScreen() {
       width: 80,
       height: 80,
       borderRadius: 40,
-      backgroundColor: colors.primary,
+      backgroundColor: theme.primary,
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: Spacing.lg,
     },
     avatarText: {
       ...Typography.h1,
-      color: colors.navigation,
+      color: theme.heading,
       fontWeight: 'bold',
     },
     userInfo: {
@@ -104,12 +104,12 @@ export default function ProfileScreen() {
     },
     sectionTitle: {
       ...Typography.h3,
-      color: colors.text,
+      color: theme.text,
       fontWeight: 'bold',
       marginBottom: Spacing.md,
     },
     menuOption: {
-      backgroundColor: colors.card,
+      backgroundColor: theme.card,
       borderRadius: BorderRadius.md,
       paddingHorizontal: Spacing.lg,
       paddingVertical: Spacing.md,
@@ -128,7 +128,7 @@ export default function ProfileScreen() {
     },
     menuTitle: {
       ...Typography.body,
-      color: colors.text,
+      color: theme.text,
       fontWeight: '500',
     },
     menuArrow: {
@@ -145,18 +145,18 @@ export default function ProfileScreen() {
       marginLeft: Spacing.sm,
     },
     themeOptionActive: {
-      backgroundColor: colors.primary,
+      backgroundColor: theme.primary,
     },
     themeOptionText: {
       ...Typography.caption,
-      color: colors.text,
+      color: theme.text,
       fontWeight: '500',
     },
     themeOptionTextActive: {
-      color: colors.navigation,
+      color: theme.heading,
     },
     logoutOption: {
-      backgroundColor: colors.error,
+      backgroundColor: theme.error,
     },
     logoutText: {
       color: '#FFFFFF',
@@ -192,8 +192,8 @@ export default function ProfileScreen() {
     );
   };
 
-  const handleThemeChange = (newTheme: 'light' | 'dark' | 'system') => {
-    setTheme(newTheme);
+  const handleThemeChange = (isDark: boolean) => {
+    setTheme(isDark);
   };
 
   const accountOptions: MenuOption[] = [
@@ -231,19 +231,19 @@ export default function ProfileScreen() {
       action: () => {},
       rightElement: (
         <View style={styles.themeSelector}>
-          {(['light', 'dark', 'system'] as const).map((themeOption) => (
+          {(['light', 'dark'] as const).map((themeOption) => (
             <TouchableOpacity
               key={themeOption}
               style={[
                 styles.themeOption,
-                theme === themeOption && styles.themeOptionActive,
+                (themeOption === 'light' && !isDark) || (themeOption === 'dark' && isDark) ? styles.themeOptionActive : null,
               ]}
-              onPress={() => handleThemeChange(themeOption)}
+              onPress={() => handleThemeChange(themeOption === 'dark')}
             >
               <Text
                 style={[
                   styles.themeOptionText,
-                  theme === themeOption && styles.themeOptionTextActive,
+                  (themeOption === 'light' && !isDark) || (themeOption === 'dark' && isDark) ? styles.themeOptionTextActive : null,
                 ]}
               >
                 {t(`settings.themeOptions.${themeOption}`)}
@@ -304,7 +304,7 @@ export default function ProfileScreen() {
         <Ionicons
           name={option.icon}
           size={24}
-          color={isLogout ? '#FFFFFF' : colors.text}
+          color={isLogout ? '#FFFFFF' : theme.text}
           style={styles.menuIcon}
         />
         <Text style={[styles.menuTitle, isLogout && styles.logoutText]}>
@@ -318,7 +318,7 @@ export default function ProfileScreen() {
         <Ionicons
           name="chevron-forward"
           size={20}
-          color={isLogout ? '#FFFFFF' : colors.textSecondary}
+          color={isLogout ? '#FFFFFF' : theme.textSecondary}
           style={styles.menuArrow}
         />
       )}
@@ -336,7 +336,7 @@ export default function ProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.header} />
+      <StatusBar barStyle="light-content" backgroundColor={theme.heading} />
       
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t('profile.title')}</Text>

@@ -2,9 +2,9 @@ import React from 'react';
 import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
-import { BorderRadius, Spacing, Typography } from '@/constants/theme';
-import { Product } from '@/constants/types';
+import { useTheme } from '../contexts/ThemeContext';
+import { BorderRadius, Spacing, Typography } from '../constants/theme';
+import { Product } from '../types/product';
 import Button from './Button';
 
 interface ProductCardProps {

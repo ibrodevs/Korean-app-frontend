@@ -1,91 +1,83 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '../contexts/ThemeContext';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-import HomeScreen from '@/screens/HomeScreen';
-import SearchScreen from '@/screens/SearchScreen';
-import OrdersScreen from '@/screens/OrdersScreen';
-import ProfileScreen from '@/screens/ProfileScreen';
+// Импорт экранов
+import HomeScreen from '../screens/home/HomeScreen';
+import CategoriesScreen from '../screens/CategoriesScreen';
+import CartScreen from '../screens/CartScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
-import { MainTabParamList } from './types';
+const Tab = createBottomTabNavigator();
 
-const Tab = createBottomTabNavigator<MainTabParamList>();
-
-export default function MainTabNavigator() {
+const MainTabNavigator: React.FC = () => {
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap;
-
-          switch (route.name) {
-            case 'Home':
-              iconName = focused ? 'home' : 'home-outline';
-              break;
-            case 'Search':
-              iconName = focused ? 'search' : 'search-outline';
-              break;
-            case 'Orders':
-              iconName = focused ? 'receipt' : 'receipt-outline';
-              break;
-            case 'Profile':
-              iconName = focused ? 'person' : 'person-outline';
-              break;
-            default:
-              iconName = 'home-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+      screenOptions={{
+        headerShown: false,
         tabBarStyle: {
-          backgroundColor: colors.navigation,
-          borderTopColor: colors.border,
+          backgroundColor: theme.navBackground,
+          borderTopColor: theme.border,
+          height: 60,
+          paddingBottom: 8,
+          paddingTop: 8,
         },
-        headerStyle: {
-          backgroundColor: colors.header,
+        tabBarActiveTintColor: theme.primary,
+        tabBarInactiveTintColor: theme.textSecondary,
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: '500',
         },
-        headerTintColor: colors.text,
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      })}
+      }}
     >
-      <Tab.Screen 
-        name="Home" 
+      <Tab.Screen
+        name="Home"
         component={HomeScreen}
         options={{
-          title: t('navigation.home'),
-          headerShown: false,
+          tabBarLabel: t('home.title'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="home-outline" size={size} color={color} />
+          ),
         }}
       />
-      <Tab.Screen 
-        name="Search" 
-        component={SearchScreen}
+      <Tab.Screen
+        name="Categories"
+        component={CategoriesScreen}
         options={{
-          title: t('navigation.search'),
+          tabBarLabel: t('home.categories'),
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="grid-outline" size={size} color={color} />
+          ),
         }}
       />
-      <Tab.Screen 
-        name="Orders" 
-        component={OrdersScreen}
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
         options={{
-          title: t('navigation.orders'),
+          tabBarLabel: 'Cart',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="cart-outline" size={size} color={color} />
+          ),
+          tabBarBadge: 3,
         }}
       />
-      <Tab.Screen 
-        name="Profile" 
+      <Tab.Screen
+        name="Profile"
         component={ProfileScreen}
         options={{
-          title: t('navigation.profile'),
+          tabBarLabel: 'Profile',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="person-outline" size={size} color={color} />
+          ),
         }}
       />
     </Tab.Navigator>
   );
-}
+};
+
+export default MainTabNavigator;

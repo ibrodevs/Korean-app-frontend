@@ -7,7 +7,7 @@ import {
   StatusBar,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/theme/ThemeProvider';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Typography, Spacing } from '@/constants/theme';
 import { Product } from '@/constants/types';
 import { MainTabScreenProps } from '@/navigation/types';
