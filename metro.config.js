@@ -40,6 +40,12 @@ config.resolver.assetExts.push(
   '7z'
 );
 
+// Configure resolver for web compatibility
+config.resolver.alias = {
+  'react-native': 'react-native-web',
+  'react-native-web': 'react-native-web'
+};
+
 // Configure transformer
 config.transformer.getTransformOptions = async () => ({
   transform: {
@@ -47,5 +53,8 @@ config.transformer.getTransformOptions = async () => ({
     inlineRequires: false,
   },
 });
+
+// Add platform extensions
+config.resolver.platforms = ['web', 'native', 'ios', 'android'];
 
 module.exports = config;

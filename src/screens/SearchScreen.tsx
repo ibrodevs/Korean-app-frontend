@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
+  
   StyleSheet,
   FlatList,
   StatusBar,
 } from 'react-native';
+import Text from '../components/Text';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Typography, Spacing } from '@/constants/theme';
-import { Product } from '@/constants/types';
-import { MainTabScreenProps } from '@/navigation/types';
+import { Product } from '../types/product';
+import { MainTabScreenProps } from '../types/navigation';
 import ProductCard from '@/components/ProductCard';
 import Input from '@/components/Input';
 
@@ -22,7 +23,7 @@ const mockProducts: Product[] = [
     name: 'Korean Ginseng Tea',
     description: 'Premium Korean red ginseng tea for health and vitality',
     price: 35000,
-    images: ['https://via.placeholder.com/300x300/F8E9A1/374785?text=Ginseng'],
+    images: ['https://picsum.photos/300/300?random=4'],
     category: 'K-Food',
     inStock: true,
     rating: 4.7,
@@ -35,7 +36,7 @@ const mockProducts: Product[] = [
     description: 'Official K-Pop merchandise high-quality cotton t-shirt',
     price: 45000,
     discountPrice: 35000,
-    images: ['https://via.placeholder.com/300x300/A8D0E6/374785?text=K-Pop'],
+    images: ['https://picsum.photos/300/300?random=5'],
     category: 'K-Fashion',
     inStock: true,
     rating: 4.9,

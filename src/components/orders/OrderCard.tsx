@@ -1,13 +1,13 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   Image,
   Alert,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -111,7 +111,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
         {order.items.slice(0, maxItems).map((item, index) => (
           <View key={item.id} style={[styles.itemImage, { marginLeft: index > 0 ? -10 : 0 }]}>
             {item.image ? (
-              <Image source={{ uri: item.image }} style={styles.image} />
+              <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
             ) : (
               <View style={[styles.imagePlaceholder, { backgroundColor: theme.border }]}>
                 <Ionicons name="cube-outline" size={20} color={theme.textSecondary} />
@@ -269,10 +269,7 @@ const styles = StyleSheet.create({
     padding: 16,
     marginHorizontal: 20,
     marginBottom: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
     elevation: 4,
   },
   header: {
@@ -342,7 +339,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover',
   },
   imagePlaceholder: {
     width: '100%',

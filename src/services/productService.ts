@@ -23,10 +23,24 @@ const mockProducts: Product[] = [
     isFeatured: true,
     isBestSeller: true,
     tags: ['skincare', 'face mask', 'snail mucin'],
+    specifications: {
+      'Brand': 'Korean Beauty Co.',
+      'Type': 'Sheet Mask',
+      'Skin Type': 'All Types',
+      'Volume': '25ml'
+    },
     shippingInfo: {
       freeShipping: true,
       deliveryTime: '2-3 days',
     },
+    seller: {
+      id: 'seller1',
+      name: 'K-Beauty Store',
+      rating: 4.8,
+      reviewCount: 256,
+      responseRate: 98
+    },
+    inStock: true
   },
   {
     id: '2',
@@ -46,6 +60,24 @@ const mockProducts: Product[] = [
     isFeatured: true,
     isBestSeller: false,
     tags: ['makeup', 'foundation', 'SPF'],
+    specifications: {
+      'Brand': 'Korean Cosmetics',
+      'Coverage': 'Medium',
+      'SPF': '50',
+      'Volume': '30ml'
+    },
+    shippingInfo: {
+      freeShipping: false,
+      deliveryTime: '3-5 days',
+    },
+    seller: {
+      id: 'seller2',
+      name: 'Beauty Paradise',
+      rating: 4.6,
+      reviewCount: 89,
+      responseRate: 95
+    },
+    inStock: true
   },
   {
     id: '3',
@@ -67,6 +99,24 @@ const mockProducts: Product[] = [
     isFeatured: false,
     isBestSeller: true,
     tags: ['snacks', 'korean food', 'assortment'],
+    specifications: {
+      'Brand': 'Korean Snacks Co.',
+      'Weight': '500g',
+      'Type': 'Mixed Snacks',
+      'Expiry': '6 months'
+    },
+    shippingInfo: {
+      freeShipping: true,
+      deliveryTime: '1-2 days',
+    },
+    seller: {
+      id: 'seller3',
+      name: 'Korean Food Hub',
+      rating: 4.9,
+      reviewCount: 342,
+      responseRate: 99
+    },
+    inStock: true
   },
   {
     id: '4',
@@ -86,6 +136,24 @@ const mockProducts: Product[] = [
     isFeatured: false,
     isBestSeller: false,
     tags: ['fashion', 'hoodie', 'k-pop'],
+    specifications: {
+      'Brand': 'K-Style',
+      'Material': '100% Cotton',
+      'Size': 'M, L, XL',
+      'Care': 'Machine wash'
+    },
+    shippingInfo: {
+      freeShipping: false,
+      deliveryTime: '5-7 days',
+    },
+    seller: {
+      id: 'seller4',
+      name: 'K-Fashion Store',
+      rating: 4.4,
+      reviewCount: 67,
+      responseRate: 92
+    },
+    inStock: true
   },
   {
     id: '5',
@@ -105,6 +173,24 @@ const mockProducts: Product[] = [
     isFeatured: false,
     isBestSeller: false,
     tags: ['home decor', 'ceramic', 'traditional'],
+    specifications: {
+      'Brand': 'Korean Ceramics',
+      'Material': 'Ceramic',
+      'Size': '15cm x 10cm',
+      'Style': 'Traditional'
+    },
+    shippingInfo: {
+      freeShipping: true,
+      deliveryTime: '3-4 days',
+    },
+    seller: {
+      id: 'seller5',
+      name: 'Traditional Korea',
+      rating: 4.7,
+      reviewCount: 156,
+      responseRate: 97
+    },
+    inStock: true
   },
   {
     id: '6',
@@ -126,6 +212,24 @@ const mockProducts: Product[] = [
     isFeatured: false,
     isBestSeller: true,
     tags: ['makeup tools', 'beauty blender', 'sponge'],
+    specifications: {
+      'Brand': 'K-Beauty Tools',
+      'Material': 'Latex-free foam',
+      'Size': 'Standard',
+      'Count': '4 pieces'
+    },
+    shippingInfo: {
+      freeShipping: false,
+      deliveryTime: '2-3 days',
+    },
+    seller: {
+      id: 'seller6',
+      name: 'Beauty Tools Pro',
+      rating: 4.5,
+      reviewCount: 234,
+      responseRate: 94
+    },
+    inStock: true
   },
 ];
 

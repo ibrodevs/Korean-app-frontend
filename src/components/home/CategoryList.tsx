@@ -1,15 +1,16 @@
 import React from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native';
+import Text from '../../components/Text';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Category } from '../../types/product';
+import { useTailwind } from '../../utils/tailwindUtilities';
 
 interface CategoryListProps {
   categories: Category[];
@@ -26,6 +27,7 @@ const CategoryList: React.FC<CategoryListProps> = ({
 }) => {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const tailwind = useTailwind();
 
   const getIconName = (icon: string) => {
     const iconMap: Record<string, string> = {

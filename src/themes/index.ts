@@ -20,6 +20,8 @@ export const lightTheme = {
   border: '#E5E7EB',
   background: '#F9FAFB',
   navBackground: '#24305E',
+  shadow: '#000000',
+  gradient: ['#F8E9A1', '#A8D0E6'],
 };
 
 export const darkTheme = {
@@ -30,6 +32,8 @@ export const darkTheme = {
   border: '#374151',
   background: '#111827',
   navBackground: '#1E1B4B',
+  shadow: '#000000',
+  gradient: ['#374785', '#24305E'],
 };
 
 export type ThemeType = typeof lightTheme;

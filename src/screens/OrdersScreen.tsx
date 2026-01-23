@@ -6,7 +6,8 @@ import {
   RefreshControl,
   Alert,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../components/Text';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -24,11 +25,13 @@ import EmptyOrders from '../components/orders/EmptyOrders';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import { useNavigation } from '@react-navigation/native';
 
+import { NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/navigation';
+
 const OrdersScreen: React.FC = () => {
   const tailwind = useTailwind();
   const { t } = useTranslation();
   const { theme } = useTheme();
-  const navigation = useNavigation();
 
   // Состояния
   const [orders, setOrders] = useState<OrderHistory[]>([]);
@@ -103,6 +106,18 @@ const OrdersScreen: React.FC = () => {
     });
   }, [orders]);
 
+const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+// Для навигации к деталям заказа:
+const handleViewOrderDetails = (orderId: string) => {
+  navigation.navigate('OrderTracking', { orderId });
+};
+
+// Для навигации к профилю:
+const goToProfile = () => {
+  navigation.navigate('Main', { screen: 'ProfileTab', params: { screen: 'ProfileMain' } });
+};
+
   // Фильтрация и сортировка заказов
   useEffect(() => {
     let result = [...orders];
@@ -116,7 +131,7 @@ const OrdersScreen: React.FC = () => {
       const query = filter.searchQuery.toLowerCase();
       result = result.filter(order =>
         order.orderNumber.toLowerCase().includes(query) ||
-        order.items.some(item => item.name.toLowerCase().includes(query))
+        order.items.some(item => item.product.name.toLowerCase().includes(query))
       );
     }
 

@@ -27,6 +27,20 @@ const resources = {
       common: {
         continue: "Continue",
         skip: "Skip",
+        back: "Back",
+        "cancel": "Cancel",
+        "save": "Save",
+        "done": "Done",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirm": "Confirm",
+        "next": "Next",
+        "previous": "Previous",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "warning": "Warning",
+        "info": "Info",
       },
       auth: {
         login: "Login",
@@ -351,6 +365,13 @@ const resources = {
         autoRefresh: "Auto-Refresh Every 30s",
         mapView: "Map View",
         listView: "List View",
+        mapNotAvailable: "Map Not Available",
+        mapNotAvailableDescription: "Map view is not supported on web platform. Location information is shown below.",
+        mapNotReady: "Map Not Ready",
+        mapNotReadyDescription: "Map functionality is currently being set up. Please check back later.",
+        currentLocation: "Current Location",
+        destination: "Destination",
+        deliveryPerson: "Delivery Person",
       },
       orderStatus: {
         placed: "Order Placed",
@@ -457,6 +478,322 @@ const resources = {
         reorderConfirm: 'Add all items from this order to your cart?',
         reorderSuccess: 'Items have been added to your cart!',
         cancelSuccess: 'Order has been cancelled successfully',
+      },
+      profile: {
+        title: "My Profile",
+        editProfile: "Edit Profile",
+        personalInfo: "Personal Information",
+        contactInfo: "Contact Information",
+        preferences: "Preferences",
+        account: "Account",
+        security: "Security",
+        
+        // Разделы
+        orders: "My Orders",
+        wishlist: "Wishlist",
+        addresses: "Shipping Addresses",
+        paymentMethods: "Payment Methods",
+        settings: "Settings",
+        notifications: "Notifications",
+        language: "Language",
+        theme: "Theme",
+        help: "Help & Support",
+        about: "About App",
+        logout: "Log Out",
+        
+        // Поля
+        name: "Full Name",
+        email: "Email Address",
+        phone: "Phone Number",
+        birthDate: "Birth Date",
+        gender: "Gender",
+        location: "Location",
+        memberSince: "Member Since",
+        
+        // Действия
+        save: "Save Changes",
+        cancel: "Cancel",
+        deleteAccount: "Delete Account",
+        changePassword: "Change Password",
+        
+        // Статус
+        verified: "Verified",
+        notVerified: "Not Verified",
+        premium: "Premium Member",
+        regular: "Regular Member",
+      },
+      support: {
+        title: "Help & Support",
+        faq: "FAQ",
+        contact: "Contact Us",
+        liveChat: "Live Chat",
+        email: "Email Support",
+        phone: "Phone Support",
+        businessHours: "Business Hours",
+        responseTime: "Response Time",
+        
+        topics: {
+          orders: "Orders & Shipping",
+          returns: "Returns & Refunds",
+          products: "Products & Stock",
+          payment: "Payment Issues",
+          account: "Account Issues",
+          technical: "Technical Support",
+        },
+      },
+      logout: {
+        title: "Log Out",
+        message: "Are you sure you want to log out?",
+        confirm: "Yes, Log Out",
+        cancel: "Cancel",
+        success: "You have been logged out successfully",
+      },
+      theme: {
+        light: "Light",
+        dark: "Dark",
+        auto: "Auto",
+      },
+      settings: {
+        appSettings: "App Settings",
+        notificationSettings: "Notifications",
+        privacySettings: "Privacy",
+        dataUsage: "Data Usage",
+        clearCache: "Clear Cache",
+        storage: "Storage Usage",
+        
+        // Настройки уведомлений
+        pushNotifications: "Push Notifications",
+        emailNotifications: "Email Notifications",
+        smsNotifications: "SMS Notifications",
+        orderUpdates: "Order Updates",
+        promotions: "Promotions & Offers",
+        priceDrops: "Price Drops",
+        newArrivals: "New Arrivals",
+        
+        // Настройки приватности
+        showActivity: "Show My Activity",
+        showWishlist: "Show My Wishlist",
+        personalizedAds: "Personalized Ads",
+        dataCollection: "Data Collection",
+        title: "Settings",
+        subtitle: "Customize your app experience",
+        sections: {
+          general: "General",
+          notifications: "Notifications",
+          privacy: "Privacy & Security",
+          about: "About",
+          support: "Support"
+        },
+        
+        // Общие настройки
+        language: "Language",
+        languageDescription: "Choose your preferred language",
+        theme: "App Theme",
+        themeDescription: "Choose light, dark or auto mode",
+        currency: "Currency",
+        currencyDescription: "Select your preferred currency",
+        
+        // Уведомления
+        notifications: "Notifications",
+        notificationsDescription: "Manage your notification preferences",
+        stockAlerts: "Stock Alerts",
+        
+        // Конфиденциальность
+        privacy: "Privacy",
+        privacyDescription: "Control your data and privacy settings",
+        dataCollectionDescription: "Allow data collection for better experience",
+        personalizedAdsDescription: "Show ads based on your interests",
+        showActivityDescription: "Show your activity to other users",
+        clearSearchHistory: "Clear Search History",
+        deleteAccount: "Delete Account",
+        
+        // О приложении
+        about: "About App",
+        version: "Version",
+        buildNumber: "Build Number",
+        terms: "Terms of Service",
+        privacyPolicy: "Privacy Policy",
+        rateApp: "Rate App",
+        shareApp: "Share App",
+        contactSupport: "Contact Support",
+        
+        // Поддержка
+        help: "Help & Support",
+        faq: "Frequently Asked Questions",
+        contactUs: "Contact Us",
+        reportIssue: "Report an Issue",
+        suggestFeature: "Suggest a Feature",
+        
+        // Действия
+        save: "Save",
+        cancel: "Cancel",
+        reset: "Reset to Default",
+        apply: "Apply",
+        
+        // Статусы
+        enabled: "Enabled",
+        disabled: "Disabled",
+        auto: "Auto",
+        light: "Light",
+        dark: "Dark",
+        
+        // Подтверждения
+        clearCacheConfirm: "Are you sure you want to clear app cache?",
+        clearSearchConfirm: "Are you sure you want to clear search history?",
+        deleteAccountConfirm: "This action cannot be undone. All your data will be permanently deleted.",
+        resetConfirm: "Reset all settings to default values?",
+        
+        // Успешные сообщения
+        cacheCleared: "Cache cleared successfully",
+        searchCleared: "Search history cleared",
+        settingsSaved: "Settings saved successfully",
+        settingsReset: "Settings reset to default",
+      },
+      
+      languages: {
+        en: "English",
+        ru: "Русский",
+        ko: "한국어",
+        auto: "System Default",
+      },
+      
+      currencies: {
+        usd: "US Dollar ($)",
+        eur: "Euro (€)",
+        krw: "Korean Won (₩)",
+        rub: "Russian Ruble (₽)",
+      },
+      errors: {
+        // Общие ошибки
+        somethingWentWrong: "Something went wrong",
+        tryAgain: "Try Again",
+        goBack: "Go Back",
+        contactSupport: "Contact Support",
+        reload: "Reload",
+        
+        // Нет интернета
+        noInternet: {
+          title: "No Internet Connection",
+          description: "Please check your internet connection and try again",
+          tips: "Make sure Wi-Fi or mobile data is turned on",
+          airplaneMode: "Turn off Airplane Mode",
+          wifi: "Turn on Wi-Fi",
+          mobileData: "Turn on Mobile Data",
+        },
+        
+        // Нет товаров
+        noProducts: {
+          title: "No Products Found",
+          description: "We couldn't find any products matching your criteria",
+          tryDifferentFilters: "Try different filters or search terms",
+          clearFilters: "Clear Filters",
+          browseAll: "Browse All Products",
+          checkBack: "Check back soon for new arrivals",
+        },
+        
+        // Ошибка оплаты
+        paymentError: {
+          title: "Payment Failed",
+          description: "We couldn't process your payment",
+          commonReasons: "Common reasons:",
+          insufficientFunds: "Insufficient funds",
+          expiredCard: "Expired card",
+          declined: "Card declined by issuer",
+          tryDifferentMethod: "Try a different payment method",
+          contactBank: "Contact your bank",
+          retryPayment: "Retry Payment",
+        },
+        
+        // Пустая корзина
+        emptyCart: {
+          title: "Your Cart is Empty",
+          description: "Add some products to get started",
+          startShopping: "Start Shopping",
+          browseProducts: "Browse Products",
+        },
+        
+        // Пустые заказы
+        emptyOrders: {
+          title: "No Orders Yet",
+          description: "You haven't placed any orders yet",
+          startShopping: "Start Shopping",
+          browseProducts: "Browse Products",
+        },
+        
+        // Пустой вишлист
+        emptyWishlist: {
+          title: "Wishlist is Empty",
+          description: "Save products you like to your wishlist",
+          discoverProducts: "Discover Products",
+          browseTrending: "Browse Trending",
+        },
+        
+        // Пустой поиск
+        emptySearch: {
+          title: "No Results Found",
+          description: "Try different keywords or filters",
+          searchTips: "Search tips:",
+          checkSpelling: "Check your spelling",
+          broaderTerms: "Try broader search terms",
+          fewerFilters: "Use fewer filters",
+          clearSearch: "Clear Search",
+        },
+        
+        // Ошибка сервера
+        serverError: {
+          title: "Server Error",
+          description: "Something went wrong on our end",
+          tryAgainLater: "Please try again in a few minutes",
+          statusCode: "Error Code",
+          technicalDetails: "Technical Details",
+        },
+        
+        // Не найдено
+        notFound: {
+          title: "Page Not Found",
+          description: "The page you're looking for doesn't exist",
+          goHome: "Go to Home",
+          goBack: "Go Back",
+        },
+        
+        // Доступ запрещен
+        unauthorized: {
+          title: "Access Denied",
+          description: "You don't have permission to access this page",
+          login: "Log In",
+          signUp: "Sign Up",
+        },
+        
+        // Ошибка загрузки
+        loadingError: {
+          title: "Failed to Load",
+          description: "We couldn't load the content",
+          checkConnection: "Check your internet connection",
+        },
+      },
+      
+      // Общие действия
+      actions: {
+        retry: "Retry",
+        refresh: "Refresh",
+        learnMore: "Learn More",
+        dismiss: "Dismiss",
+        continue: "Continue",
+        cancel: "Cancel",
+        ok: "OK",
+        yes: "Yes",
+        no: "No",
+      },
+      navigation: {
+        home: "Home",
+        search: "Search",
+        cart: "Cart",
+        orders: "Orders",
+        profile: "Profile",
+        categories: "Categories",
+        wishlist: "Wishlist",
+        settings: "Settings",
+        checkout: "Checkout"
       },
     },
   },
@@ -806,6 +1143,13 @@ const resources = {
         autoRefresh: "Автообновление каждые 30с",
         mapView: "Вид карты",
         listView: "Вид списка",
+        mapNotAvailable: "Карта недоступна",
+        mapNotAvailableDescription: "Просмотр карты не поддерживается на веб-платформе. Информация о местоположении показана ниже.",
+        mapNotReady: "Карта не готова",
+        mapNotReadyDescription: "Функциональность карты в настоящее время настраивается. Пожалуйста, зайдите позже.",
+        currentLocation: "Текущее местоположение",
+        destination: "Пункт назначения",
+        deliveryPerson: "Доставщик",
       },
       orderStatus: {
         placed: "Заказ оформлен",
@@ -912,6 +1256,311 @@ const resources = {
         reorderConfirm: 'Добавить все товары из этого заказа в корзину?',
         reorderSuccess: 'Товары добавлены в корзину!',
         cancelSuccess: 'Заказ успешно отменен',
+      },
+      profile: {
+        title: "Мой профиль",
+        editProfile: "Редактировать профиль",
+        personalInfo: "Личная информация",
+        contactInfo: "Контактная информация",
+        preferences: "Настройки",
+        account: "Аккаунт",
+        security: "Безопасность",
+        
+        // Разделы
+        orders: "Мои заказы",
+        wishlist: "Избранное",
+        addresses: "Адреса доставки",
+        paymentMethods: "Способы оплаты",
+        settings: "Настройки",
+        notifications: "Уведомления",
+        language: "Язык",
+        theme: "Тема",
+        help: "Помощь и поддержка",
+        about: "О приложении",
+        logout: "Выйти",
+        
+        // Поля
+        name: "Полное имя",
+        email: "Email адрес",
+        phone: "Номер телефона",
+        birthDate: "Дата рождения",
+        gender: "Пол",
+        location: "Местоположение",
+        memberSince: "Участник с",
+        
+        // Действия
+        save: "Сохранить изменения",
+        cancel: "Отмена",
+        deleteAccount: "Удалить аккаунт",
+        changePassword: "Изменить пароль",
+        
+        // Статус
+        verified: "Подтверждено",
+        notVerified: "Не подтверждено",
+        premium: "Премиум участник",
+        regular: "Обычный участник",
+      },
+      support: {
+        title: "Помощь и поддержка",
+        faq: "Частые вопросы",
+        contact: "Связаться с нами",
+        liveChat: "Онлайн чат",
+        email: "Поддержка по email",
+        phone: "Поддержка по телефону",
+        businessHours: "Часы работы",
+        responseTime: "Время ответа",
+        
+        topics: {
+          orders: "Заказы и доставка",
+          returns: "Возвраты и возврат средств",
+          products: "Товары и наличие",
+          payment: "Проблемы с оплатой",
+          account: "Проблемы с аккаунтом",
+          technical: "Техническая поддержка",
+        },
+      },
+      logout: {
+        title: "Выход",
+        message: "Вы уверены, что хотите выйти?",
+        confirm: "Да, выйти",
+        cancel: "Отмена",
+        success: "Вы успешно вышли из системы",
+      },
+      theme: {
+        light: "Светлая",
+        dark: "Темная",
+        auto: "Авто",
+      },
+      settings: {
+        title: "Настройки",
+        appSettings: "Настройки приложения",
+        notificationSettings: "Уведомления",
+        privacySettings: "Приватность",
+        dataUsage: "Использование данных",
+        clearCache: "Очистить кэш",
+        storage: "Использование памяти",
+        
+        // Настройки уведомлений
+        pushNotifications: "Push-уведомления",
+        emailNotifications: "Email-уведомления",
+        smsNotifications: "SMS-уведомления",
+        orderUpdates: "Обновления заказов",
+        promotions: "Акции и предложения",
+        priceDrops: "Снижение цен",
+        newArrivals: "Новые поступления",
+        
+        // Настройки приватности
+        showActivity: "Показывать мою активность",
+        showWishlist: "Показывать мой вишлист",
+        personalizedAds: "Персонализированная реклама",
+        dataCollection: "Сбор данных",
+        subtitle: "Настройте работу приложения",
+        sections: {
+          general: "Общие",
+          notifications: "Уведомления",
+          privacy: "Конфиденциальность",
+          about: "О приложении",
+          support: "Поддержка"
+        },
+        
+        // Общие настройки
+        language: "Язык",
+        languageDescription: "Выберите предпочитаемый язык",
+        theme: "Тема приложения",
+        themeDescription: "Светлая, темная или автоматическая тема",
+        currency: "Валюта",
+        currencyDescription: "Выберите предпочитаемую валюту",
+        
+        // Уведомления
+        notifications: "Уведомления",
+        notificationsDescription: "Управление уведомлениями",
+        stockAlerts: "Уведомления о наличии",
+        
+        // Конфиденциальность
+        privacy: "Конфиденциальность",
+        privacyDescription: "Управление данными и настройками приватности",
+        dataCollectionDescription: "Разрешить сбор данных для улучшения опыта",
+        personalizedAdsDescription: "Показывать рекламу на основе интересов",
+        showActivityDescription: "Показывать вашу активность другим пользователям",
+        clearSearchHistory: "Очистить историю поиска",
+        deleteAccount: "Удалить аккаунт",
+        
+        // О приложении
+        about: "О приложении",
+        version: "Версия",
+        buildNumber: "Номер сборки",
+        terms: "Условия использования",
+        privacyPolicy: "Политика конфиденциальности",
+        rateApp: "Оценить приложение",
+        shareApp: "Поделиться приложением",
+        contactSupport: "Связаться с поддержкой",
+        
+        // Поддержка
+        help: "Помощь и поддержка",
+        faq: "Частые вопросы",
+        contactUs: "Связаться с нами",
+        reportIssue: "Сообщить о проблеме",
+        suggestFeature: "Предложить функцию",
+        
+        // Действия
+        save: "Сохранить",
+        cancel: "Отмена",
+        reset: "Сбросить",
+        apply: "Применить",
+        
+        // Статусы
+        enabled: "Включено",
+        disabled: "Выключено",
+        auto: "Авто",
+        light: "Светлая",
+        dark: "Темная",
+        
+        // Подтверждения
+        clearCacheConfirm: "Очистить кэш приложения?",
+        clearSearchConfirm: "Очистить историю поиска?",
+        deleteAccountConfirm: "Это действие нельзя отменить. Все ваши данные будут удалены.",
+        resetConfirm: "Сбросить все настройки?",
+        
+        // Успешные сообщения
+        cacheCleared: "Кэш очищен",
+        searchCleared: "История поиска очищена",
+        settingsSaved: "Настройки сохранены",
+        settingsReset: "Настройки сброшены",
+      },
+      
+      languages: {
+        en: "Английский",
+        ru: "Русский",
+        ko: "Корейский",
+        auto: "Системная",
+      },
+      
+      currencies: {
+        usd: "Доллар США ($)",
+        eur: "Евро (€)",
+        krw: "Корейская вона (₩)",
+        rub: "Российский рубль (₽)",
+      },
+      errors: {
+        // Общие ошибки
+        somethingWentWrong: "Что-то пошло не так",
+        tryAgain: "Попробовать снова",
+        goBack: "Назад",
+        contactSupport: "Связаться с поддержкой",
+        reload: "Перезагрузить",
+        
+        // Нет интернета
+        noInternet: {
+          title: "Нет подключения к интернету",
+          description: "Проверьте подключение к интернету и попробуйте снова",
+          tips: "Советы по устранению:",
+          airplaneMode: "Выключите режим полета",
+          wifi: "Включите Wi-Fi",
+          mobileData: "Включите мобильные данные",
+        },
+        
+        // Нет товаров
+        noProducts: {
+          title: "Товары не найдены",
+          description: "Мы не нашли товаров по вашему запросу",
+          tryDifferentFilters: "Попробуйте другие фильтры или поисковые запросы",
+          clearFilters: "Сбросить фильтры",
+          browseAll: "Посмотреть все товары",
+          checkBack: "Загляните позже за новыми поступлениями",
+        },
+        
+        // Ошибка оплаты
+        paymentError: {
+          title: "Ошибка оплаты",
+          description: "Не удалось обработать платеж",
+          commonReasons: "Возможные причины:",
+          insufficientFunds: "Недостаточно средств",
+          expiredCard: "Срок действия карты истек",
+          declined: "Карта отклонена банком",
+          tryDifferentMethod: "Попробуйте другой способ оплаты",
+          contactBank: "Свяжитесь с вашим банком",
+          retryPayment: "Повторить оплату",
+        },
+        
+        // Пустая корзина
+        emptyCart: {
+          title: "Корзина пуста",
+          description: "Добавьте товары, чтобы начать",
+          startShopping: "Начать покупки",
+          browseProducts: "Смотреть товары",
+        },
+        
+        // Пустые заказы
+        emptyOrders: {
+          title: "Заказов пока нет",
+          description: "Вы еще не совершали покупок",
+          startShopping: "Начать покупки",
+          browseProducts: "Смотреть товары",
+        },
+        
+        // Пустой вишлист
+        emptyWishlist: {
+          title: "Список желаний пуст",
+          description: "Сохраняйте понравившиеся товары в избранное",
+          discoverProducts: "Открыть товары",
+          browseTrending: "Смотреть популярное",
+        },
+        
+        // Пустой поиск
+        emptySearch: {
+          title: "Ничего не найдено",
+          description: "Попробуйте другие ключевые слова или фильтры",
+          searchTips: "Советы по поиску:",
+          checkSpelling: "Проверьте орфографию",
+          broaderTerms: "Используйте более общие запросы",
+          fewerFilters: "Используйте меньше фильтров",
+          clearSearch: "Очистить поиск",
+        },
+        
+        // Ошибка сервера
+        serverError: {
+          title: "Ошибка сервера",
+          description: "Произошла ошибка на нашей стороне",
+          tryAgainLater: "Попробуйте снова через несколько минут",
+          statusCode: "Код ошибки",
+          technicalDetails: "Технические детали",
+        },
+        
+        // Не найдено
+        notFound: {
+          title: "Страница не найдена",
+          description: "Запрашиваемая страница не существует",
+          goHome: "На главную",
+          goBack: "Назад",
+        },
+        
+        // Доступ запрещен
+        unauthorized: {
+          title: "Доступ запрещен",
+          description: "У вас нет прав для доступа к этой странице",
+          login: "Войти",
+          signUp: "Зарегистрироваться",
+        },
+        
+        // Ошибка загрузки
+        loadingError: {
+          title: "Не удалось загрузить",
+          description: "Не удалось загрузить контент",
+          checkConnection: "Проверьте подключение к интернету",
+        },
+      },
+      
+      // Общие действия
+      actions: {
+        retry: "Повторить",
+        refresh: "Обновить",
+        learnMore: "Подробнее",
+        dismiss: "Закрыть",
+        continue: "Продолжить",
+        cancel: "Отмена",
+        ok: "OK",
+        yes: "Да",
+        no: "Нет",
       },
     },
   },

@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import Text from '../Text';
 import Animated, {
   useAnimatedStyle,
   withTiming,
 } from 'react-native-reanimated';
-import { useTailwind } from 'tailwind-rn';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTheme } from '../../contexts/ThemeContext';
 import { OnboardingSlide as OnboardingSlideType } from '../../types/onboarding';
 

@@ -22,7 +22,60 @@
     "success": "Success",
     "ok": "OK",
     "seeAll": "See All",
-    "seller": "Seller"
+    "seller": "Seller",
+    "selectLanguage": "Select Language"
+  },
+  "appName": "Korean Store",
+  "home": {
+    "title": "Korean Store",
+    "searchPlaceholder": "Search products...",
+    "welcomeBanner": "Discover Amazing Korean Products",
+    "categories": "Categories",
+    "featured": "Featured Products",
+    "bestSellers": "Best Seller",
+    "newArrivals": "New Arrivals",
+    "popularItems": "Popular Items"
+  },
+  "splash": {
+    "loading": "Loading..."
+  },
+  "search": {
+    "startSearching": "Start searching for products",
+    "searchInstructions": "Use the search bar above to find Korean products",
+    "tryDifferentKeywords": "Try different keywords"
+  },
+  "errors": {
+    "noProducts": "No products found",
+    "somethingWentWrong": "Something went wrong",
+    "tryAgain": "Please try again",
+    "goBack": "Go Back",
+    "noInternet": {
+      "title": "No Internet Connection",
+      "description": "Please check your internet connection and try again",
+      "tips": "Try these suggestions:",
+      "airplaneMode": "Turn off airplane mode",
+      "wifi": "Check your Wi-Fi connection",
+      "mobileData": "Enable mobile data"
+    },
+    "paymentError": {
+      "title": "Payment Error",
+      "description": "There was a problem processing your payment",
+      "commonReasons": "Common reasons:",
+      "insufficientFunds": "Insufficient funds",
+      "expiredCard": "Expired card",
+      "declined": "Card declined"
+    }
+  },
+  "actions": {
+    "retry": "Retry"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "emptyCart": "Your cart is empty",
+    "selectAddress": "Please select shipping address"
+  },
+  "tracking": {
+    "loadError": "Failed to load tracking information"
   },
   "auth": {
     "login": "Login",
@@ -50,18 +103,20 @@
     "fullNamePlaceholder": "Enter your full name",
     "phonePlaceholder": "Enter your phone number",
     "confirmPasswordPlaceholder": "Confirm your password",
-    "fillInformation": "Please fill in your information",
-    "loginError": "Failed to login. Please try again.",
-    "registerError": "Failed to register. Please try again.",
-    "resetPasswordInstructions": "Enter your email address and we'll send you a link to reset your password.",
+    "rememberMe": "Remember me",
+    "haveAccount": "Already have an account?",
+    "signIn": "Sign In",
+    "createNewAccount": "Create New Account",
+    "resetPassword": "Reset Password",
+    "resetPasswordDescription": "Enter your email address and we'll send you a link to reset your password",
     "sendResetLink": "Send Reset Link",
-    "resetPasswordSent": "Password reset link sent to your email",
-    "resetPasswordError": "Failed to send reset link. Please try again."
+    "backToLogin": "Back to Login",
+    "resetEmailSent": "Reset email sent! Check your inbox"
   },
   "onboarding": {
     "slide1": {
-      "title": "Find & Buy Products",
-      "description": "Discover amazing Korean products with easy search and purchase"
+      "title": "Discover Korean Products",
+      "description": "Find amazing Korean products with easy search and shopping"
     },
     "slide2": {
       "title": "Fast Delivery",
@@ -69,123 +124,44 @@
     },
     "slide3": {
       "title": "Track Your Order",
-      "description": "Real-time tracking of your orders from warehouse to delivery"
+      "description": "Follow your orders in real-time from warehouse to delivery"
     },
     "slide4": {
       "title": "Secure Payments",
-      "description": "Safe and secure payment processing for peace of mind"
+      "description": "Shop with confidence using our secure payment system"
     },
     "getStarted": "Get Started"
   },
-  "home": {
-    "title": "Korean Shop",
-    "searchPlaceholder": "Search products...",
-    "categories": "Categories",
-    "featured": "Featured Products",
-    "newArrivals": "New Arrivals",
-    "bestSellers": "Best Sellers",
-    "welcomeBanner": "Discover Amazing Korean Products",
-    "seeAll": "See All"
-  },
   "product": {
     "details": "Product Details",
-    "description": "Description",
+    "specifications": "Specifications",
+    "shipping": "Shipping Information",
+    "freeShipping": "Free Shipping",
+    "standardShipping": "Standard Shipping",
+    "days": "days",
+    "responseRate": "Response Rate",
     "addToCart": "Add to Cart",
     "buyNow": "Buy Now",
-    "addToWishlist": "Add to Wishlist",
-    "share": "Share",
-    "reviews": "Reviews",
-    "specifications": "Specifications",
+    "outOfStock": "Out of Stock",
     "inStock": "In Stock",
-    "outOfStock": "Out of Stock"
+    "reviews": "Reviews",
+    "rating": "Rating",
+    "bestSellers": "Best Sellers",
+    "newProducts": "New Products",
+    "featuredProducts": "Featured Products"
   },
   "cart": {
-    "title": "Shopping Cart",
+    "title": "Cart",
     "empty": "Your cart is empty",
+    "total": "Total",
     "subtotal": "Subtotal",
-    "shipping": "Shipping",
-    "total": "Total",
-    "checkout": "Checkout",
-    "remove": "Remove",
-    "quantity": "Quantity"
-  },
-  "checkout": {
-    "title": "Checkout",
-    "shipping": "Shipping Information",
-    "payment": "Payment Method",
-    "review": "Review Order",
-    "placeOrder": "Place Order",
-    "orderSuccess": "Order placed successfully!",
-    "recipient": "Recipient Name",
-    "phoneNumber": "Phone Number",
-    "shippingAddress": "Shipping Address",
-    "comment": "Comment"
-  },
-  "orders": {
-    "title": "My Orders",
-    "empty": "No orders yet",
-    "emptyDescription": "Start shopping to see your orders here",
-    "orderNumber": "Order #",
-    "status": "Status",
-    "date": "Date",
-    "total": "Total",
-    "track": "Track Order",
-    "reorder": "Reorder",
-    "trackingNumber": "Tracking Number",
-    "statuses": {
-      "pending": "Pending",
-      "processing": "Processing",
-      "shipped": "Shipped",
-      "delivered": "Delivered",
-      "cancelled": "Cancelled"
-    }
-  },
-  "profile": {
-    "title": "Profile",
-    "editProfile": "Edit Profile",
-    "myOrders": "My Orders",
-    "settings": "Settings",
-    "support": "Support",
-    "about": "About",
-    "logout": "Logout",
-    "account": "Account",
-    "preferences": "App Preferences",
-    "addresses": "Shipping Addresses",
-    "paymentMethods": "Payment Methods",
-    "help": "Help & FAQ",
-    "contact": "Contact Support",
-    "logoutConfirmation": "Are you sure you want to logout?"
-  },
-  "settings": {
-    "title": "Settings",
-    "language": "Language",
-    "theme": "Theme",
-    "notifications": "Notifications",
-    "privacy": "Privacy Policy",
-    "terms": "Terms of Service",
-    "themeOptions": {
-      "light": "Light",
-      "dark": "Dark",
-      "system": "System"
-    }
-  },
-  "errors": {
-    "networkError": "Network connection error",
-    "noProducts": "No products found",
-    "paymentFailed": "Payment failed",
-    "orderNotFound": "Order not found",
-    "tryAgain": "Try again"
+    "checkout": "Checkout"
   },
   "navigation": {
     "home": "Home",
     "search": "Search",
+    "cart": "Cart",
     "orders": "Orders",
     "profile": "Profile"
-  },
-  "search": {
-    "startSearching": "Start searching for products",
-    "searchInstructions": "Enter keywords to find amazing Korean products",
-    "tryDifferentKeywords": "Try using different keywords or browse categories",
-    "resultsCount": "Found {{count}} results"
   }
 }

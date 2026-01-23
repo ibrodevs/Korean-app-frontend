@@ -1,16 +1,16 @@
 import React from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
+  Platform,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import MapView, { Marker, Polyline } from 'react-native-maps';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -18,150 +18,126 @@ interface MapViewProps {
   currentLocation: {
     latitude: number;
     longitude: number;
-    address: string;
   };
-  destination: {
-    city: string;
-    address: string;
+  destinationLocation: {
+    latitude: number;
+    longitude: number;
   };
-  onClose: () => void;
+  route?: {
+    latitude: number;
+    longitude: number;
+  }[];
+  deliveryPersonLocation?: {
+    latitude: number;
+    longitude: number;
+  };
+  onLocationPress?: () => void;
 }
 
-const TrackingMapView: React.FC<MapViewProps> = ({
+const MapViewComponent: React.FC<MapViewProps> = ({
   currentLocation,
-  destination,
-  onClose,
+  destinationLocation,
+  route,
+  deliveryPersonLocation,
+  onLocationPress,
 }) => {
   const tailwind = useTailwind();
   const { t } = useTranslation();
   const { theme } = useTheme();
 
-  // Моковые координаты для демонстрации
-  const mockDestination = {
-    latitude: currentLocation.latitude + 0.02,
-    longitude: currentLocation.longitude + 0.01,
-  };
+  // Заглушка карты для веб-платформы или когда react-native-maps недоступен
+  if (Platform.OS === 'web') {
+    return (
+      <View style={styles.container}>
+        <View style={[styles.mapPlaceholder, { backgroundColor: theme.card }]}>
+          <Ionicons name="map-outline" size={64} color={theme.textSecondary} />
+          <Text style={[styles.placeholderTitle, { color: theme.heading }]}>
+            {t('tracking.mapNotAvailable')}
+          </Text>
+          <Text style={[styles.placeholderText, { color: theme.textSecondary }]}>
+            {t('tracking.mapNotAvailableDescription')}
+          </Text>
+          
+          {/* Информация о местоположениях */}
+          <View style={styles.locationInfo}>
+            <View style={[styles.locationItem, { borderBottomColor: theme.border }]}>
+              <Ionicons name="location" size={20} color={theme.primary} />
+              <View style={styles.locationDetails}>
+                <Text style={[styles.locationTitle, { color: theme.heading }]}>
+                  {t('tracking.currentLocation')}
+                </Text>
+                <Text style={[styles.locationCoords, { color: theme.textSecondary }]}>
+                  {currentLocation.latitude.toFixed(6)}, {currentLocation.longitude.toFixed(6)}
+                </Text>
+              </View>
+            </View>
+            
+            <View style={[styles.locationItem, { borderBottomColor: theme.border }]}>
+              <Ionicons name="flag" size={20} color={theme.error} />
+              <View style={styles.locationDetails}>
+                <Text style={[styles.locationTitle, { color: theme.heading }]}>
+                  {t('tracking.destination')}
+                </Text>
+                <Text style={[styles.locationCoords, { color: theme.textSecondary }]}>
+                  {destinationLocation.latitude.toFixed(6)}, {destinationLocation.longitude.toFixed(6)}
+                </Text>
+              </View>
+            </View>
 
-  const region = {
-    latitude: (currentLocation.latitude + mockDestination.latitude) / 2,
-    longitude: (currentLocation.longitude + mockDestination.longitude) / 2,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  };
+            {deliveryPersonLocation && (
+              <View style={styles.locationItem}>
+                <Ionicons name="person" size={20} color={theme.secondary} />
+                <View style={styles.locationDetails}>
+                  <Text style={[styles.locationTitle, { color: theme.heading }]}>
+                    {t('tracking.deliveryPerson')}
+                  </Text>
+                  <Text style={[styles.locationCoords, { color: theme.textSecondary }]}>
+                    {deliveryPersonLocation.latitude.toFixed(6)}, {deliveryPersonLocation.longitude.toFixed(6)}
+                  </Text>
+                </View>
+              </View>
+            )}
+          </View>
+        </View>
 
-  const coordinates = [
-    {
-      latitude: currentLocation.latitude,
-      longitude: currentLocation.longitude,
-    },
-    {
-      latitude: mockDestination.latitude,
-      longitude: mockDestination.longitude,
-    },
-  ];
+        {/* Кнопки управления */}
+        <View style={styles.mapControls}>
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.card }]}
+            onPress={onLocationPress}
+          >
+            <Ionicons name="navigate" size={20} color={theme.primary} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.card }]}
+            onPress={() => {/* Zoom in logic */}}
+          >
+            <Ionicons name="add" size={20} color={theme.text} />
+          </TouchableOpacity>
+          
+          <TouchableOpacity
+            style={[styles.controlButton, { backgroundColor: theme.card }]}
+            onPress={() => {/* Zoom out logic */}}
+          >
+            <Ionicons name="remove" size={20} color={theme.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
 
+  // Для мобильных платформ также показываем заглушку пока не установим react-native-maps
   return (
     <View style={styles.container}>
-      {/* Хедер карты */}
-      <View style={[styles.header, { backgroundColor: theme.card }]}>
-        <TouchableOpacity onPress={onClose} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
-        </TouchableOpacity>
-        <View style={styles.headerInfo}>
-          <Text style={[styles.headerTitle, { color: theme.heading }]}>
-            {t('delivery.liveTracking')}
-          </Text>
-          <Text style={[styles.headerSubtitle, { color: theme.textSecondary }]}>
-            {currentLocation.address}
-          </Text>
-        </View>
-      </View>
-
-      {/* Карта */}
-      <View style={styles.mapContainer}>
-        <MapView
-          style={styles.map}
-          region={region}
-          showsUserLocation={true}
-          showsMyLocationButton={true}
-          showsCompass={true}
-          showsScale={true}
-        >
-          {/* Маркер текущего местоположения */}
-          <Marker
-            coordinate={coordinates[0]}
-            title={t('tracking.currentLocation')}
-            description={currentLocation.address}
-          >
-            <View style={[styles.currentMarker, { backgroundColor: theme.primary }]}>
-              <Ionicons name="navigate" size={20} color={theme.heading} />
-            </View>
-          </Marker>
-
-          {/* Маркер назначения */}
-          <Marker
-            coordinate={coordinates[1]}
-            title={t('tracking.deliveryAddress')}
-            description={destination.address}
-          >
-            <View style={[styles.destinationMarker, { backgroundColor: theme.secondary }]}>
-              <Ionicons name="home" size={20} color={theme.heading} />
-            </View>
-          </Marker>
-
-          {/* Линия маршрута */}
-          <Polyline
-            coordinates={coordinates}
-            strokeColor={theme.primary}
-            strokeWidth={4}
-            lineDashPattern={[10, 10]}
-          />
-        </MapView>
-      </View>
-
-      {/* Информационная панель */}
-      <View style={[styles.infoPanel, { backgroundColor: theme.card }]}>
-        <View style={styles.infoRow}>
-          <View style={styles.infoItem}>
-            <Ionicons name="time-outline" size={20} color={theme.primary} />
-            <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-              {t('delivery.eta')}
-            </Text>
-            <Text style={[styles.infoValue, { color: theme.text }]}>
-              45 min
-            </Text>
-          </View>
-
-          <View style={styles.infoItem}>
-            <Ionicons name="speedometer-outline" size={20} color={theme.primary} />
-            <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-              Distance
-            </Text>
-            <Text style={[styles.infoValue, { color: theme.text }]}>
-              8.5 km
-            </Text>
-          </View>
-
-          <View style={styles.infoItem}>
-            <Ionicons name="car-outline" size={20} color={theme.primary} />
-            <Text style={[styles.infoLabel, { color: theme.textSecondary }]}>
-              Speed
-            </Text>
-            <Text style={[styles.infoValue, { color: theme.text }]}>
-              32 km/h
-            </Text>
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={[styles.refreshButton, { backgroundColor: theme.primary }]}
-          onPress={() => console.log('Refresh location')}
-        >
-          <Ionicons name="refresh" size={20} color={theme.heading} />
-          <Text style={[styles.refreshText, { color: theme.heading }]}>
-            {t('tracking.refresh')}
-          </Text>
-        </TouchableOpacity>
+      <View style={[styles.mapPlaceholder, { backgroundColor: theme.card }]}>
+        <Ionicons name="construct-outline" size={64} color={theme.textSecondary} />
+        <Text style={[styles.placeholderTitle, { color: theme.heading }]}>
+          {t('tracking.mapNotReady')}
+        </Text>
+        <Text style={[styles.placeholderText, { color: theme.textSecondary }]}>
+          {t('tracking.mapNotReadyDescription')}
+        </Text>
       </View>
     </View>
   );
@@ -170,100 +146,71 @@ const TrackingMapView: React.FC<MapViewProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: 'relative',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    paddingTop: 50,
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 12,
-  },
-  headerInfo: {
+  mapPlaceholder: {
     flex: 1,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 2,
-  },
-  headerSubtitle: {
-    fontSize: 14,
-  },
-  mapContainer: {
-    flex: 1,
-  },
-  map: {
-    width: '100%',
-    height: '100%',
-  },
-  currentMarker: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  destinationMarker: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  infoPanel: {
     padding: 20,
-    borderTopLeftRadius: 24,
-    borderTopRightRadius: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: -2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
-    elevation: 5,
+    borderRadius: 12,
+    margin: 16,
   },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  placeholderTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 16,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  placeholderText: {
+    fontSize: 14,
+    textAlign: 'center',
+    lineHeight: 20,
     marginBottom: 20,
   },
-  infoItem: {
-    alignItems: 'center',
-    flex: 1,
+  locationInfo: {
+    width: '100%',
+    maxWidth: 300,
   },
-  infoLabel: {
-    fontSize: 12,
-    marginTop: 4,
-    marginBottom: 2,
-  },
-  infoValue: {
-    fontSize: 16,
-    fontWeight: '700',
-  },
-  refreshButton: {
+  locationItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 12,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+  },
+  locationDetails: {
+    marginLeft: 12,
+    flex: 1,
+  },
+  locationTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 4,
+  },
+  locationCoords: {
+    fontSize: 12,
+    fontFamily: 'monospace',
+  },
+  mapControls: {
+    position: 'absolute',
+    right: 16,
+    top: 16,
     gap: 8,
   },
-  refreshText: {
-    fontSize: 16,
-    fontWeight: '600',
+  controlButton: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    justifyContent: 'center',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });
 
-export default TrackingMapView;
+export default MapViewComponent;

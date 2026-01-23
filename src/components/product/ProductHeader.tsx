@@ -1,11 +1,12 @@
 import React from 'react';
 import {
   View,
-  Text,
+  
   TouchableOpacity,
   StyleSheet,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../../components/Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -155,10 +156,7 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
     borderBottomLeftRadius: 24,
     borderBottomRightRadius: 24,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 8,
+    boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
     elevation: 5,
   },
   topBar: {
@@ -173,10 +171,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 3,
+    boxShadow: '0px 1px 3px rgba(0, 0, 0, 0.05)',
     elevation: 2,
   },
   rightActions: {

@@ -18,7 +18,64 @@
     "email": "Email",
     "password": "Пароль",
     "phone": "Телефон",
-    "address": "Адрес"
+    "address": "Адрес",
+    "success": "Успех",
+    "ok": "ОК",
+    "seeAll": "Показать все",
+    "seller": "Продавец",
+    "selectLanguage": "Выбрать язык"
+  },
+  "appName": "Корейский Магазин",
+  "home": {
+    "title": "Корейский Магазин",
+    "searchPlaceholder": "Поиск товаров...",
+    "welcomeBanner": "Откройте удивительные корейские товары",
+    "categories": "Категории",
+    "featured": "Рекомендуемые товары",
+    "bestSellers": "Хит продаж",
+    "newArrivals": "Новинки",
+    "popularItems": "Популярные товары"
+  },
+  "splash": {
+    "loading": "Загрузка..."
+  },
+  "search": {
+    "startSearching": "Начните поиск товаров",
+    "searchInstructions": "Используйте поисковую строку выше, чтобы найти корейские товары",
+    "tryDifferentKeywords": "Попробуйте другие ключевые слова"
+  },
+  "errors": {
+    "noProducts": "Товары не найдены",
+    "somethingWentWrong": "Что-то пошло не так",
+    "tryAgain": "Пожалуйста, попробуйте ещё раз",
+    "goBack": "Назад",
+    "noInternet": {
+      "title": "Нет интернет-соединения",
+      "description": "Проверьте интернет-соединение и попробуйте снова",
+      "tips": "Попробуйте эти решения:",
+      "airplaneMode": "Отключите режим полёта",
+      "wifi": "Проверьте Wi-Fi соединение",
+      "mobileData": "Включите мобильные данные"
+    },
+    "paymentError": {
+      "title": "Ошибка оплаты",
+      "description": "Произошла ошибка при обработке платежа",
+      "commonReasons": "Общие причины:",
+      "insufficientFunds": "Недостаточно средств",
+      "expiredCard": "Карта просрочена",
+      "declined": "Карта отклонена"
+    }
+  },
+  "actions": {
+    "retry": "Повторить"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "emptyCart": "Корзина пуста",
+    "selectAddress": "Пожалуйста, выберите адрес доставки"
+  },
+  "tracking": {
+    "loadError": "Не удалось загрузить информацию о отслеживании"
   },
   "auth": {
     "login": "Войти",
@@ -31,7 +88,30 @@
     "loginSuccess": "Успешный вход",
     "registerSuccess": "Успешная регистрация",
     "invalidCredentials": "Неверные данные",
-    "passwordMismatch": "Пароли не совпадают"
+    "passwordMismatch": "Пароли не совпадают",
+    "welcomeBack": "Добро пожаловать обратно",
+    "signInToContinue": "Войдите в свой аккаунт, чтобы продолжить",
+    "emailRequired": "Email обязателен",
+    "emailInvalid": "Пожалуйста, введите действительный email",
+    "passwordRequired": "Пароль обязателен",
+    "passwordTooShort": "Пароль должен содержать минимум 6 символов",
+    "nameRequired": "Имя обязательно",
+    "phoneRequired": "Номер телефона обязателен",
+    "dontHaveAccount": "Нет аккаунта?",
+    "emailPlaceholder": "Введите ваш email",
+    "passwordPlaceholder": "Введите ваш пароль",
+    "fullNamePlaceholder": "Введите ваше полное имя",
+    "phonePlaceholder": "Введите номер телефона",
+    "confirmPasswordPlaceholder": "Подтвердите пароль",
+    "rememberMe": "Запомнить меня",
+    "haveAccount": "Уже есть аккаунт?",
+    "signIn": "Войти",
+    "createNewAccount": "Создать новый аккаунт",
+    "resetPassword": "Сбросить пароль",
+    "resetPasswordDescription": "Введите ваш email адрес и мы отправим вам ссылку для сброса пароля",
+    "sendResetLink": "Отправить ссылку",
+    "backToLogin": "Назад к входу",
+    "resetEmailSent": "Письмо отправлено! Проверьте вашу почту"
   },
   "onboarding": {
     "slide1": {
@@ -48,99 +128,39 @@
     },
     "slide4": {
       "title": "Безопасные платежи",
-      "description": "Безопасная обработка платежей для вашего спокойствия"
+      "description": "Покупайте с уверенностью, используя нашу безопасную систему платежей"
     },
     "getStarted": "Начать"
   },
-  "home": {
-    "title": "Корейский магазин",
-    "searchPlaceholder": "Поиск товаров...",
-    "categories": "Категории",
-    "featured": "Рекомендуемые товары",
-    "newArrivals": "Новинки",
-    "bestSellers": "Бестселлеры"
-  },
   "product": {
     "details": "Детали товара",
-    "description": "Описание",
-    "addToCart": "Добавить в корзину",
+    "specifications": "Характеристики",
+    "shipping": "Информация о доставке",
+    "freeShipping": "Бесплатная доставка",
+    "standardShipping": "Стандартная доставка",
+    "days": "дней",
+    "responseRate": "Скорость ответа",
+    "addToCart": "В корзину",
     "buyNow": "Купить сейчас",
-    "addToWishlist": "В избранное",
-    "share": "Поделиться",
+    "outOfStock": "Нет в наличии",
+    "inStock": "В наличии",
     "reviews": "Отзывы",
-    "specifications": "Характеристики"
+    "rating": "Рейтинг",
+    "bestSellers": "Бестселлеры",
+    "newProducts": "Новые товары",
+    "featuredProducts": "Рекомендуемые товары"
   },
   "cart": {
     "title": "Корзина",
-    "empty": "Ваша корзина пуста",
-    "subtotal": "Промежуточная сумма",
-    "shipping": "Доставка",
+    "empty": "Корзина пуста",
     "total": "Итого",
-    "checkout": "Оформить заказ",
-    "remove": "Удалить",
-    "quantity": "Количество"
-  },
-  "checkout": {
-    "title": "Оформление заказа",
-    "shipping": "Информация о доставке",
-    "payment": "Способ оплаты",
-    "review": "Проверить заказ",
-    "placeOrder": "Разместить заказ",
-    "orderSuccess": "Заказ успешно размещен!",
-    "recipient": "Имя получателя",
-    "phoneNumber": "Номер телефона",
-    "shippingAddress": "Адрес доставки",
-    "comment": "Комментарий"
-  },
-  "orders": {
-    "title": "Мои заказы",
-    "empty": "Заказов пока нет",
-    "orderNumber": "Заказ №",
-    "status": "Статус",
-    "date": "Дата",
-    "total": "Сумма",
-    "track": "Отследить заказ",
-    "reorder": "Повторить заказ",
-    "statuses": {
-      "pending": "Ожидает",
-      "processing": "Обрабатывается",
-      "shipped": "Отправлен",
-      "delivered": "Доставлен",
-      "cancelled": "Отменен"
-    }
-  },
-  "profile": {
-    "title": "Профиль",
-    "editProfile": "Редактировать профиль",
-    "myOrders": "Мои заказы",
-    "settings": "Настройки",
-    "support": "Поддержка",
-    "about": "О приложении",
-    "logout": "Выйти"
-  },
-  "settings": {
-    "title": "Настройки",
-    "language": "Язык",
-    "theme": "Тема",
-    "notifications": "Уведомления",
-    "privacy": "Политика конфиденциальности",
-    "terms": "Условия использования",
-    "themeOptions": {
-      "light": "Светлая",
-      "dark": "Темная",
-      "system": "Системная"
-    }
-  },
-  "errors": {
-    "networkError": "Ошибка сетевого соединения",
-    "noProducts": "Товары не найдены",
-    "paymentFailed": "Ошибка платежа",
-    "orderNotFound": "Заказ не найден",
-    "tryAgain": "Попробовать снова"
+    "subtotal": "Подытог",
+    "checkout": "Оформить заказ"
   },
   "navigation": {
     "home": "Главная",
     "search": "Поиск",
+    "cart": "Корзина",
     "orders": "Заказы",
     "profile": "Профиль"
   }

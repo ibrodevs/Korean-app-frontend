@@ -1,6 +1,7 @@
 import React from 'react';
-import { View, Text } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import { View } from 'react-native';
+import Text from '../components/Text';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTheme } from '../contexts/ThemeContext';
 
 const CartScreen: React.FC = () => {

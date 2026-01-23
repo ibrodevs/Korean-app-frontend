@@ -31,3 +31,24 @@ export const tw = (className: string): Record<string, any> => {
   });
   return styles;
 };
+
+// Helper function to create box shadows that work on both web and native
+export const createBoxShadow = (
+  offsetX: number = 0, 
+  offsetY: number = 2, 
+  blurRadius: number = 4, 
+  color: string = '#000000', 
+  opacity: number = 0.1,
+  elevation: number = 3
+) => ({
+  boxShadow: `${offsetX}px ${offsetY}px ${blurRadius}px ${color}${Math.round(opacity * 255).toString(16).padStart(2, '0')}`,
+  elevation,
+});
+
+// Predefined shadow styles for common use cases
+export const shadows = {
+  small: createBoxShadow(0, 1, 3, '#000000', 0.05, 2),
+  medium: createBoxShadow(0, 4, 8, '#000000', 0.1, 4),
+  large: createBoxShadow(0, 6, 15, '#000000', 0.15, 8),
+  card: createBoxShadow(0, 2, 4, '#000000', 0.08, 3),
+};

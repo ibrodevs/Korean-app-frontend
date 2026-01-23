@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
-  Text,
+  
   TextInput,
   TouchableOpacity,
   FlatList,
@@ -12,17 +12,18 @@ import {
   Animated,
   ScrollView,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../components/Text';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../../contexts/ThemeContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
 
 // Типы и сервисы
-import { Product, SearchFilters, SearchHistoryItem, PopularSearch, Brand, ColorOption, SizeOption } from '../../types/product';
-import { productService } from '../../services/productService';
-import { searchService } from '../../services/searchService';
+import { Product, SearchFilters, SearchHistoryItem, PopularSearch, Brand, ColorOption, SizeOption } from '../types/product';
+import { productService } from '../services/productService';
+import { searchService } from '../services/searchService';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
@@ -230,7 +231,7 @@ const AdvancedSearchScreen: React.FC = () => {
           <Text style={[styles.filterTitle, { color: theme.heading }]}>
             {t('filters.availability')}
           </Text>
-          <View style={styles.quickFilters}>
+          <View style={styles.quickFilter}>
             {(['all', 'inStock', 'outOfStock'] as const).map((availability) => (
               <TouchableOpacity
                 key={availability}
@@ -500,7 +501,7 @@ const AdvancedSearchScreen: React.FC = () => {
         renderItem={({ item }) => (
           <TouchableOpacity
             style={[styles.productItem, { backgroundColor: theme.card }]}
-            onPress={() => navigation.navigate('ProductDetail', { product: item })}
+            onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
           >
             <View style={styles.productInfo}>
               <Text style={[styles.productName, { color: theme.text }]}>

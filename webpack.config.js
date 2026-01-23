@@ -5,17 +5,35 @@ module.exports = async function (env, argv) {
   const config = await createExpoWebpackConfigAsync({
     ...env,
     babel: {
-      dangerouslyDisableDefaultRootMode: true,
+      dangerouslyDisableDefaultRootMode: false,
     },
   }, argv);
 
-  // Add alias configuration
+  // Add alias configuration with proper React Native Web mappings
   config.resolve.alias = {
     ...config.resolve.alias,
     '@': path.resolve(__dirname, 'src'),
-    // Fix Text constructor conflicts on web
+    // Fix React Native to React Native Web mapping
     'react-native$': 'react-native-web',
+    'react-native/Libraries/Components/View/ViewPropTypes': 'react-native-web/dist/exports/ViewPropTypes',
+    'react-native/Libraries/EventEmitter/NativeEventEmitter': 'react-native-web/dist/vendor/react-native/NativeEventEmitter',
+    'react-native-web/Libraries/Image/AssetRegistry': 'react-native-web/dist/modules/AssetRegistry',
+    // Fix specific component imports
+    'react-native/Libraries/Components/TextInput/TextInput': 'react-native-web/dist/exports/TextInput',
+    'react-native/Libraries/Text/Text': 'react-native-web/dist/exports/Text',
   };
+
+  // Ensure react-native-web is properly resolved with correct extensions
+  config.resolve.extensions = [
+    '.web.tsx', '.web.ts', '.web.js', '.web.jsx',
+    '.tsx', '.ts', '.js', '.jsx', '.json'
+  ];
+
+  // Configure module resolution for better React Native Web compatibility
+  config.resolve.modules = [
+    path.resolve(__dirname, 'node_modules'),
+    'node_modules'
+  ];
 
   // Add custom loader for handling buffer issues
   config.module.rules.unshift({

@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   StyleSheet,
   ScrollView,
   FlatList,
@@ -9,10 +8,12 @@ import {
   StatusBar,
   RefreshControl,
 } from 'react-native';
+import Text from '../components/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
+import LanguageSwitcher from '../components/common/LanguageSwitcher';
 import { Product, Category } from '../types/product';
 import { BorderRadius, Spacing, Typography } from '../constants/theme';
 import { MainTabScreenProps } from '../types/navigation';
@@ -39,7 +40,7 @@ const mockProducts: Product[] = [
     discount: 22,
     currency: 'KRW',
     category: 'K-Beauty',
-    images: ['https://via.placeholder.com/300x300/F8E9A1/374785?text=Skincare'],
+    images: ['https://picsum.photos/300/300?random=1'],
     rating: 4.8,
     reviewCount: 245,
     stock: 50,
@@ -60,7 +61,7 @@ const mockProducts: Product[] = [
     price: 25000,
     currency: 'KRW',
     category: 'K-Food',
-    images: ['https://via.placeholder.com/300x300/A8D0E6/374785?text=BBQ+Sauce'],
+    images: ['https://picsum.photos/300/300?random=2'],
     rating: 4.6,
     reviewCount: 89,
     stock: 100,
@@ -83,7 +84,7 @@ const mockProducts: Product[] = [
     discount: 20,
     currency: 'KRW',
     category: 'K-Fashion',
-    images: ['https://via.placeholder.com/300x300/F76C6C/FFFFFF?text=Hanbok'],
+    images: ['https://picsum.photos/300/300?random=3'],
     rating: 4.9,
     reviewCount: 156,
     stock: 0,
@@ -102,7 +103,7 @@ const mockProducts: Product[] = [
 export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenProps['navigation']>();
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { colors, theme } = useTheme();
   
   const [searchQuery, setSearchQuery] = useState('');
   const [refreshing, setRefreshing] = useState(false);
@@ -117,7 +118,11 @@ export default function HomeScreen() {
       backgroundColor: colors.heading,
       paddingTop: StatusBar.currentHeight || 0,
       paddingHorizontal: Spacing.lg,
-      paddingBottom: Spacing.lg,
+      paddingBottom: Spacing.lg + 10,
+      borderBottomLeftRadius: 20,
+      borderBottomRightRadius: 20,
+      elevation: 8,
+      boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.15)',
     },
     headerTop: {
       flexDirection: 'row',
@@ -128,13 +133,22 @@ export default function HomeScreen() {
     logo: {
       ...Typography.h2,
       color: '#FFFFFF',
-      fontWeight: 'bold',
+      fontWeight: '800',
+      fontSize: 24,
+      letterSpacing: 0.5,
     },
     headerIcons: {
       flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
     },
     iconButton: {
-      marginLeft: Spacing.md,
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginLeft: 0,
     },
     searchContainer: {
       marginTop: Spacing.sm,
@@ -173,12 +187,21 @@ export default function HomeScreen() {
       justifyContent: 'center',
       alignItems: 'center',
       marginHorizontal: Spacing.lg,
+      shadowColor: '#000',
+      shadowOffset: {
+        width: 0,
+        height: 4,
+      },
+      shadowOpacity: 0.15,
+      shadowRadius: 8,
+      elevation: 8,
     },
     bannerText: {
       ...Typography.h2,
       color: colors.heading,
-      fontWeight: 'bold',
+      fontWeight: '700',
       textAlign: 'center',
+      textShadow: '1px 1px 2px rgba(0, 0, 0, 0.1)',
     },
     categoriesContainer: {
       paddingLeft: Spacing.lg,
@@ -283,22 +306,26 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <View style={styles.headerTop}>
-          <Text style={styles.logo}>{t('home.title')}</Text>
+          <Text style={[styles.logo, { color: theme.white }]}>{t('home.title')}</Text>
           <View style={styles.headerIcons}>
-            <TouchableOpacity style={styles.iconButton} onPress={handleCartPress}>
-              <Ionicons name="cart-outline" size={24} color="#FFFFFF" />
+            <LanguageSwitcher />
+            <TouchableOpacity 
+              style={[styles.iconButton, { backgroundColor: 'rgba(255, 255, 255, 0.2)' }]} 
+              onPress={handleCartPress}
+            >
+              <Ionicons name="cart-outline" size={24} color={theme.white} />
             </TouchableOpacity>
           </View>
         </View>
         
-        <View style={styles.searchContainer}>
+        <View style={[styles.searchContainer, { backgroundColor: 'rgba(255, 255, 255, 0.95)', borderRadius: 25, marginHorizontal: 20, marginTop: 15 }]}>
           <Input
             placeholder={t('home.searchPlaceholder')}
             value={searchQuery}
             onChangeText={setSearchQuery}
             leftIcon="search-outline"
             onSubmitEditing={handleSearch}
-            style={{ backgroundColor: '#FFFFFF' }}
+            style={{ backgroundColor: 'transparent' }}
           />
         </View>
       </View>
@@ -311,18 +338,30 @@ export default function HomeScreen() {
         }
       >
         {/* Banner */}
-        <View style={styles.bannerContainer}>
-          <View style={styles.banner}>
-            <Text style={styles.bannerText}>{t('home.welcomeBanner')}</Text>
+        <View style={[styles.bannerContainer, { paddingHorizontal: 20, paddingTop: 10 }]}>
+          <View style={[styles.banner, { 
+            backgroundColor: theme.primary, 
+            borderRadius: 20,
+            padding: 25,
+            boxShadow: '0px 8px 12px rgba(0, 0, 0, 0.2)',
+            elevation: 10,
+          }]}>
+            <Text style={[styles.bannerText, { 
+              color: theme.heading, 
+              fontSize: 22, 
+              fontWeight: '700',
+              textAlign: 'center',
+              lineHeight: 28
+            }]}>{t('home.welcomeBanner')}</Text>
           </View>
         </View>
 
         {/* Categories */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('home.categories')}</Text>
+        <View style={[styles.section, { paddingHorizontal: 20 }]}>
+          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
+            <Text style={[styles.sectionTitle, { color: theme.heading, fontSize: 20, fontWeight: '700' }]}>{t('home.categories')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <Text style={styles.seeAllButton}>{t('common.seeAll')}</Text>
+              <Text style={[styles.seeAllButton, { color: theme.primary, fontSize: 14, fontWeight: '600' }]}>{t('common.seeAll')}</Text>
             </TouchableOpacity>
           </View>
           
@@ -337,11 +376,11 @@ export default function HomeScreen() {
         </View>
 
         {/* Featured Products */}
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('home.featured')}</Text>
+        <View style={[styles.section, { paddingHorizontal: 20 }]}>
+          <View style={[styles.sectionHeader, { marginBottom: 15 }]}>
+            <Text style={[styles.sectionTitle, { color: theme.heading, fontSize: 20, fontWeight: '700' }]}>{t('home.featured')}</Text>
             <TouchableOpacity onPress={() => navigation.navigate('Search')}>
-              <Text style={styles.seeAllButton}>{t('common.seeAll')}</Text>
+              <Text style={[styles.seeAllButton, { color: theme.primary, fontSize: 14, fontWeight: '600' }]}>{t('common.seeAll')}</Text>
             </TouchableOpacity>
           </View>
           

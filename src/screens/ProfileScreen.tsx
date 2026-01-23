@@ -1,386 +1,458 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
   ScrollView,
-  TouchableOpacity,
-  StatusBar,
+  StyleSheet,
   Alert,
+  Linking,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import { Typography, Spacing, BorderRadius } from '../constants/theme';
-import { MainTabScreenProps } from '../navigation/types';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type ProfileScreenProps = MainTabScreenProps<'Profile'>;
+import ProfileHeader from '../components/profile/ProfileHeader';
+import MenuItem from '../components/profile/MenuItem';
+import SettingItem from '../components/profile/SettingItem';
+import Text from '../components/Text';
 
-interface MenuOption {
-  id: string;
-  title: string;
-  icon: keyof typeof Ionicons.glyphMap;
-  action: () => void;
-  rightElement?: React.ReactNode;
-}
+import {
+  UserProfile,
+  UserPreferences,
+} from '../types/profile';
 
-export default function ProfileScreen() {
-  const navigation = useNavigation<ProfileScreenProps['navigation']>();
-  const { t } = useTranslation();
-  const { theme, isDark, toggleTheme, setTheme } = useTheme();
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types/navigation';
+
+const ProfileScreen: React.FC = () => {
+  const tailwind = useTailwind();
+  const { t, i18n } = useTranslation();
+  const { theme, setTheme } = useTheme();
+
+  // Мок-данные для профиля
+  const mockProfile: UserProfile = {
+    id: '1',
+    avatar: 'https://picsum.photos/100/100?random=6',
+    fullName: 'John Doe',
+    email: 'john.doe@email.com',
+    phone: '+1 (555) 123-4567',
+    emailVerified: true,
+    phoneVerified: false,
+    memberSince: '2023-01-01',
+    tier: 'premium',
+    loyaltyPoints: 1250,
+    stats: {
+      totalOrders: 15,
+      totalSpent: 489.99,
+      wishlistItems: 12,
+      reviewsCount: 8,
+      savedAddresses: 2,
+      savedPaymentMethods: 3,
+    },
+    preferences: {
+      language: 'en',
+      theme: 'light',
+      notifications: {
+        pushEnabled: true,
+        emailEnabled: true,
+        smsEnabled: false,
+        orderUpdates: true,
+        promotions: true,
+        priceDrops: true,
+        newArrivals: false,
+        restockNotifications: true,
+      },
+      privacy: {
+        showActivity: true,
+        showWishlist: true,
+        personalizedAds: true,
+        dataCollection: false,
+      },
+    },
+  };
+
+  const mockPreferences: UserPreferences = {
+    language: 'en',
+    theme: 'light',
+    notifications: {
+      pushEnabled: true,
+      emailEnabled: true,
+      smsEnabled: false,
+      orderUpdates: true,
+      promotions: true,
+      priceDrops: true,
+      newArrivals: false,
+      restockNotifications: true,
+    },
+    privacy: {
+      showActivity: true,
+      showWishlist: true,
+      personalizedAds: true,
+      dataCollection: false,
+    },
+  };
+
+  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+  const [preferences, setPreferences] = useState<UserPreferences>(mockPreferences);
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  // Загрузка настроек
+  useEffect(() => {
+    loadPreferences();
+  }, []);
+
+  const loadPreferences = async () => {
+    try {
+      const savedTheme = await AsyncStorage.getItem('userTheme');
+      const savedLang = await AsyncStorage.getItem('userLanguage');
+      const savedNotifications = await AsyncStorage.getItem('notificationsEnabled');
+
+      if (savedTheme) {
+        setTheme(savedTheme as any);
+        setPreferences(prev => ({
+          ...prev,
+          theme: savedTheme as any,
+        }));
+      }
+
+      if (savedLang && savedLang !== i18n.language) {
+        i18n.changeLanguage(savedLang);
+        setPreferences(prev => ({
+          ...prev,
+          language: savedLang,
+        }));
+      }
+
+      if (savedNotifications !== null) {
+        const enabled = savedNotifications === 'true';
+        setNotificationsEnabled(enabled);
+        setPreferences(prev => ({
+          ...prev,
+          notifications: {
+            ...prev.notifications,
+            pushEnabled: enabled,
+          },
+        }));
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+    }
+  };
+
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  // Для навигации:
+  const handleViewOrders = () => {
+    // navigation.navigate('Orders');
+  };
   
-  const [userInfo] = useState({
-    name: 'John Doe',
-    email: 'john.doe@example.com',
-    phone: '+82 10-1234-5678',
-    avatar: null,
-  });
+  const handleGoToSettings = () => {
+    navigation.navigate('Settings', { screen: 'SettingsMain' }); // Отдельный экран в RootNavigator
+  };
+  
+  const handleViewOrderDetails = (orderId: string) => {
+    navigation.navigate('OrderTracking', { orderId });
+  };
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: theme.background,
-    },
-    header: {
-      backgroundColor: theme.heading,
-      paddingHorizontal: Spacing.lg,
-      paddingBottom: Spacing.xl,
-      paddingTop: (StatusBar.currentHeight || 0) + Spacing.lg,
-    },
-    headerTitle: {
-      ...Typography.h2,
-      color: '#FFFFFF',
-      fontWeight: 'bold',
-      marginBottom: Spacing.lg,
-    },
-    profileCard: {
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
-      borderRadius: BorderRadius.lg,
-      padding: Spacing.lg,
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    avatar: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: theme.primary,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: Spacing.lg,
-    },
-    avatarText: {
-      ...Typography.h1,
-      color: theme.heading,
-      fontWeight: 'bold',
-    },
-    userInfo: {
-      flex: 1,
-    },
-    userName: {
-      ...Typography.h3,
-      color: '#FFFFFF',
-      fontWeight: 'bold',
-      marginBottom: Spacing.xs,
-    },
-    userEmail: {
-      ...Typography.body,
-      color: 'rgba(255, 255, 255, 0.8)',
-      marginBottom: Spacing.xs,
-    },
-    userPhone: {
-      ...Typography.body,
-      color: 'rgba(255, 255, 255, 0.8)',
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Spacing.lg,
-      paddingTop: Spacing.lg,
-    },
-    section: {
-      marginBottom: Spacing.xl,
-    },
-    sectionTitle: {
-      ...Typography.h3,
-      color: theme.text,
-      fontWeight: 'bold',
-      marginBottom: Spacing.md,
-    },
-    menuOption: {
-      backgroundColor: theme.card,
-      borderRadius: BorderRadius.md,
-      paddingHorizontal: Spacing.lg,
-      paddingVertical: Spacing.md,
-      marginBottom: Spacing.sm,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
-    menuOptionLeft: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      flex: 1,
-    },
-    menuIcon: {
-      marginRight: Spacing.md,
-    },
-    menuTitle: {
-      ...Typography.body,
-      color: theme.text,
-      fontWeight: '500',
-    },
-    menuArrow: {
-      marginLeft: Spacing.md,
-    },
-    themeSelector: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    themeOption: {
-      paddingHorizontal: Spacing.sm,
-      paddingVertical: Spacing.xs,
-      borderRadius: BorderRadius.sm,
-      marginLeft: Spacing.sm,
-    },
-    themeOptionActive: {
-      backgroundColor: theme.primary,
-    },
-    themeOptionText: {
-      ...Typography.caption,
-      color: theme.text,
-      fontWeight: '500',
-    },
-    themeOptionTextActive: {
-      color: theme.heading,
-    },
-    logoutOption: {
-      backgroundColor: theme.error,
-    },
-    logoutText: {
-      color: '#FFFFFF',
-    },
-  });
+  // Обработчики
+  const handleEditProfile = (updatedProfile: Partial<UserProfile>) => {
+    setProfile(prev => ({ ...prev, ...updatedProfile }));
+  };
 
-  const handleLogout = async () => {
+  const handleViewWishlist = () => {
+    // navigation.navigate('Wishlist');
+  };
+
+  const handleAddresses = () => {
+    navigation.navigate('Addresses' as never);
+  };
+
+  const handlePaymentMethods = () => {
+    navigation.navigate('PaymentMethods' as never);
+  };
+
+  const handleNotifications = () => {
+    navigation.navigate('Notifications' as never);
+  };
+
+  const handleSettings = () => {
+  navigation.navigate('Settings', { screen: 'SettingsMain' });
+};
+
+  const handleLanguage = () => {
     Alert.alert(
-      t('profile.logout'),
-      t('profile.logoutConfirmation'),
+      t('profile.language'),
+      t('profile.selectLanguage'),
       [
+        { text: 'English', onPress: () => changeLanguage('en') },
+        { text: 'Русский', onPress: () => changeLanguage('ru') },
+        { text: t('common.cancel'), style: 'cancel' },
+      ]
+    );
+  };
+
+  const changeLanguage = async (lang: string) => {
+    try {
+      await i18n.changeLanguage(lang);
+      await AsyncStorage.setItem('userLanguage', lang);
+      setPreferences(prev => ({
+        ...prev,
+        language: lang,
+      }));
+    } catch (error) {
+      console.error('Error changing language:', error);
+    }
+  };
+
+  const handleTheme = () => {
+    Alert.alert(
+      t('profile.theme'),
+      t('profile.selectTheme'),
+      [
+        { text: t('theme.light'), onPress: () => changeTheme('light') },
+        { text: t('theme.dark'), onPress: () => changeTheme('dark') },
+        { text: t('theme.auto'), onPress: () => changeTheme('auto') },
+        { text: t('common.cancel'), style: 'cancel' },
+      ]
+    );
+  };
+
+  const changeTheme = async (newTheme: string) => {
+    try {
+      setTheme(newTheme as any);
+      await AsyncStorage.setItem('userTheme', newTheme);
+      setPreferences(prev => ({
+        ...prev,
+        theme: newTheme as any,
+      }));
+    } catch (error) {
+      console.error('Error changing theme:', error);
+    }
+  };
+
+  const handleHelp = () => {
+    navigation.navigate('Support' as never);
+  };
+
+  const handleAbout = () => {
+    Alert.alert(
+      'KoreanStore',
+      'Version 1.0.0\n\nKoreanStore - Your gateway to authentic Korean products.\n\n© 2024 KoreanStore. All rights reserved.',
+      [{ text: t('common.ok') }]
+    );
+  };
+
+  const handleLogout = () => {
+    Alert.alert(
+      t('logout.title'),
+      t('logout.message'),
+      [
+        { text: t('logout.cancel'), style: 'cancel' },
         {
-          text: t('common.cancel'),
-          style: 'cancel',
-        },
-        {
-          text: t('profile.logout'),
+          text: t('logout.confirm'),
           style: 'destructive',
-          onPress: async () => {
-            try {
-              await AsyncStorage.removeItem('userToken');
-              await AsyncStorage.removeItem('userEmail');
-              navigation.reset({
-                index: 0,
-                routes: [{ name: 'Auth' }],
-              });
-            } catch (error) {
-              console.error('Logout error:', error);
-            }
+          onPress: performLogout,
+        },
+      ]
+    );
+  };
+
+  const performLogout = () => {
+    // Здесь будет логика выхода
+    Alert.alert(t('common.success'), t('logout.success'));
+    // navigation.reset({ index: 0, routes: [{ name: 'Login' }] });
+  };
+
+  const handleNotificationToggle = async (value: boolean) => {
+    setNotificationsEnabled(value);
+    await AsyncStorage.setItem('notificationsEnabled', value.toString());
+    setPreferences(prev => ({
+      ...prev,
+      notifications: {
+        ...prev.notifications,
+        pushEnabled: value,
+      },
+    }));
+  };
+
+  const handleClearCache = () => {
+    Alert.alert(
+      t('settings.clearCache'),
+      t('settings.clearCacheConfirm'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.confirm'),
+          onPress: () => {
+            // Логика очистки кэша
+            Alert.alert(t('common.success'), t('settings.cacheCleared'));
           },
         },
       ]
     );
   };
 
-  const handleThemeChange = (isDark: boolean) => {
-    setTheme(isDark);
-  };
-
-  const accountOptions: MenuOption[] = [
-    {
-      id: 'edit-profile',
-      title: t('profile.editProfile'),
-      icon: 'person-outline',
-      action: () => console.log('Edit profile'),
-    },
-    {
-      id: 'my-orders',
-      title: t('profile.myOrders'),
-      icon: 'receipt-outline',
-      action: () => navigation.navigate('Orders'),
-    },
-    {
-      id: 'addresses',
-      title: t('profile.addresses'),
-      icon: 'location-outline',
-      action: () => console.log('Manage addresses'),
-    },
-    {
-      id: 'payment-methods',
-      title: t('profile.paymentMethods'),
-      icon: 'card-outline',
-      action: () => console.log('Payment methods'),
-    },
-  ];
-
-  const appOptions: MenuOption[] = [
-    {
-      id: 'theme',
-      title: t('settings.theme'),
-      icon: 'color-palette-outline',
-      action: () => {},
-      rightElement: (
-        <View style={styles.themeSelector}>
-          {(['light', 'dark'] as const).map((themeOption) => (
-            <TouchableOpacity
-              key={themeOption}
-              style={[
-                styles.themeOption,
-                (themeOption === 'light' && !isDark) || (themeOption === 'dark' && isDark) ? styles.themeOptionActive : null,
-              ]}
-              onPress={() => handleThemeChange(themeOption === 'dark')}
-            >
-              <Text
-                style={[
-                  styles.themeOptionText,
-                  (themeOption === 'light' && !isDark) || (themeOption === 'dark' && isDark) ? styles.themeOptionTextActive : null,
-                ]}
-              >
-                {t(`settings.themeOptions.${themeOption}`)}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ),
-    },
-    {
-      id: 'language',
-      title: t('settings.language'),
-      icon: 'language-outline',
-      action: () => navigation.navigate('Settings'),
-    },
-    {
-      id: 'notifications',
-      title: t('settings.notifications'),
-      icon: 'notifications-outline',
-      action: () => console.log('Notifications'),
-    },
-  ];
-
-  const supportOptions: MenuOption[] = [
-    {
-      id: 'help',
-      title: t('profile.help'),
-      icon: 'help-circle-outline',
-      action: () => console.log('Help'),
-    },
-    {
-      id: 'contact',
-      title: t('profile.contact'),
-      icon: 'mail-outline',
-      action: () => console.log('Contact'),
-    },
-    {
-      id: 'about',
-      title: t('profile.about'),
-      icon: 'information-circle-outline',
-      action: () => console.log('About'),
-    },
-    {
-      id: 'privacy',
-      title: t('settings.privacy'),
-      icon: 'shield-outline',
-      action: () => console.log('Privacy'),
-    },
-  ];
-
-  const renderMenuOption = (option: MenuOption, isLogout = false) => (
-    <TouchableOpacity
-      key={option.id}
-      style={[styles.menuOption, isLogout && styles.logoutOption]}
-      onPress={option.action}
-    >
-      <View style={styles.menuOptionLeft}>
-        <Ionicons
-          name={option.icon}
-          size={24}
-          color={isLogout ? '#FFFFFF' : theme.text}
-          style={styles.menuIcon}
-        />
-        <Text style={[styles.menuTitle, isLogout && styles.logoutText]}>
-          {option.title}
-        </Text>
-      </View>
-      
-      {option.rightElement ? (
-        option.rightElement
-      ) : (
-        <Ionicons
-          name="chevron-forward"
-          size={20}
-          color={isLogout ? '#FFFFFF' : theme.textSecondary}
-          style={styles.menuArrow}
-        />
-      )}
-    </TouchableOpacity>
-  );
-
-  const getUserInitials = (name: string): string => {
-    return name
-      .split(' ')
-      .map(part => part.charAt(0))
-      .join('')
-      .toUpperCase()
-      .slice(0, 2);
-  };
-
   return (
-    <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={theme.heading} />
-      
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-        
-        <View style={styles.profileCard}>
-          <View style={styles.avatar}>
-            <Text style={styles.avatarText}>
-              {getUserInitials(userInfo.name)}
-            </Text>
-          </View>
+    <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
+      <ScrollView 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        {/* Заголовок профиля */}
+        <ProfileHeader
+          profile={profile}
+          onEditProfile={handleEditProfile}
+          onViewOrders={handleViewOrders}
+          onViewWishlist={handleViewWishlist}
+        />
+
+        {/* Основные разделы */}
+        <View style={styles.section}>
+          <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+            {t('profile.account')}
+          </Text>
+
+          <MenuItem
+            icon="settings-outline"
+            title={t('profile.settings')}
+            onPress={() => navigation.navigate('Settings', { screen: 'SettingsMain' })}
+            showChevron
+          />
           
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>{userInfo.name}</Text>
-            <Text style={styles.userEmail}>{userInfo.email}</Text>
-            <Text style={styles.userPhone}>{userInfo.phone}</Text>
-          </View>
+          <MenuItem
+            icon="cart-outline"
+            title={t('profile.orders')}
+            badge={profile.stats.totalOrders}
+            onPress={handleViewOrders}
+          />
+          
+          <MenuItem
+            icon="heart-outline"
+            title={t('profile.wishlist')}
+            badge={profile.stats.wishlistItems}
+            onPress={handleViewWishlist}
+          />
+          
+          <MenuItem
+            icon="location-outline"
+            title={t('profile.addresses')}
+            badge={profile.stats.savedAddresses}
+            onPress={handleAddresses}
+          />
+          
+          <MenuItem
+            icon="card-outline"
+            title={t('profile.paymentMethods')}
+            badge={profile.stats.savedPaymentMethods}
+            onPress={handlePaymentMethods}
+          />
         </View>
-      </View>
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+        {/* Настройки */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.account')}</Text>
-          {accountOptions.map(option => renderMenuOption(option))}
+          <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+            {t('profile.preferences')}
+          </Text>
+          
+          <SettingItem
+            title={t('settings.notificationSettings')}
+            description={t('settings.notificationDescription')}
+            type="switch"
+            value={notificationsEnabled}
+            onValueChange={handleNotificationToggle}
+          />
+          
+          <SettingItem
+            title={t('profile.language')}
+            description={t('profile.languageDescription')}
+            type="select"
+            selectedValue={preferences.language === 'en' ? 'English' : 'Русский'}
+            onPress={handleLanguage}
+          />
+          
+          <SettingItem
+            title={t('profile.theme')}
+            description={t('profile.themeDescription')}
+            type="select"
+            selectedValue={
+              preferences.theme === 'light' ? t('theme.light') :
+              preferences.theme === 'dark' ? t('theme.dark') :
+              t('theme.auto')
+            }
+            onPress={handleTheme}
+          />
+          
+          <SettingItem
+            title={t('settings.clearCache')}
+            description={t('settings.clearCacheDescription')}
+            type="button"
+            icon="trash-outline"
+            onPress={handleClearCache}
+          />
         </View>
 
+        {/* Поддержка */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.preferences')}</Text>
-          {appOptions.map(option => renderMenuOption(option))}
+          <Text style={[styles.sectionTitle, { color: theme.heading }]}>
+            {t('profile.help')}
+          </Text>
+          
+          <MenuItem
+            icon="help-circle-outline"
+            title={t('support.faq')}
+            onPress={() => Linking.openURL('https://koreanstore.com/faq')}
+          />
+          
+          <MenuItem
+            icon="chatbubble-outline"
+            title={t('support.liveChat')}
+            onPress={() => Linking.openURL('https://koreanstore.com/chat')}
+          />
+          
+          <MenuItem
+            icon="mail-outline"
+            title={t('support.contact')}
+            onPress={() => Linking.openURL('mailto:support@koreanstore.com')}
+          />
+          
+          <MenuItem
+            icon="information-circle-outline"
+            title={t('profile.about')}
+            onPress={handleAbout}
+          />
         </View>
 
+        {/* Выход */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>{t('profile.support')}</Text>
-          {supportOptions.map(option => renderMenuOption(option))}
-        </View>
-
-        <View style={styles.section}>
-          {renderMenuOption({
-            id: 'logout',
-            title: t('profile.logout'),
-            icon: 'log-out-outline',
-            action: handleLogout,
-          }, true)}
+          <MenuItem
+            icon="log-out-outline"
+            title={t('profile.logout')}
+            danger
+            onPress={handleLogout}
+          />
         </View>
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingVertical: 20,
+  },
+  section: {
+    marginTop: 24,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginLeft: 20,
+    marginBottom: 12,
+  },
+});
+
+export default ProfileScreen;

@@ -1,220 +1,343 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
-  StyleSheet,
+  
+  TouchableOpacity,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  StatusBar,
   Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/native';
+import Text from '../components/Text';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Typography, Spacing, BorderRadius } from '@/constants/theme';
-import { RootStackScreenProps } from '@/navigation/types';
-import Button from '@/components/Button';
-import Input from '@/components/Input';
+import { useTheme } from '../contexts/ThemeContext';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as LocalAuthentication from 'expo-local-authentication';
 
-type LoginScreenProps = RootStackScreenProps<'Auth'>;
+// Компоненты
+import InputField from '../components/auth/InputField';
+import Checkbox from '../components/auth/Checkbox';
+import SocialButton from '../components/auth/SocialButton';
 
-export default function LoginScreen() {
-  const navigation = useNavigation<LoginScreenProps['navigation']>();
+// Сервисы и утилиты
+import { authService } from '../services/authService';
+import { validateEmail, validatePassword } from '../utils/validation';
+import { RootStackParamList } from '../types/navigation';
+import { LoginFormData } from '../types/auth';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList>;
+
+const LoginScreen: React.FC = () => {
+  const tailwind = useTailwind();
   const { t } = useTranslation();
-  const { colors } = useTheme();
+  const { theme } = useTheme();
+  const navigation = useNavigation<NavigationProp>();
   
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{email?: string; password?: string}>({});
-
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    scrollView: {
-      flex: 1,
-    },
-    content: {
-      flex: 1,
-      paddingHorizontal: Spacing.xl,
-      paddingTop: Spacing.xxl,
-    },
-    header: {
-      alignItems: 'center',
-      marginBottom: Spacing.xxl,
-    },
-    logo: {
-      width: 80,
-      height: 80,
-      borderRadius: 40,
-      backgroundColor: colors.primary,
-      marginBottom: Spacing.lg,
-    },
-    title: {
-      ...Typography.h1,
-      color: colors.text,
-      fontWeight: 'bold',
-      marginBottom: Spacing.sm,
-    },
-    subtitle: {
-      ...Typography.body,
-      color: colors.textSecondary,
-      textAlign: 'center',
-    },
-    form: {
-      marginBottom: Spacing.xl,
-    },
-    forgotPassword: {
-      alignSelf: 'flex-end',
-      marginBottom: Spacing.xl,
-    },
-    forgotPasswordText: {
-      ...Typography.body,
-      color: colors.primary,
-    },
-    loginButton: {
-      marginBottom: Spacing.lg,
-    },
-    footer: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 'auto',
-      paddingBottom: Spacing.xl,
-    },
-    footerText: {
-      ...Typography.body,
-      color: colors.textSecondary,
-    },
-    registerButton: {
-      marginLeft: Spacing.sm,
-    },
-    registerButtonText: {
-      ...Typography.body,
-      color: colors.primary,
-      fontWeight: '600',
-    },
+  const [formData, setFormData] = useState<LoginFormData>({
+    email: '',
+    password: '',
+    rememberMe: false,
   });
+  
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [isBiometricAvailable, setIsBiometricAvailable] = useState(false);
 
-  const validateForm = () => {
-    const newErrors: {email?: string; password?: string} = {};
+  // Проверка доступности биометрии
+  React.useEffect(() => {
+    checkBiometricAvailability();
+  }, []);
 
-    if (!email.trim()) {
-      newErrors.email = t('auth.emailRequired');
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = t('auth.emailInvalid');
+  const checkBiometricAvailability = async () => {
+    try {
+      const compatible = await LocalAuthentication.hasHardwareAsync();
+      const enrolled = await LocalAuthentication.isEnrolledAsync();
+      setIsBiometricAvailable(compatible && enrolled);
+    } catch (error) {
+      console.error('Biometric check failed:', error);
     }
+  };
 
-    if (!password.trim()) {
-      newErrors.password = t('auth.passwordRequired');
-    } else if (password.length < 6) {
-      newErrors.password = t('auth.passwordTooShort');
+  const handleBiometricAuth = async () => {
+    try {
+      const result = await LocalAuthentication.authenticateAsync({
+        promptMessage: t('auth.login'),
+        fallbackLabel: t('auth.usePassword'),
+      });
+
+      if (result.success) {
+        // Используем демо-данные для биометрического входа
+        handleLogin({
+          email: 'user@example.com',
+          password: 'password123',
+          rememberMe: true,
+        });
+      }
+    } catch (error) {
+      console.error('Biometric auth failed:', error);
     }
+  };
 
+  const handleInputChange = (field: keyof LoginFormData, value: string | boolean) => {
+    setFormData((prev: LoginFormData) => ({ ...prev, [field]: value }));
+    
+    // Очищаем ошибку при изменении поля
+    if (errors[field as keyof typeof errors]) {
+      setErrors((prev: any) => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const validateForm = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    
+    const emailError = validateEmail(formData.email);
+    if (emailError) newErrors.email = t(emailError);
+    
+    const passwordError = validatePassword(formData.password);
+    if (passwordError) newErrors.password = t(passwordError);
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleLogin = async () => {
+  const handleLogin = async (loginData?: LoginFormData) => {
+    const dataToUse = loginData || formData;
+    
     if (!validateForm()) return;
-
-    setLoading(true);
+    
+    setIsLoading(true);
+    
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-
-      // Save user token (mock)
-      await AsyncStorage.setItem('userToken', 'mock-token-123');
-      await AsyncStorage.setItem('userEmail', email);
-
-      // Navigate to main app
-      navigation.replace('Main');
+      const response = await authService.login(dataToUse);
+      
+      if (response.success && response.token && response.user) {
+        // Сохраняем токен
+        await AsyncStorage.setItem('user-token', response.token);
+        await AsyncStorage.setItem('user-data', JSON.stringify(response.user));
+        
+        if (formData.rememberMe) {
+          await AsyncStorage.setItem('remember-me', 'true');
+        }
+        
+        Alert.alert(t('auth.success.login'), '', [
+          {
+            text: 'OK',
+            onPress: () => navigation.reset({
+              index: 0,
+              routes: [{ name: 'Main' }],
+            }),
+          },
+        ]);
+      } else {
+        Alert.alert(
+          t('auth.login'),
+          t(response.error || 'auth.errors.unknownError')
+        );
+      }
     } catch (error) {
-      Alert.alert(t('common.error'), t('auth.loginError'));
+      Alert.alert(
+        t('auth.errors.networkError'),
+        t('auth.errors.unknownError')
+      );
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const handleRegister = () => {
-    navigation.navigate('Register');
+  const handleForgotPassword = () => {
+    navigation.navigate('Auth', { screen: 'ForgotPassword' });
   };
 
-  const handleForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
+  const handleSocialLogin = (provider: string) => {
+    Alert.alert(
+      `${provider} Login`,
+      'Social login will be implemented in the full version'
+    );
   };
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={[
+        tailwind('flex-1'),
+        { backgroundColor: theme.background },
+      ]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <StatusBar barStyle="dark-content" backgroundColor={colors.background} />
-      
-      <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <View style={styles.logo} />
-            <Text style={styles.title}>{t('auth.welcomeBack')}</Text>
-            <Text style={styles.subtitle}>{t('auth.signInToContinue')}</Text>
-          </View>
+      <ScrollView
+        contentContainerStyle={tailwind('flex-grow px-6 py-8')}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+      >
+        {/* Заголовок */}
+        <View style={tailwind('mb-10')}>
+          <Text
+            style={[
+              tailwind('text-3xl font-bold'),
+              { color: theme.heading },
+            ]}
+          >
+            {t('auth.login')}
+          </Text>
+          <Text
+            style={[
+              tailwind('text-base mt-2'),
+              { color: theme.textSecondary },
+            ]}
+          >
+            Welcome back! Please sign in to your account
+          </Text>
+        </View>
 
-          <View style={styles.form}>
-            <Input
-              label={t('common.email')}
-              value={email}
-              onChangeText={setEmail}
-              placeholder={t('auth.emailPlaceholder')}
-              leftIcon="mail-outline"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              error={errors.email}
+        {/* Форма */}
+        <View style={tailwind('mb-8')}>
+          <InputField
+            label={t('auth.email')}
+            placeholder="your.email@example.com"
+            value={formData.email}
+            onChangeText={(value: string) => handleInputChange('email', value)}
+            error={errors.email}
+            icon="mail-outline"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!isLoading}
+          />
+
+          <InputField
+            label={t('auth.password')}
+            placeholder="••••••••"
+            value={formData.password}
+            onChangeText={(value: string) => handleInputChange('password', value)}
+            error={errors.password}
+            icon="lock-closed-outline"
+            secureTextEntry
+            editable={!isLoading}
+          />
+
+          {/* Опции */}
+          <View style={tailwind('flex-row justify-between items-center mb-6')}>
+            <Checkbox
+              checked={formData.rememberMe}
+              onToggle={() => handleInputChange('rememberMe', !formData.rememberMe)}
+              label={t('auth.rememberMe')}
             />
 
-            <Input
-              label={t('common.password')}
-              value={password}
-              onChangeText={setPassword}
-              placeholder={t('auth.passwordPlaceholder')}
-              leftIcon="lock-closed-outline"
-              secureTextEntry
-              error={errors.password}
-            />
-
-            <Button
-              title={t('auth.forgotPassword')}
+            <TouchableOpacity
               onPress={handleForgotPassword}
-              variant="outline"
-              size="small"
-              style={styles.forgotPassword}
-              textStyle={styles.forgotPasswordText}
-            />
-
-            <Button
-              title={t('auth.login')}
-              onPress={handleLogin}
-              loading={loading}
-              style={styles.loginButton}
-            />
+              disabled={isLoading}
+              activeOpacity={0.7}
+            >
+              <Text
+                style={[
+                  tailwind('text-sm font-medium'),
+                  { color: theme.primary },
+                ]}
+              >
+                {t('auth.forgotPassword')}
+              </Text>
+            </TouchableOpacity>
           </View>
 
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>{t('auth.dontHaveAccount')}</Text>
-            <Button
-              title={t('auth.register')}
-              onPress={handleRegister}
-              variant="outline"
-              size="small"
-              style={styles.registerButton}
-              textStyle={styles.registerButtonText}
+          {/* Кнопка входа */}
+          <TouchableOpacity
+            style={[
+              tailwind('rounded-xl py-4 items-center'),
+              { backgroundColor: theme.primary },
+              isLoading && tailwind('opacity-70'),
+            ]}
+            onPress={() => handleLogin()}
+            disabled={isLoading}
+            activeOpacity={0.8}
+          >
+            <Text
+              style={[
+                tailwind('text-lg font-semibold'),
+                { color: theme.heading },
+              ]}
+            >
+              {isLoading ? '...' : t('auth.signIn')}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Биометрическая аутентификация */}
+          {isBiometricAvailable && (
+            <TouchableOpacity
+              style={[
+                tailwind('rounded-xl py-4 items-center mt-4 border'),
+                { borderColor: theme.border },
+              ]}
+              onPress={handleBiometricAuth}
+              disabled={isLoading}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  tailwind('text-lg font-semibold'),
+                  { color: theme.text },
+                ]}
+              >
+                Use Biometric Login
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+
+        {/* Разделитель */}
+        <View style={tailwind('flex-row items-center mb-6')}>
+          <View style={[tailwind('flex-1 h-px'), { backgroundColor: theme.border }]} />
+          <Text style={[tailwind('px-4'), { color: theme.textSecondary }]}>
+            {t('auth.orContinueWith')}
+          </Text>
+          <View style={[tailwind('flex-1 h-px'), { backgroundColor: theme.border }]} />
+        </View>
+
+        {/* Социальные кнопки */}
+        <View style={tailwind('flex-row mb-8')}>
+          <View style={tailwind('mr-2 flex-1')}>
+            <SocialButton
+              provider="google"
+              onPress={() => handleSocialLogin('Google')}
             />
           </View>
+          <View style={tailwind('mx-2 flex-1')}>
+            <SocialButton
+              provider="apple"
+              onPress={() => handleSocialLogin('Apple')}
+            />
+          </View>
+          <View style={tailwind('ml-2 flex-1')}>
+            <SocialButton
+              provider="facebook"
+              onPress={() => handleSocialLogin('Facebook')}
+            />
+          </View>
+        </View>
+
+        {/* Ссылка на регистрацию */}
+        <View style={tailwind('items-center')}>
+          <Text style={[tailwind('text-base'), { color: theme.textSecondary }]}>
+            {t('auth.noAccount')}{' '}
+          </Text>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('Auth', { screen: 'Register' })}
+            disabled={isLoading}
+            activeOpacity={0.7}
+          >
+            <Text
+              style={[
+                tailwind('text-base font-semibold'),
+                { color: theme.primary },
+              ]}
+            >
+              {t('auth.signUp')}
+            </Text>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
-}
+};
+
+export default LoginScreen;

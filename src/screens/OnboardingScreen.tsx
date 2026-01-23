@@ -1,14 +1,15 @@
 import React, { useState, useRef } from 'react';
 import {
   View,
-  Text,
+  
   TouchableOpacity,
   StyleSheet,
   Dimensions,
   FlatList,
   Animated,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../components/Text';
+import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -74,7 +75,7 @@ const OnboardingScreen: React.FC = () => {
 
   const handleSkip = async () => {
     await AsyncStorage.setItem('onboarding-completed', 'true');
-    navigation.replace('Auth'); // Или 'Main' если будет сразу авторизация
+    navigation.replace('Auth', { screen: 'Login' }); // Или 'Main' если будет сразу авторизация
   };
 
   const handleNext = async () => {
@@ -82,7 +83,7 @@ const OnboardingScreen: React.FC = () => {
       slidesRef.current?.scrollToIndex({ index: currentIndex + 1 });
     } else {
       await AsyncStorage.setItem('onboarding-completed', 'true');
-      navigation.replace('Auth'); // Или 'Main' если будет сразу авторизация
+      navigation.replace('Auth', { screen: 'Login' }); // Или 'Main' если будет сразу авторизация
     }
   };
 
@@ -93,6 +94,7 @@ const OnboardingScreen: React.FC = () => {
   const renderSlide = ({ item, index }: { item: OnboardingSlideType; index: number }) => {
     return (
       <OnboardingSlide
+        id={item.id}
         title={item.title}
         description={item.description}
         illustration={item.illustration}

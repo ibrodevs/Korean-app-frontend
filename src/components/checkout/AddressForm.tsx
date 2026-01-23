@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
+  
   ScrollView,
   TouchableOpacity,
   StyleSheet,
@@ -9,7 +9,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../../components/Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -153,12 +154,12 @@ const AddressForm: React.FC<AddressFormProps> = ({
           <Text style={[styles.sectionTitle, { color: theme.heading }]}>
             {t('address.addressLabel')}
           </Text>
-          <View style={styles.labelOptions}>
+          <View style={styles.labelOptionText,s}>
             {labelOptions.map((option) => (
               <TouchableOpacity
                 key={option.id}
                 style={[
-                  styles.labelOption,
+                  styles.labelOptionText,,
                   {
                     backgroundColor: selectedLabel === option.id
                       ? theme.primary
@@ -177,7 +178,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                 />
                 <Text
                   style={[
-                    styles.labelOptionText,
+                    styles.labelOptionText,Text,
                     {
                       color: selectedLabel === option.id ? theme.heading : theme.text,
                     },

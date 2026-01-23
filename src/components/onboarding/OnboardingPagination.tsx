@@ -4,7 +4,7 @@ import Animated, {
   useAnimatedStyle,
   withSpring,
 } from 'react-native-reanimated';
-import { useTailwind } from 'tailwind-rn';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTheme } from '../../contexts/ThemeContext';
 import { OnboardingPaginationProps } from '../../types/onboarding';
 

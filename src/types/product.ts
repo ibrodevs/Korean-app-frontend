@@ -25,6 +25,9 @@ export interface Product {
   seller: {
     name: string;
     id: string;
+    rating?: number;
+    reviewCount?: number;
+    responseRate?: number;
   };
   inStock: boolean;
 }

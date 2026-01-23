@@ -1,46 +1,69 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import { useTheme } from '@/contexts/ThemeContext';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useTranslation } from 'react-i18next';
+import { useTheme } from '../contexts/ThemeContext';
 
-import LoginScreen from '@/screens/LoginScreen';
-import RegisterScreen from '@/screens/RegisterScreen';
-import ForgotPasswordScreen from '@/screens/ForgotPasswordScreen';
+// Auth Screens
+import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
+import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
 
-import { AuthStackParamList } from './types';
+// Types
+import { AuthStackParamList } from '../types/navigation';
 
-const Stack = createStackNavigator<AuthStackParamList>();
+const Stack = createNativeStackNavigator<AuthStackParamList>();
 
-export default function AuthNavigator() {
-  const { colors } = useTheme();
+const AuthNavigator: React.FC = () => {
+  const { t } = useTranslation();
+  const { theme } = useTheme();
+
+  const screenOptions = {
+    headerStyle: {
+      backgroundColor: theme.navBackground,
+    },
+    headerTintColor: theme.heading,
+    headerTitleStyle: {
+      fontWeight: '600' as '600',
+    },
+    headerShadowVisible: false,
+    contentStyle: {
+      backgroundColor: theme.background,
+    },
+  };
 
   return (
     <Stack.Navigator
       initialRouteName="Login"
-      screenOptions={{
-        headerStyle: {
-          backgroundColor: colors.header,
-        },
-        headerTintColor: '#FFFFFF',
-        headerTitleStyle: {
-          fontWeight: 'bold',
-        },
-      }}
+      screenOptions={screenOptions}
     >
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={{ headerShown: false }}
+        options={{
+          title: t('auth.login'),
+          headerShown: false,
+        }}
       />
+      
       <Stack.Screen
         name="Register"
         component={RegisterScreen}
-        options={{ title: 'Create Account' }}
+        options={{
+          title: t('auth.register'),
+          headerBackTitle: t('common.back'),
+        }}
       />
+      
       <Stack.Screen
         name="ForgotPassword"
         component={ForgotPasswordScreen}
-        options={{ title: 'Reset Password' }}
+        options={{
+          title: t('auth.forgotPassword'),
+          headerBackTitle: t('common.back'),
+        }}
       />
     </Stack.Navigator>
   );
-}
+};
+
+export default AuthNavigator;

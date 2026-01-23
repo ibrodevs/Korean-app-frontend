@@ -11,6 +11,13 @@ export const Colors = {
     card: '#FFFFFF',
     border: '#E5E5E5',
     shadow: '#000000',
+    accent: '#F8E9A1',
+    heading: '#374785',
+    navBackground: '#24305E',
+    white: '#FFFFFF',
+    black: '#000000',
+    gray: '#666666',
+    lightGray: '#E5E5E5',
   },
   dark: {
     primary: '#F8E9A1',
@@ -24,6 +31,13 @@ export const Colors = {
     card: '#2A2A2A',
     border: '#444444',
     shadow: '#000000',
+    accent: '#F8E9A1',
+    heading: '#F8E9A1',
+    navBackground: '#24305E',
+    white: '#FFFFFF',
+    black: '#000000',
+    gray: '#666666',
+    lightGray: '#444444',
   },
 };
 

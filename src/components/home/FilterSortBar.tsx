@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
   TouchableOpacity,
   Modal,
   StyleSheet,
   ScrollView,
   Dimensions,
 } from 'react-native';
+import Text from '../../components/Text';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';

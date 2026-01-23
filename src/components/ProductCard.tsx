@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, TouchableOpacity, Text, Image, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import Text from './Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
-import { BorderRadius, Spacing, Typography } from '../constants/theme';
+import { BorderRadius, Spacing } from '../constants/theme';
 import { Product } from '../types/product';
 import Button from './Button';
 
@@ -31,14 +32,10 @@ export default function ProductCard({
       borderRadius: BorderRadius.lg,
       padding: Spacing.md,
       marginBottom: Spacing.md,
-      shadowColor: colors.shadow,
-      shadowOffset: {
-        width: 0,
-        height: 2,
-      },
-      shadowOpacity: 0.1,
-      shadowRadius: 4,
-      elevation: 3,
+      boxShadow: '0px 6px 15px rgba(0, 0, 0, 0.15)',
+      elevation: 8,
+      borderWidth: 0.5,
+      borderColor: colors.border,
     },
     imageContainer: {
       position: 'relative',
@@ -46,9 +43,9 @@ export default function ProductCard({
     },
     image: {
       width: '100%',
-      height: 200,
+      height: 180,
       borderRadius: BorderRadius.md,
-      backgroundColor: colors.border,
+      backgroundColor: colors.background,
     },
     wishlistButton: {
       position: 'absolute',
@@ -57,6 +54,8 @@ export default function ProductCard({
       backgroundColor: colors.background,
       borderRadius: BorderRadius.round,
       padding: Spacing.xs,
+      boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.15)',
+      elevation: 3,
     },
     discountBadge: {
       position: 'absolute',
@@ -66,22 +65,27 @@ export default function ProductCard({
       borderRadius: BorderRadius.sm,
       paddingHorizontal: Spacing.sm,
       paddingVertical: Spacing.xs,
+      boxShadow: '0px 2px 3px rgba(0, 0, 0, 0.25)',
+      elevation: 4,
     },
     discountText: {
-      ...Typography.caption,
+      fontSize: 12,
       color: '#FFFFFF',
-      fontWeight: 'bold',
+      fontWeight: '700',
     },
     content: {
       flex: 1,
     },
     name: {
-      ...Typography.h3,
+      fontSize: 16,
+      fontWeight: '600',
+      marginBottom: 4,
+      lineHeight: 20,
       color: colors.text,
-      marginBottom: Spacing.xs,
     },
     seller: {
-      ...Typography.caption,
+      fontSize: 12,
+      fontWeight: '400',
       color: colors.textSecondary,
       marginBottom: Spacing.sm,
     },
@@ -91,7 +95,8 @@ export default function ProductCard({
       marginBottom: Spacing.sm,
     },
     ratingText: {
-      ...Typography.caption,
+      fontSize: 12,
+      fontWeight: '400',
       color: colors.textSecondary,
       marginLeft: Spacing.xs,
     },
@@ -106,20 +111,20 @@ export default function ProductCard({
       alignItems: 'center',
     },
     price: {
-      ...Typography.h3,
+      fontSize: 20,
+      fontWeight: '700',
       color: colors.text,
-      fontWeight: 'bold',
     },
     originalPrice: {
-      ...Typography.body,
+      fontSize: 16,
+      fontWeight: '400',
       color: colors.textSecondary,
       textDecorationLine: 'line-through',
       marginLeft: Spacing.sm,
     },
     stockStatus: {
-      ...Typography.caption,
-      color: product.inStock ? colors.text : colors.error,
-      fontStyle: product.inStock ? 'normal' : 'italic',
+      fontSize: 12,
+      fontWeight: '400',
     },
     buttonContainer: {
       flexDirection: 'row',
@@ -128,6 +133,11 @@ export default function ProductCard({
     },
     addToCartButton: {
       flex: 1,
+      backgroundColor: colors.primary,
+      borderRadius: BorderRadius.md,
+      paddingVertical: Spacing.sm,
+      boxShadow: `0px 2px 4px ${colors.primary}40`,
+      elevation: 3,
     },
   });
 
@@ -214,7 +224,13 @@ export default function ProductCard({
               </Text>
             )}
           </View>
-          <Text style={styles.stockStatus}>
+          <Text style={[
+            styles.stockStatus,
+            {
+              color: product.inStock ? colors.text : colors.error,
+              fontStyle: product.inStock ? 'normal' : 'italic',
+            }
+          ]}>
             {product.inStock ? t('product.inStock') : t('product.outOfStock')}
           </Text>
         </View>

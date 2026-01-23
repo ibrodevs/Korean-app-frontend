@@ -1,10 +1,11 @@
 import React from 'react';
 import {
   TouchableOpacity,
-  Text,
+  
   StyleSheet,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../../components/Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 

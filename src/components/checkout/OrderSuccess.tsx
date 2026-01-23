@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import Text from '../Text';
 import { useTheme } from '../../contexts/ThemeContext';
 
 interface OrderSuccessProps {
@@ -91,7 +92,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({
           style={[styles.button, styles.primaryButton]}
           onPress={onContinueShopping}
         >
-          <Text style={[styles.buttonText, styles.primaryButtonText]}>
+          <Text style={[styles.primaryButtonText]}>
             Continue Shopping
           </Text>
         </TouchableOpacity>
@@ -100,7 +101,7 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({
           style={[styles.button, styles.secondaryButton]}
           onPress={onViewOrders}
         >
-          <Text style={[styles.buttonText, styles.secondaryButtonText]}>
+          <Text style={[styles.secondaryButtonText]}>
             View Orders
           </Text>
         </TouchableOpacity>

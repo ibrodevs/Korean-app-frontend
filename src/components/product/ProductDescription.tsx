@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import {
   View,
-  Text,
+  
   TouchableOpacity,
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { useTailwind } from 'tailwind-rn';
+import Text from '../../components/Text';
+import { useTailwind } from '../../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -59,13 +60,13 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
         {t('product.specifications')}
       </Text>
       <View style={styles.specsGrid}>
-        {product.specifications.map((spec, index) => (
+        {product.specifications && Object.entries(product.specifications).map(([key, value], index) => (
           <View key={index} style={styles.specRow}>
             <Text style={[styles.specLabel, { color: theme.textSecondary }]}>
-              {spec.key}
+              {key}
             </Text>
             <Text style={[styles.specValue, { color: theme.text }]}>
-              {spec.value}
+              {value}
             </Text>
           </View>
         ))}
@@ -81,22 +82,25 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
           {t('product.shipping')}
         </Text>
         <View style={styles.shippingOptions}>
-          {product.shippingOptions.map((option) => (
-            <View key={option.id} style={styles.shippingOption}>
+          {product.shippingInfo && (
+            <View style={styles.shippingOption}>
               <Text style={[styles.shippingName, { color: theme.text }]}>
-                {option.name}
+                {product.shippingInfo.freeShipping 
+                  ? t('product.freeShipping') 
+                  : t('product.standardShipping')
+                }
               </Text>
               <Text style={[styles.shippingPrice, { color: theme.heading }]}>
-                {option.free 
+                {product.shippingInfo.freeShipping 
                   ? t('product.freeShipping')
-                  : `${product.currency} ${option.price.toFixed(2)}`
+                  : `${product.currency} 5.99`
                 }
               </Text>
               <Text style={[styles.shippingTime, { color: theme.textSecondary }]}>
-                {option.estimatedDays} {t('product.days')}
+                {product.shippingInfo.deliveryTime}
               </Text>
             </View>
-          ))}
+          )}
         </View>
       </View>
     </View>
@@ -111,12 +115,16 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
             {product.seller.name}
           </Text>
           <View style={styles.sellerStats}>
-            <Text style={[styles.sellerRating, { color: theme.text }]}>
-              ⭐ {product.seller.rating} ({product.seller.reviewCount})
-            </Text>
-            <Text style={[styles.sellerResponse, { color: theme.textSecondary }]}>
-              {product.seller.responseRate}% {t('product.responseRate')}
-            </Text>
+            {product.seller.rating && product.seller.reviewCount && (
+              <Text style={[styles.sellerRating, { color: theme.text }]}>
+                ⭐ {product.seller.rating.toFixed(1)} ({product.seller.reviewCount})
+              </Text>
+            )}
+            {product.seller.responseRate && (
+              <Text style={[styles.sellerResponse, { color: theme.textSecondary }]}>
+                {product.seller.responseRate}% {t('product.responseRate')}
+              </Text>
+            )}
           </View>
         </View>
       </View>
@@ -145,7 +153,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
           >
             <Text
               style={[
-                styles.tabText,
+                styles.tab,
                 {
                   color: activeTab === tab ? theme.primary : theme.text,
                 },
