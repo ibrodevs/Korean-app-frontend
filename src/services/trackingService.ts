@@ -147,7 +147,7 @@ export const trackingService = {
       carrier: {
         id: 'korean_post',
         name: 'Korean Post',
-        logo: 'https://via.placeholder.com/60',
+        logo: 'https://picsum.photos/60/60?random=logo1',
         phone: '+82 2-1234-5678',
         website: 'https://koreapost.go.kr',
         trackingUrl: `https://koreapost.go.kr/tracking/${orderId}`,
@@ -178,7 +178,7 @@ export const trackingService = {
       driver: {
         name: 'Kim Min-woo',
         phone: '+82 10-9876-5432',
-        photo: 'https://via.placeholder.com/40',
+        photo: 'https://picsum.photos/40/40?random=photo1',
       },
       currentLocation: {
         latitude: 37.5665 + Math.random() * 0.01,

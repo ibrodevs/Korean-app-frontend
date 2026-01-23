@@ -271,7 +271,7 @@ export default function HomeScreen() {
   };
   
   const handleCartPress = () => {
-    navigation.navigate('Cart');
+    navigation.navigate('CartTab');
   };
 
   const handleCategoryPress = (category: Category) => {

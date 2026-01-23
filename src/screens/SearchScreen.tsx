@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  
   StyleSheet,
   FlatList,
   StatusBar,
@@ -48,7 +47,6 @@ const mockProducts: Product[] = [
 export default function SearchScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [loading, setLoading] = useState(false);
@@ -133,30 +131,30 @@ export default function SearchScreen() {
     console.log('Product pressed:', product.name);
   };
 
-  const renderProduct = ({ item }: { item: Product }) => (
-    <View style={styles.productItem}>
-      <ProductCard
-        product={item}
-        onPress={handleProductPress}
-      />
-    </View>
-  );
+  const renderProduct = ({ item }: { item: Product }) => {
+    return (
+      <View style={styles.productItem}>
+        <ProductCard product={item} onPress={handleProductPress} />
+      </View>
+    );
+  };
 
-  const renderEmptyState = () => (
-    <View style={styles.emptyContainer}>
-      <Text style={styles.emptyText}>
-        {searchQuery.trim() ? t('errors.noProducts') : t('search.startSearching')}
-      </Text>
-      <Text style={styles.emptySubtext}>
-        {searchQuery.trim() ? t('search.tryDifferentKeywords') : t('search.searchInstructions')}
-      </Text>
-    </View>
-  );
+  const renderEmptyState = () => {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>
+          {searchQuery.trim() ? t('errors.noProducts') : t('search.startSearching')}
+        </Text>
+        <Text style={styles.emptySubtext}>
+          {searchQuery.trim() ? t('search.tryDifferentKeywords') : t('search.searchInstructions')}
+        </Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor={colors.header} />
-      
       <View style={styles.header}>
         <View style={styles.searchContainer}>
           <Input
@@ -168,25 +166,21 @@ export default function SearchScreen() {
           />
         </View>
       </View>
-
       <View style={styles.content}>
-        {searchQuery.trim() && searchResults.length > 0 && (
+        {searchQuery.trim() && searchResults.length > 0 ? (
           <View style={styles.resultsHeader}>
             <Text style={styles.resultsCount}>
               {t('search.resultsCount', { count: searchResults.length })}
             </Text>
           </View>
-        )}
-
+        ) : null}
         <FlatList
           data={searchResults}
           renderItem={renderProduct}
           keyExtractor={(item) => item.id}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={renderEmptyState}
-          contentContainerStyle={
-            searchResults.length === 0 ? { flex: 1 } : undefined
-          }
+          contentContainerStyle={searchResults.length === 0 ? { flex: 1 } : undefined}
         />
       </View>
     </View>

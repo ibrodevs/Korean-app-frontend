@@ -109,7 +109,7 @@ const ProductDescription: React.FC<ProductDescriptionProps> = ({ product }) => {
   const renderSellerInfo = () => (
     <View style={[styles.sellerCard, { backgroundColor: theme.card }]}>
       <View style={styles.sellerHeader}>
-        <Ionicons name="storefront-outline" size={24} color={theme.primary} />
+        <Ionicons name="business" size={24} color={theme.primary} />
         <View style={styles.sellerInfo}>
           <Text style={[styles.sellerName, { color: theme.heading }]}>
             {product.seller.name}
@@ -259,10 +259,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 16,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
     elevation: 2,
   },
   shippingInfo: {
@@ -303,10 +300,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     padding: 16,
     borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 4,
+    boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.05)',
     elevation: 2,
   },
   sellerHeader: {

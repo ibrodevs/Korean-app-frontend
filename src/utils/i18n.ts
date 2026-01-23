@@ -38,7 +38,7 @@ i18n
       ru: { translation: ru },
     },
     fallbackLng: 'en',
-    debug: false,
+    debug: __DEV__,
     interpolation: {
       escapeValue: false,
     },

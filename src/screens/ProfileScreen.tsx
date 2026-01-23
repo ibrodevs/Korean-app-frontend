@@ -165,11 +165,13 @@ const ProfileScreen: React.FC = () => {
   };
 
   const handleAddresses = () => {
-    navigation.navigate('Addresses' as never);
+    // TODO: Create AddressesScreen and add to navigation
+    console.log('Navigate to Addresses screen - Not implemented yet');
   };
 
   const handlePaymentMethods = () => {
-    navigation.navigate('PaymentMethods' as never);
+    // TODO: Create PaymentMethodsScreen and add to navigation  
+    console.log('Navigate to Payment Methods screen - Not implemented yet');
   };
 
   const handleNotifications = () => {
