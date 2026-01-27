@@ -33,7 +33,7 @@ const CustomIllustration: React.FC<CustomIllustrationProps> = ({ type }) => {
             
             {/* Продукты */}
             <Circle cx="80" cy="100" r="8" fill={theme.error} />
-            <Rect x="90" cy="100" width="12" height="12" rx="3" fill={theme.primary} y="94" />
+            <Rect x="90" y="94" width="12" height="12" rx="3" fill={theme.primary} />
             <Path
               d="M105 100C105 104.418 101.418 108 97 108C92.5817 108 89 104.418 89 100C89 95.5817 92.5817 92 97 92C101.418 92 105 95.5817 105 100Z"
               fill={theme.heading}

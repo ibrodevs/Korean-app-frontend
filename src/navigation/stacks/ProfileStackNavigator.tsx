@@ -4,8 +4,10 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../../contexts/ThemeContext';
 
 // Screens
-import ProfileScreen from '../../screens/ProfileScreen';
+import ProfileScreen from '../../screens/ProfileScreenNew';
+import EditProfileScreen from '../../screens/EditProfileScreen';
 import SettingsStackNavigator from './SettingsStackNavigator';
+import PaymentStackNavigator from './PaymentStackNavigator';
 import SupportScreen from '../../screens/SupportScreen';
 
 // Types
@@ -45,8 +47,24 @@ const ProfileStackNavigator: React.FC = () => {
       />
       
       <Stack.Screen
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          title: t('profile.editProfile'),
+        }}
+      />
+      
+      <Stack.Screen
         name="Settings"
         component={SettingsStackNavigator}
+        options={{
+          headerShown: false,
+        }}
+      />
+      
+      <Stack.Screen
+        name="PaymentMethods"
+        component={PaymentStackNavigator}
         options={{
           headerShown: false,
         }}

@@ -84,14 +84,14 @@ export const searchService = {
   // Получение цветов
   getColors: async (): Promise<ColorOption[]> => {
     return [
-      { id: '1', name: 'Red', color: '#F76C6C', productCount: 23 },
-      { id: '2', name: 'Blue', color: '#A8D0E6', productCount: 18 },
-      { id: '3', name: 'Yellow', color: '#F8E9A1', productCount: 12 },
-      { id: '4', name: 'Purple', color: '#9B59B6', productCount: 15 },
-      { id: '5', name: 'Green', color: '#2ECC71', productCount: 21 },
-      { id: '6', name: 'Black', color: '#2C3E50', productCount: 34 },
-      { id: '7', name: 'White', color: '#ECF0F1', productCount: 28 },
-      { id: '8', name: 'Pink', color: '#F1948A', productCount: 17 },
+      { id: '1', name: 'Red', color: '#DC2626', productCount: 23 },
+      { id: '2', name: 'Blue', color: '#1774F3', productCount: 18 },
+      { id: '3', name: 'Yellow', color: '#FBBF24', productCount: 12 },
+      { id: '4', name: 'Purple', color: '#7C3AED', productCount: 15 },
+      { id: '5', name: 'Green', color: '#059669', productCount: 21 },
+      { id: '6', name: 'Black', color: '#0F172A', productCount: 34 },
+      { id: '7', name: 'White', color: '#F8FAFC', productCount: 28 },
+      { id: '8', name: 'Pink', color: '#EC4899', productCount: 17 },
     ];
   },
 

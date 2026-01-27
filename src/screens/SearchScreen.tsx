@@ -7,14 +7,11 @@ import {
 } from 'react-native';
 import Text from '../components/Text';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '@/contexts/ThemeContext';
-import { Typography, Spacing } from '@/constants/theme';
+import { useTheme } from '../contexts/ThemeContext';
+import { Typography, Spacing } from '../constants/theme';
 import { Product } from '../types/product';
-import { MainTabScreenProps } from '../types/navigation';
-import ProductCard from '@/components/ProductCard';
-import Input from '@/components/Input';
-
-type SearchScreenProps = MainTabScreenProps<'Search'>;
+import ProductCard from '../components/ProductCard';
+import Input from '../components/Input';
 
 const mockProducts: Product[] = [
   {

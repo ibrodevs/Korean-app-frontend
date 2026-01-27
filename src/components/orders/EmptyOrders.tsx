@@ -14,8 +14,8 @@ const EmptyOrders: React.FC<EmptyOrdersProps> = ({ onStartShopping }) => {
 
   return (
     <View style={styles.container}>
-      <View style={[styles.emptyIcon, { backgroundColor: theme.card, borderColor: theme.primary, borderWidth: 2 }]}>
-        <Text style={[styles.emptyIconText, { color: theme.primary }]}>📦</Text>
+      <View style={[styles.image, { backgroundColor: theme.card, borderColor: theme.primary, borderWidth: 2 }]}>
+        <Text style={[styles.title, { color: theme.primary, fontSize: 48 }]}>📦</Text>
       </View>
       
       <Text style={[styles.title, { color: theme.heading }]}>

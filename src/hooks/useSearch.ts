@@ -1,9 +1,9 @@
 import { useState, useCallback } from 'react';
-import { SearchFilters } from '../types/product';
+import { SearchFilters, Product } from '../types/product';
 import { productService } from '../services/productService';
 
 export const useSearch = () => {
-  const [searchResults, setSearchResults] = useState([]);
+  const [searchResults, setSearchResults] = useState<Product[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<SearchFilters>({

@@ -11,6 +11,7 @@ import {
 import { useTailwind } from '../utils/tailwindUtilities';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
+import { useCart } from '../contexts/CartContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
@@ -34,6 +35,7 @@ const ProductDetailScreen: React.FC = () => {
   const tailwind = useTailwind();
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { addToCart } = useCart();
   const navigation = useNavigation<NavigationProp>();
   const route = useRoute<any>();
 
@@ -93,13 +95,14 @@ const ProductDetailScreen: React.FC = () => {
     selectedColor?: any,
     selectedSize?: any
   ) => {
-    console.log('Add to cart:', {
-      product: product?.name,
-      quantity,
-      color: selectedColor?.name,
-      size: selectedSize?.name,
-    });
-    // Здесь будет логика добавления в корзину
+    if (product) {
+      addToCart(product, quantity);
+      Alert.alert(
+        t('product.addedToCart'),
+        `${product.name} ${t('product.addedToCartMessage')}`,
+        [{ text: t('common.ok') }]
+      );
+    }
   };
 
   const handleBuyNow = (
@@ -107,14 +110,12 @@ const ProductDetailScreen: React.FC = () => {
     selectedColor?: any,
     selectedSize?: any
   ) => {
-    console.log('Buy now:', {
-      product: product?.name,
-      quantity,
-      color: selectedColor?.name,
-      size: selectedSize?.name,
-    });
-    // Здесь будет логика покупки
-    navigation.navigate('Checkout');
+    if (product) {
+      // Сначала добавим в корзину
+      addToCart(product, quantity);
+      // Затем перейдем к оформлению заказа
+      navigation.navigate('Checkout');
+    }
   };
 
   const handleImagePress = (index: number) => {
@@ -168,8 +169,8 @@ const ProductDetailScreen: React.FC = () => {
         <RelatedProducts
           productId={product.id}
           category={product.category}
-          onProductPress={(product: ProductDetail) =>
-            navigation.push('ProductDetail', { product })
+          onProductPress={(productId: string) =>
+            navigation.push('ProductDetail', { productId })
           }
         />
       </ScrollView>

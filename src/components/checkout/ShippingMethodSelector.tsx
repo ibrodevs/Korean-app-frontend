@@ -22,20 +22,26 @@ const ShippingMethodSelector: React.FC<ShippingMethodSelectorProps> = ({
     {
       id: '1',
       name: 'Standard Shipping',
+      description: '5-7 business days',
       price: 10,
       estimatedDays: 5,
+      icon: 'package-outline',
     },
     {
       id: '2',
       name: 'Express Shipping',
+      description: '2-3 business days',
       price: 25,
       estimatedDays: 2,
+      icon: 'flash-outline',
     },
     {
       id: '3',
       name: 'Overnight Shipping',
+      description: 'Next business day',
       price: 50,
       estimatedDays: 1,
+      icon: 'rocket-outline',
     },
   ];
 

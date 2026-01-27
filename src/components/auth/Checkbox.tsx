@@ -12,7 +12,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 
 interface CheckboxProps {
   checked: boolean;
-  onToggle: () => void;
+  onToggle: (checked: boolean) => void; // Изменяем тип для передачи параметра
   label: string;
   labelComponent?: React.ReactNode;
 }
@@ -29,7 +29,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <TouchableOpacity
       style={tailwind('flex-row items-center')}
-      onPress={onToggle}
+      onPress={() => onToggle(!checked)}
       activeOpacity={0.7}
     >
       {/* Checkbox */}

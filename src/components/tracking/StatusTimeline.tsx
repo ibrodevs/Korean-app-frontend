@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
     top: 40,
     left: 19,
     width: 2,
-    height: 'calc(100% + 24px)',
+    height: 300, // Используем фиксированное значение вместо calc
     zIndex: 0,
   },
   statusIcon: {

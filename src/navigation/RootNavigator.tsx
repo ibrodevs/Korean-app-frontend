@@ -28,6 +28,8 @@ import PaymentErrorScreen from '../screens/errors/PaymentErrorScreen';
 // Other Screens
 import SupportScreen from '../screens/SupportScreen';
 import PaymentScreen from '../screens/PaymentScreen';
+import TestScreen from '../screens/TestScreen';
+import EditProfileScreen from '../screens/EditProfileScreen';
 
 // Types
 import { RootStackParamList } from '../types/navigation';
@@ -48,17 +50,42 @@ const RootNavigator: React.FC = () => {
 
   const initializeApp = async () => {
     try {
+      console.log('=== Initializing App ===');
+      
       // Check first launch
       const hasLaunched = await AsyncStorage.getItem('hasLaunched');
-      setIsFirstLaunch(hasLaunched === null);
+      const isFirstLaunch = hasLaunched === null;
+      setIsFirstLaunch(isFirstLaunch);
       
-      // Check authentication status
+      console.log('Has launched before:', !isFirstLaunch);
+      
+      // Если это первый запуск, очистим все данные
+      if (isFirstLaunch) {
+        console.log('First launch detected, clearing storage...');
+        await AsyncStorage.clear();
+      }
+      
+      // Check authentication status - более строгая проверка
       const token = await AsyncStorage.getItem('authToken');
-      setIsAuthenticated(!!token);
+      const isValidToken = token && token.trim() !== '' && token !== 'null' && token !== 'undefined';
+      
+      console.log('Token from storage:', token);
+      console.log('Is valid token:', isValidToken);
+      
+      setIsAuthenticated(isValidToken);
+      
+      // Добавим небольшую задержку для лучшего UX
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      console.log('=== App initialization complete ===');
+      console.log('isAuthenticated:', isValidToken);
       
       setIsLoading(false);
     } catch (error) {
       console.error('Error initializing app:', error);
+      // В случае ошибки считаем пользователя не аутентифицированным
+      setIsAuthenticated(false);
+      setIsFirstLaunch(false);
       setIsLoading(false);
     }
   };
@@ -101,15 +128,20 @@ const RootNavigator: React.FC = () => {
             <SplashScreen
               {...props}
               onFinish={() => {
-                // Закомментировано для тестирования - сразу переход на Main
-                // if (isFirstLaunch) {
-                //   props.navigation.replace('Onboarding');
-                // } else if (isAuthenticated) {
-                //   props.navigation.replace('Main');
-                // } else {
-                //   props.navigation.replace('Auth');
-                // }
-                props.navigation.replace('Main');
+                console.log('Splash finishing, isAuthenticated:', isAuthenticated);
+                // Убедимся что инициализация завершена
+                if (isLoading) {
+                  console.log('Still loading, waiting...');
+                  return;
+                }
+                
+                if (isAuthenticated) {
+                  console.log('Navigating to Main');
+                  props.navigation.replace('Main');
+                } else {
+                  console.log('Navigating to Auth');
+                  props.navigation.replace('Auth');
+                }
               }}
             />
           )}
@@ -187,6 +219,15 @@ const RootNavigator: React.FC = () => {
           }}
         />
 
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfileScreen}
+          options={{
+            headerShown: false,
+            presentation: 'card',
+          }}
+        />
+
         {/* Error Screens */}
         <Stack.Group
           screenOptions={{
@@ -230,6 +271,15 @@ const RootNavigator: React.FC = () => {
             component={PaymentScreen}
             options={{
               title: t('payment.title'),
+              presentation: 'card',
+            }}
+          />
+
+          <Stack.Screen
+            name="TestScreen"
+            component={TestScreen}
+            options={{
+              title: 'Button Test',
               presentation: 'card',
             }}
           />

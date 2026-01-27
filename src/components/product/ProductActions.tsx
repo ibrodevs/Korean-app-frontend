@@ -93,7 +93,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
       <View style={styles.modalOverlay}>
         <View style={[styles.modalContent, { backgroundColor: theme.card }]}>
           <View style={styles.modalHeader}>
-            <Text style={[styles.modalTitle, { color: theme.heading }]}>
+            <Text style={[styles.modalTitle, { color: theme.text }]}>
               Select Options
             </Text>
             <TouchableOpacity onPress={() => setShowOptionsModal(false)}>
@@ -103,7 +103,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
 
           {colors.length > 0 && (
             <View style={styles.optionSection}>
-              <Text style={[styles.optionTitle, { color: theme.heading }]}>
+              <Text style={[styles.optionTitle, { color: theme.text }]}>
                 {t('product.color')}
               </Text>
               <View style={styles.colorsContainer}>
@@ -125,7 +125,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
                       <Ionicons
                         name="checkmark"
                         size={16}
-                        color={theme.heading}
+                        color={theme.background}
                       />
                     )}
                   </TouchableOpacity>
@@ -136,7 +136,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
 
           {sizes.length > 0 && (
             <View style={styles.optionSection}>
-              <Text style={[styles.optionTitle, { color: theme.heading }]}>
+              <Text style={[styles.optionTitle, { color: theme.text }]}>
                 {t('product.size')}
               </Text>
               <View style={styles.sizesContainer}>
@@ -161,7 +161,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
                         styles.sizeText,
                         {
                           color: selectedSize?.id === size.id
-                            ? theme.heading
+                            ? theme.background
                             : theme.text,
                         },
                       ]}
@@ -184,7 +184,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
               handleAddToCart();
             }}
           >
-            <Text style={[styles.confirmButtonText, { color: theme.heading }]}>
+            <Text style={[styles.confirmButtonText, { color: '#FFFFFF' }]}>
               Confirm Selection
             </Text>
           </TouchableOpacity>
@@ -255,7 +255,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
           >
             <Ionicons name="remove" size={20} color={theme.text} />
           </TouchableOpacity>
-          <Text style={[styles.quantityValue, { color: theme.heading }]}>
+          <Text style={[styles.quantityValue, { color: theme.text }]}>
             {quantity}
           </Text>
           <TouchableOpacity
@@ -287,13 +287,13 @@ const ProductActions: React.FC<ProductActionsProps> = ({
           <Ionicons
             name="cart-outline"
             size={20}
-            color={product.stock > 0 ? theme.heading : theme.textSecondary}
+            color={product.stock > 0 ? theme.text : theme.textSecondary}
           />
           <Text
             style={[
               styles.addToCartText,
               {
-                color: product.stock > 0 ? theme.heading : theme.textSecondary,
+                color: product.stock > 0 ? theme.text : theme.textSecondary,
               },
             ]}
           >
@@ -317,7 +317,7 @@ const ProductActions: React.FC<ProductActionsProps> = ({
             style={[
               styles.buyNowText,
               {
-                color: product.stock > 0 ? theme.heading : theme.textSecondary,
+                color: product.stock > 0 ? '#FFFFFF' : theme.textSecondary,
               },
             ]}
           >
@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -5,
     right: -5,
-    color: '#F76C6C',
+    color: '#DC2626',
     fontWeight: 'bold',
   },
   confirmButton: {

@@ -5,7 +5,7 @@ import { useTheme } from '../../contexts/ThemeContext';
 
 // Screens
 import HomeScreen from '../../screens/HomeScreen';
-import ProductDetailScreen from '../../screens/ProductDetailScreen';
+import ProductDetailScreen from '../../screens/ProductDetailScreenNew';
 
 // Types
 import { HomeStackParamList } from '../../types/navigation';
@@ -47,8 +47,9 @@ const HomeStackNavigator: React.FC = () => {
         name="ProductDetail"
         component={ProductDetailScreen}
         options={({ route }) => ({
-          title: route.params.productName || t('product.details'),
+          title: route.params.product.name || t('product.details'),
           headerBackTitleVisible: true,
+          headerShown: false,
         })}
       />
     </Stack.Navigator>

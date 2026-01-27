@@ -154,7 +154,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
           <Text style={[styles.sectionTitle, { color: theme.heading }]}>
             {t('address.addressLabel')}
           </Text>
-          <View style={styles.labelOptionText,s}>
+          <View style={styles.labelOptions}>
             {labelOptions.map((option) => (
               <TouchableOpacity
                 key={option.id}
@@ -178,7 +178,7 @@ const AddressForm: React.FC<AddressFormProps> = ({
                 />
                 <Text
                   style={[
-                    styles.labelOptionText,Text,
+                    styles.labelOptionText,
                     {
                       color: selectedLabel === option.id ? theme.heading : theme.text,
                     },

@@ -1,4 +1,4 @@
-import { Product, Category, Banner } from '../types/product';
+import { Product, Category, Banner, ProductDetail } from '../types/product';
 
 // Моковые данные товаров
 const mockProducts: Product[] = [
@@ -239,42 +239,42 @@ const mockCategories: Category[] = [
     id: 'all',
     name: 'all',
     icon: 'all',
-    color: '#F8E9A1',
+    color: '#1774F3',
     productCount: mockProducts.length,
   },
   {
     id: 'cosmetics',
     name: 'cosmetics',
     icon: 'cosmetics',
-    color: '#F76C6C',
+    color: '#2563EB',
     productCount: mockProducts.filter(p => p.category === 'cosmetics').length,
   },
   {
     id: 'skincare',
     name: 'skincare',
     icon: 'skincare',
-    color: '#A8D0E6',
+    color: '#1D4ED8',
     productCount: mockProducts.filter(p => p.category === 'skincare').length,
   },
   {
     id: 'snacks',
     name: 'snacks',
     icon: 'snacks',
-    color: '#374785',
+    color: '#93C5FD',
     productCount: mockProducts.filter(p => p.category === 'snacks').length,
   },
   {
     id: 'fashion',
     name: 'fashion',
     icon: 'fashion',
-    color: '#24305E',
+    color: '#475569',
     productCount: mockProducts.filter(p => p.category === 'fashion').length,
   },
   {
     id: 'homeDecor',
     name: 'homeDecor',
     icon: 'homeDecor',
-    color: '#F8E9A1',
+    color: '#1774F3',
     productCount: mockProducts.filter(p => p.category === 'homeDecor').length,
   },
 ];
@@ -286,7 +286,7 @@ const mockBanners: Banner[] = [
     title: 'Summer Sale',
     subtitle: 'Up to 50% off on Korean cosmetics',
     image: 'https://images.unsplash.com/photo-1596462502278-27bfdc403348?w=400',
-    backgroundColor: '#A8D0E6',
+    backgroundColor: '#1774F3',
     action: {
       type: 'category',
       target: 'cosmetics',
@@ -297,7 +297,7 @@ const mockBanners: Banner[] = [
     title: 'New Arrivals',
     subtitle: 'Discover latest Korean fashion trends',
     image: 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=400',
-    backgroundColor: '#F8E9A1',
+    backgroundColor: '#2563EB',
     action: {
       type: 'category',
       target: 'fashion',
@@ -308,7 +308,7 @@ const mockBanners: Banner[] = [
     title: 'Free Shipping',
     subtitle: 'On orders over $50',
     image: 'https://images.unsplash.com/photo-1563245372-f21724e3856d?w=400',
-    backgroundColor: '#F76C6C',
+    backgroundColor: '#1D4ED8',
     action: {
       type: 'url',
       target: '/shipping-info',

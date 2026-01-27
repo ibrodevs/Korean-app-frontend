@@ -12,8 +12,8 @@ import { Order } from './order';
 
 // Main Tab Navigator
 export type MainTabParamList = {
-  HomeTab: NavigatorScreenParams<HomeStackParamList>;
-  SearchTab: NavigatorScreenParams<SearchStackParamList>;
+  HomeTab: NavigatorScreenParams<HomeStackParamList>; // Возвращаем обратно HomeTab
+  FavoritesTab: NavigatorScreenParams<FavoritesStackParamList>;
   OrdersTab: NavigatorScreenParams<OrdersStackParamList>;
   ProfileTab: NavigatorScreenParams<ProfileStackParamList>;
   CartTab: NavigatorScreenParams<CartStackParamList>;
@@ -22,15 +22,12 @@ export type MainTabParamList = {
 // Home Stack
 export type HomeStackParamList = {
   HomeMain: undefined;
-  ProductDetail: { productId: string; productName?: string };
+  ProductDetail: { product: Product };
 };
 
-// Search Stack
-export type SearchStackParamList = {
-  SearchMain: undefined;
-  SearchResults: { query: string; filters?: any };
-  AdvancedSearch: undefined;
-  FilterScreen: { initialFilters?: any; onApplyFilters?: (filters: any) => void };
+// Favorites Stack (instead of Search)
+export type FavoritesStackParamList = {
+  FavoritesMain: undefined;
   ProductDetail: { productId: string; productName?: string };
 };
 
@@ -42,13 +39,22 @@ export type OrdersStackParamList = {
 // Profile Stack
 export type ProfileStackParamList = {
   ProfileMain: undefined;
+  EditProfile: undefined;
   Settings: NavigatorScreenParams<SettingsStackParamList>;
+  PaymentMethods: undefined;
   Support: undefined;
 };
 
 // Settings Stack
 export type SettingsStackParamList = {
   SettingsMain: undefined;
+};
+
+// Search Stack
+export type SearchStackParamList = {
+  SearchMain: undefined;
+  SearchResults: { query: string };
+  AdvancedSearch: { query?: string; category?: string };
 };
 
 // Cart Stack
@@ -64,6 +70,7 @@ export type CheckoutStackParamList = {
 
 // Auth Stack
 export type AuthStackParamList = {
+  AuthScreen: undefined;
   Welcome: undefined;
   Login: undefined;
   Register: undefined;
@@ -80,8 +87,13 @@ export type RootStackParamList = {
   ProductDetail: { product?: Product; productId?: string };
   Checkout: undefined;
   OrderTracking: { orderId: string };
-  AdvancedSearch: undefined;
+  AdvancedSearch: { query?: string; category?: string };
+  Search: undefined;
   Settings: NavigatorScreenParams<SettingsStackParamList>;
+  EditProfile: { 
+    profile: any; 
+    onSave: (updatedProfile: any) => void;
+  };
   // Modal screens
   ProductDetailModal: { productId: string; productName?: string };
   QuickView: { productId: string };
@@ -92,6 +104,7 @@ export type RootStackParamList = {
   PaymentError: { errorCode?: string; errorMessage?: string };
   Support: undefined;
   Payment: undefined;
+  TestScreen: undefined;
 };
 
 export type RootNavigationProp = NativeStackNavigationProp<RootStackParamList>;
@@ -100,10 +113,10 @@ export type MainTabNavigationProp = BottomTabNavigationProp<MainTabParamList>;
 export type MainTabScreenProps<Screen extends keyof MainTabParamList> = BottomTabScreenProps<MainTabParamList, Screen>;
 
 export type HomeScreenProps = NativeStackScreenProps<HomeStackParamList, 'HomeMain'>;
-export type SearchScreenProps = NativeStackScreenProps<SearchStackParamList, 'SearchMain'>;
 export type OrdersScreenProps = NativeStackScreenProps<OrdersStackParamList, 'OrdersMain'>;
 export type ProfileScreenProps = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
 export type ProductDetailScreenProps = NativeStackScreenProps<HomeStackParamList, 'ProductDetail'>;
+export type SearchScreenProps = NativeStackScreenProps<SearchStackParamList, 'SearchMain'>;
 
 declare global {
   namespace ReactNavigation {

@@ -204,7 +204,10 @@ const goToProfile = () => {
   };
 
   const handleStartShopping = () => {
-    navigation.navigate('Home' as never);
+    const parentNavigation = navigation.getParent();
+    if (parentNavigation) {
+      parentNavigation.navigate('Main', { screen: 'HomeTab' });
+    }
   };
 
   const handleRefresh = () => {

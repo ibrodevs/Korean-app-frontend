@@ -45,11 +45,11 @@ const AddressCard: React.FC<AddressCardProps> = ({
   const getLabelColor = () => {
     switch (address.label) {
       case 'home':
-        return '#F76C6C';
+        return '#059669';
       case 'work':
-        return '#374785';
+        return '#1774F3';
       default:
-        return '#A8D0E6';
+        return '#64748B';
     }
   };
 

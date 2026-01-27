@@ -2,11 +2,13 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        primary: '#F8E9A1',
-        error: '#F76C6C',
-        secondary: '#A8D0E6',
-        heading: '#374785',
-        background: '#24305E',
+        primary: '#1774F3',
+        error: '#DC2626',
+        success: '#059669',
+        warning: '#D97706',
+        secondary: '#475569',
+        heading: '#0F172A',
+        background: '#1774F3',
       },
       fontFamily: {
         sans: ['-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],

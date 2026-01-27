@@ -64,7 +64,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
         >
           {item.name}
         </Text>
-        <Text style={[styles.productPrice, { color: theme.heading }]}>
+        <Text style={[styles.productPrice, { color: theme.text }]}>
           {item.currency} {item.price.toFixed(2)}
         </Text>
       </View>
@@ -77,7 +77,7 @@ const RelatedProducts: React.FC<RelatedProductsProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.title, { color: theme.heading }]}>
+      <Text style={[styles.title, { color: theme.text }]}>
         {t('product.relatedProducts')}
       </Text>
       {loading ? (

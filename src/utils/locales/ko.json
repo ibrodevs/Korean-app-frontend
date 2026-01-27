@@ -415,6 +415,8 @@
     "update": "업데이트"
   },
   "profile": {
+    "title": "프로필",
+    "currency": "통화",
     "account": "계정",
     "settings": "설정",
     "orders": "내 주문",
@@ -436,6 +438,8 @@
     "premium": "프리미엄",
     "memberSince": "가입일",
     "editProfile": "프로필 편집",
+    "light": "라이트",
+    "dark": "다크",
     "totalSpent": "총 사용 금액",
     "points": "포인트",
     "name": "이름",
@@ -495,9 +499,14 @@
     "highestAmount": "가격 높은 순",
     "lowestAmount": "가격 낮은 순"
   },
+  "favorites": {
+    "title": "즐겨찾기",
+    "empty": "즐겨찾기가 없습니다",
+    "emptyDescription": "하트 아이콘을 눌러 상품을 즐겨찾기에 추가하세요"
+  },
   "navigation": {
     "home": "홈",
-    "search": "검색",
+    "favorites": "즐겨찾기",
     "cart": "장바구니",
     "orders": "주문내역",
     "profile": "프로필"

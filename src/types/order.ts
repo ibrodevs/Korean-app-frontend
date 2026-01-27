@@ -14,6 +14,8 @@ export interface ShippingAddress {
   country: string;
   isDefault?: boolean;
   label?: 'home' | 'work' | 'other';
+  street?: string; // Добавляем поле для обратной совместимости
+  phone?: string; // Добавляем поле для обратной совместимости
 }
 
 export interface ShippingMethod {
@@ -32,6 +34,8 @@ export interface PaymentMethod {
   icon: string;
   lastFour?: string;
   expiryDate?: string;
+  brand?: string; // Добавляем поле для обратной совместимости
+  last4?: string; // Добавляем поле для обратной совместимости
 }
 
 export interface OrderItem {
@@ -42,6 +46,9 @@ export interface OrderItem {
   price: number;
   color?: string;
   size?: string;
+  name?: string; // Добавляем поле для обратной совместимости
+  variant?: string; // Добавляем поле для обратной совместимости
+  image?: string; // Добавляем поле для обратной совместимости
 }
 
 export interface Order {
@@ -132,18 +139,56 @@ export const MOCK_ORDERS: OrderHistory[] = [
     items: [
       {
         id: '101',
+        productId: '1',
+        product: {
+          id: '1',
+          name: 'Korean Face Sunscreen SPF 50+',
+          description: 'Premium sunscreen',
+          price: 24.99,
+          currency: 'USD',
+          category: 'Skincare',
+          images: ['https://picsum.photos/150/150?random=order1'],
+          rating: 4.8,
+          reviewCount: 120,
+          stock: 50,
+          isNew: false,
+          isFeatured: true,
+          isBestSeller: true,
+          tags: ['sunscreen'],
+          seller: { id: '1', name: 'Korean Beauty Co', rating: 4.9 },
+          inStock: true,
+        },
+        quantity: 2,
+        price: 24.99,
         name: 'Korean Face Sunscreen SPF 50+',
         variant: '50ml',
-        price: 24.99,
-        quantity: 2,
         image: 'https://picsum.photos/150/150?random=order1',
       },
       {
         id: '102',
+        productId: '2',
+        product: {
+          id: '2',
+          name: 'Snail Mucin Essence',
+          description: 'Hydrating essence',
+          price: 18.50,
+          currency: 'USD',
+          category: 'Skincare',
+          images: ['https://picsum.photos/150/150?random=order2'],
+          rating: 4.7,
+          reviewCount: 89,
+          stock: 30,
+          isNew: false,
+          isFeatured: false,
+          isBestSeller: false,
+          tags: ['essence'],
+          seller: { id: '1', name: 'Korean Beauty Co', rating: 4.9 },
+          inStock: true,
+        },
+        quantity: 1,
+        price: 18.50,
         name: 'Snail Mucin Essence',
         variant: '100ml',
-        price: 18.50,
-        quantity: 1,
         image: 'https://picsum.photos/150/150?random=order2',
       },
     ],

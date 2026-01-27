@@ -4,10 +4,12 @@ import {
   ActivityIndicator,
   StyleSheet,
   StatusBar,
+  TouchableOpacity,
 } from 'react-native';
 import Text from '../components/Text';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface SplashScreenProps {
   onFinish?: () => Promise<void> | void;

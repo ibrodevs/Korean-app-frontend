@@ -254,7 +254,11 @@
     "rating": "Rating",
     "bestSellers": "Best Sellers",
     "newProducts": "New Products",
-    "featuredProducts": "Featured Products"
+    "featuredProducts": "Featured Products",
+    "addedToCart": "Added to Cart",
+    "addedToCartMessage": "has been added to your cart",
+    "addedToFavorites": "Added to Favorites",
+    "removeFavorite": "Removed from Favorites"
   },
   "cart": {
     "title": "Cart",
@@ -368,6 +372,8 @@
     "update": "Update"
   },
   "profile": {
+    "title": "Profile",
+    "currency": "Currency",
     "account": "Account",
     "settings": "Settings",
     "orders": "My Orders",
@@ -389,6 +395,11 @@
     "premium": "Premium",
     "memberSince": "Member since",
     "editProfile": "Edit Profile",
+    "light": "Light",
+    "dark": "Dark",
+    "premium": "Premium",
+    "memberSince": "Member since",
+    "editProfile": "Edit Profile",
     "totalSpent": "Total Spent",
     "points": "Points",
     "name": "Name",
@@ -400,9 +411,14 @@
     "location": "Location",
     "locationPlaceholder": "Enter your location"
   },
+  "favorites": {
+    "title": "Favorites",
+    "empty": "No favorites yet",
+    "emptyDescription": "Add products to your favorites by tapping the heart icon"
+  },
   "navigation": {
     "home": "Home",
-    "search": "Search",
+    "favorites": "Favorites",
     "cart": "Cart",
     "orders": "Orders",
     "profile": "Profile"

@@ -15,14 +15,13 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({
   onViewOrders,
 }) => {
   const { theme } = useTheme();
-  const colors = theme.colors;
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.background,
+      backgroundColor: theme.background,
       paddingHorizontal: 20,
     },
     successIcon: {
@@ -32,19 +31,19 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({
     title: {
       fontSize: 24,
       fontWeight: 'bold',
-      color: colors.text,
+      color: theme.text,
       marginBottom: 12,
       textAlign: 'center',
     },
     subtitle: {
       fontSize: 16,
-      color: colors.textSecondary,
+      color: theme.textSecondary,
       marginBottom: 8,
       textAlign: 'center',
     },
     orderNumber: {
       fontSize: 14,
-      color: colors.primary,
+      color: theme.primary,
       fontWeight: '600',
       marginBottom: 32,
       textAlign: 'center',
@@ -61,22 +60,22 @@ const OrderSuccess: React.FC<OrderSuccessProps> = ({
       justifyContent: 'center',
     },
     primaryButton: {
-      backgroundColor: colors.primary,
+      backgroundColor: theme.primary,
     },
     secondaryButton: {
-      backgroundColor: colors.secondary,
+      backgroundColor: theme.secondary,
       borderWidth: 1,
-      borderColor: colors.primary,
+      borderColor: theme.primary,
     },
     buttonText: {
       fontSize: 16,
       fontWeight: '600',
     },
     primaryButtonText: {
-      color: colors.headerBackground,
+      color: theme.text,
     },
     secondaryButtonText: {
-      color: colors.primary,
+      color: theme.primary,
     },
   });
 

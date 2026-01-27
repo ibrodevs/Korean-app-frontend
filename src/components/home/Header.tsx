@@ -72,11 +72,11 @@ const Header: React.FC<HeaderProps> = ({ onMenuPress, onSearchPress, onCartPress
           onPress={onMenuPress}
           activeOpacity={0.7}
         >
-          <Ionicons name="menu-outline" size={28} color={theme.primary} />
+          <Ionicons name="menu-outline" size={28} color="#FFFFFF" />
         </TouchableOpacity>
 
         <View style={styles.titleContainer}>
-          <Text style={[styles.title, { color: theme.primary }]}>
+          <Text style={[styles.title, { color: '#FFFFFF' }]}>
             {t('home.title')}
           </Text>
         </View>
@@ -87,7 +87,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuPress, onSearchPress, onCartPress
             onPress={handleCartPress}
             activeOpacity={0.7}
           >
-            <Ionicons name="cart-outline" size={28} color={theme.primary} />
+            <Ionicons name="cart-outline" size={28} color="#FFFFFF" />
             <View style={[styles.cartBadge, { backgroundColor: theme.error }]}>
               <Text style={styles.cartBadgeText}>3</Text>
             </View>

@@ -168,6 +168,7 @@ export const checkoutService = {
         orderNumber,
         userId: 'user_1',
         ...orderData,
+        discount: 0, // Добавляем отсутствующее поле
         status: 'pending',
         createdAt: new Date().toISOString(),
         estimatedDelivery: new Date(Date.now() + 

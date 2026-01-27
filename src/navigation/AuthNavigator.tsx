@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 
 // Auth Screens
+import AuthScreen from "../screens/AuthScreen";
 import LoginScreen from "../screens/LoginScreen";
 import RegisterScreen from "../screens/RegisterScreen";
 import ForgotPasswordScreen from "../screens/ForgotPasswordScreen";
@@ -33,9 +34,17 @@ const AuthNavigator: React.FC = () => {
 
   return (
     <Stack.Navigator
-      initialRouteName="Login"
+      initialRouteName="AuthScreen"
       screenOptions={screenOptions}
     >
+      <Stack.Screen
+        name="AuthScreen"
+        component={AuthScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
+
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -50,7 +59,7 @@ const AuthNavigator: React.FC = () => {
         component={RegisterScreen}
         options={{
           title: t('auth.register'),
-          headerBackTitle: t('common.back'),
+          headerShown: false,
         }}
       />
       

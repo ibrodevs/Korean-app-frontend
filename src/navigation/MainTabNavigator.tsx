@@ -2,12 +2,13 @@ import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
+import { useCart } from '../contexts/CartContext';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Platform } from 'react-native';
 
 // Stack Navigators
 import HomeStackNavigator from './stacks/HomeStackNavigator';
-import SearchStackNavigator from './stacks/SearchStackNavigator';
+import FavoritesStackNavigator from './stacks/FavoritesStackNavigator';
 import OrdersStackNavigator from './stacks/OrdersStackNavigator';
 import ProfileStackNavigator from './stacks/ProfileStackNavigator';
 import CartStackNavigator from './stacks/CartStackNavigator';
@@ -20,6 +21,7 @@ const Tab = createBottomTabNavigator<MainTabParamList>();
 const MainTabNavigator: React.FC = () => {
   const { t } = useTranslation();
   const { theme } = useTheme();
+  const { getCartItemsCount } = useCart();
 
   const getTabBarIcon = (routeName: string, focused: boolean, color: string, size: number) => {
     let iconName: string;
@@ -28,11 +30,11 @@ const MainTabNavigator: React.FC = () => {
       case 'HomeTab':
         iconName = focused ? 'home' : 'home-outline';
         break;
-      case 'SearchTab':
-        iconName = focused ? 'search' : 'search-outline';
+      case 'FavoritesTab':
+        iconName = focused ? 'heart' : 'heart-outline';
         break;
       case 'CartTab':
-        iconName = focused ? 'cart' : 'cart-outline';
+        iconName = focused ? 'bag' : 'bag-outline';
         break;
       case 'OrdersTab':
         iconName = focused ? 'list' : 'list-outline';
@@ -52,23 +54,29 @@ const MainTabNavigator: React.FC = () => {
     tabBarIcon: ({ focused, color, size }: any) =>
       getTabBarIcon(route.name, focused, color, size),
     tabBarActiveTintColor: theme.primary,
-    tabBarInactiveTintColor: theme.textSecondary,
+    tabBarInactiveTintColor: theme.textHint,
     tabBarStyle: {
-      backgroundColor: theme.navBackground,
+      backgroundColor: theme.background,
       borderTopColor: theme.border,
-      height: 60,
-      paddingTop: 5,
-      paddingBottom: Platform.OS === 'ios' ? 20 : 5,
-      elevation: 10,
-      boxShadow: '0px -2px 4px rgba(0, 0, 0, 0.1)',
+      borderTopWidth: 1,
+      height: 70,
+      paddingTop: 8,
+      paddingBottom: Platform.OS === 'ios' ? 25 : 8,
+      elevation: 12,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
     },
     tabBarLabelStyle: {
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: '600' as const,
-      marginBottom: Platform.OS === 'ios' ? 0 : 2,
+      marginBottom: 2,
+      marginTop: -2,
     },
     tabBarItemStyle: {
-      paddingVertical: 4,
+      paddingVertical: 6,
+      minHeight: 50,
     },
     tabBarHideOnKeyboard: true,
   });
@@ -88,10 +96,10 @@ const MainTabNavigator: React.FC = () => {
       />
       
       <Tab.Screen
-        name="SearchTab"
-        component={SearchStackNavigator}
+        name="FavoritesTab"
+        component={FavoritesStackNavigator}
         options={{
-          title: t('navigation.search'),
+          title: 'Favorites',
         }}
       />
       
@@ -100,7 +108,7 @@ const MainTabNavigator: React.FC = () => {
         component={CartStackNavigator}
         options={{
           title: t('navigation.cart'),
-          tabBarBadge: 3,
+          tabBarBadge: getCartItemsCount() > 0 ? getCartItemsCount() : undefined,
         }}
       />
       

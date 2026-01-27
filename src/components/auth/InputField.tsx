@@ -42,7 +42,7 @@ const InputField: React.FC<InputFieldProps> = ({
         style={[
           styles.label,
           { color: theme.textSecondary },
-          error && { color: theme.error },
+          error ? { color: theme.error } : null,
         ]}
       >
         {label}
@@ -77,7 +77,7 @@ const InputField: React.FC<InputFieldProps> = ({
           style={[
             styles.input,
             { color: theme.text },
-            icon && { paddingLeft: 0 },
+            icon ? { paddingLeft: 0 } : null,
           ]}
           placeholderTextColor={theme.textSecondary}
           value={value}
