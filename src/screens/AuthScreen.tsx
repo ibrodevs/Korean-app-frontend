@@ -14,6 +14,9 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BlueImg from '../../assets/Ellipse.svg'
+import ShopImg from '../../assets/Shoppingbag.png'
+import WelcomeImg from '../../assets/Welcome.png'
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -48,29 +51,17 @@ const AuthScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={['#1E3A8A', '#1E40AF', '#1D4ED8']}
-        style={styles.gradient}
-      >
+
+            <Text style={styles.headerTitle}>Korean Shop</Text>
+            {/* <img style={styles.shopbag} src={ShopImg} alt="" /> */}
+          <View style={styles.shopbag}>
+          <img style={styles.blueimg} src={BlueImg} alt="" />
+          <img style={styles.WelcomePhoto} src={WelcomeImg} alt="" />
+          </View>
+          
+
         {/* Main Content */}
         <View style={styles.content}>
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={styles.headerTitle}>Korean Shop</Text>
-          </View>
-
-          {/* Logo/Sample Section */}
-          <View style={styles.sampleSection}>
-            <View style={styles.sampleContainer}>
-              <Text style={styles.sampleText}>SAMPLE</Text>
-              <Text style={styles.boldSampleText}>SAMPLE</Text>
-              <Text style={styles.boldSampleText}>SAMPLE</Text>
-            </View>
-          </View>
-
-          {/* Divider Line */}
-          <View style={styles.dividerLine} />
-
           {/* Buttons Section */}
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
@@ -100,18 +91,8 @@ const AuthScreen: React.FC = () => {
             <View style={styles.socialPlaceholder}>
               <View style={styles.socialLine} />
             </View>
-
-            {/* Debug Button - Remove in production */}
-            <TouchableOpacity
-              style={styles.debugButton}
-              onPress={handleClearStorage}
-              activeOpacity={0.7}
-            >
-              <Text style={styles.debugButtonText}>Clear Storage (Debug)</Text>
-            </TouchableOpacity>
           </View>
         </View>
-      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -119,7 +100,10 @@ const AuthScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
+    backgroundColor: '#fff',
+  },
+  shopbag:{
+    flex: 1
   },
   gradient: {
     flex: 1,
@@ -127,33 +111,29 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     paddingHorizontal: 24,
-    paddingTop: 20,
+  },
+  WelcomePhoto:{
+    marginBottom: 320
+  },
+  blueimg:{
+    marginBottom: -300
+
   },
   header: {
+    paddingTop: 130,
+    fontSize: 32,
+    fontWeight: '700',
+    backgroundColor: '#1779F3',
     alignItems: 'center',
-    marginTop: 20,
-    marginBottom: 40,
   },
   headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FFFFFF',
     letterSpacing: 1,
-  },
-  sampleSection: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sampleContainer: {
-    alignItems: 'center',
-  },
-  sampleText: {
-    fontSize: 32,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    letterSpacing: 4,
-    marginBottom: 8,
+    backgroundColor: '#1779F3',
+    textAlign: 'center',
+    paddingTop: 120,
   },
   boldSampleText: {
     fontSize: 32,
@@ -172,35 +152,38 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   loginButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1779F3',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
+    marginTop: 100,
     marginBottom: 16,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
+    
   },
   loginButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#1E3A8A',
+    color: '#fff',
   },
   registerButton: {
+    fontWeight: 800,
     backgroundColor: 'transparent',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
     marginBottom: 32,
     borderWidth: 2,
-    borderColor: '#FFFFFF',
+    borderColor: '#1779F3',
   },
   registerButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FFFFFF',
+    color: '#1779F3',
   },
   dividerSection: {
     flexDirection: 'row',
@@ -210,42 +193,26 @@ const styles = StyleSheet.create({
   divider: {
     flex: 1,
     height: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: '#333333',
   },
   dividerText: {
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: '#333333',
     fontSize: 14,
     marginHorizontal: 16,
     fontWeight: '500',
   },
   socialPlaceholder: {
     alignItems: 'center',
+    height: 38,
   },
   socialLine: {
     width: '100%',
-    height: 40,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    height: 50,
+    backgroundColor: '#fff',
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.2)',
-    borderStyle: 'dashed',
-  },
-  // Debug styles - remove in production
-  debugButton: {
-    backgroundColor: 'rgba(255, 0, 0, 0.2)',
-    borderRadius: 6,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    alignItems: 'center',
-    marginTop: 20,
-    borderWidth: 1,
-    borderColor: 'rgba(255, 0, 0, 0.5)',
-  },
-  debugButtonText: {
-    color: '#FFAAAA',
-    fontSize: 12,
-    fontWeight: '500',
-  },
+    borderColor: '#BDBDBD',
+  }
 });
 
 export default AuthScreen;
