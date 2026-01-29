@@ -19,6 +19,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BlueImg from '../../assets/blue2.svg'
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -28,18 +29,29 @@ const RegisterScreen: React.FC = () => {
   
   const [formData, setFormData] = useState({
     name: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword);
+  };
+
   const handleRegister = async () => {
-    if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+    if (!formData.name || !formData.lastName || !formData.email || !formData.password || !formData.confirmPassword) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
@@ -86,10 +98,10 @@ const RegisterScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={['#1E3A8A', '#1E40AF', '#1D4ED8']}
-        style={styles.gradient}
-      >
+        <View style={{height: 100, backgroundColor: '#1779F3'}}></View>
+        <View>
+          <img src={BlueImg} alt="Background Ellipse" />
+        </View>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoidingView}
@@ -115,13 +127,28 @@ const RegisterScreen: React.FC = () => {
             <View style={styles.formSection}>
               {/* Name Field */}
               <View style={styles.inputGroup}>
-                <Text style={styles.inputLabel}>name</Text>
+                <Text style={styles.inputLabel}>first name</Text>
                 <TextInput
                   style={styles.input}
                   placeholder="John"
                   placeholderTextColor="rgba(255, 255, 255, 0.6)"
                   value={formData.name}
                   onChangeText={(value) => handleInputChange('name', value)}
+                  autoCapitalize="words"
+                  autoCorrect={false}
+                  selectionColor="#FFFFFF"
+                />
+              </View>
+
+              {/* Last Name Field */}
+              <View style={styles.inputGroup}>
+                <Text style={styles.inputLabel}>last name</Text>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Max"
+                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                  value={formData.lastName}
+                  onChangeText={(value) => handleInputChange('lastName', value)}
                   autoCapitalize="words"
                   autoCorrect={false}
                   selectionColor="#FFFFFF"
@@ -147,33 +174,57 @@ const RegisterScreen: React.FC = () => {
               {/* Password Field */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>password</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="your password"
-                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                  value={formData.password}
-                  onChangeText={(value) => handleInputChange('password', value)}
-                  secureTextEntry={true}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  selectionColor="#FFFFFF"
-                />
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="your password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                    value={formData.password}
+                    onChangeText={(value) => handleInputChange('password', value)}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    selectionColor="#FFFFFF"
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={togglePasswordVisibility}
+                  >
+                    <Ionicons
+                      name={showPassword ? "eye-off" : "eye"}
+                      size={24}
+                      color="rgba(255, 255, 255, 0.6)"
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Confirm Password Field */}
               <View style={styles.inputGroup}>
                 <Text style={styles.inputLabel}>confirm password</Text>
-                <TextInput
-                  style={styles.input}
-                  placeholder="your password"
-                  placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                  value={formData.confirmPassword}
-                  onChangeText={(value) => handleInputChange('confirmPassword', value)}
-                  secureTextEntry={true}
-                  autoCapitalize="none"
-                  autoCorrect={false}
-                  selectionColor="#FFFFFF"
-                />
+                <View style={styles.passwordContainer}>
+                  <TextInput
+                    style={styles.passwordInput}
+                    placeholder="your password"
+                    placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                    value={formData.confirmPassword}
+                    onChangeText={(value) => handleInputChange('confirmPassword', value)}
+                    secureTextEntry={!showConfirmPassword}
+                    autoCapitalize="none"
+                    autoCorrect={false}
+                    selectionColor="#FFFFFF"
+                  />
+                  <TouchableOpacity
+                    style={styles.eyeIcon}
+                    onPress={toggleConfirmPasswordVisibility}
+                  >
+                    <Ionicons
+                      name={showConfirmPassword ? "eye-off" : "eye"}
+                      size={24}
+                      color="rgba(255, 255, 255, 0.6)"
+                    />
+                  </TouchableOpacity>
+                </View>
               </View>
 
               {/* Register Button */}
@@ -197,7 +248,6 @@ const RegisterScreen: React.FC = () => {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
-      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -205,21 +255,45 @@ const RegisterScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
   },
   gradient: {
     flex: 1,
   },
+  backgroundImageContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1,
+  },
+  backgroundImage: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.3,
+  },
+  backgroundEllipse: {
+    position: 'absolute',
+    width: 1100,
+    height: 600,
+    left: -110,
+    top: -60,
+    backgroundColor: '#1779F3',
+    borderRadius: 298,
+    opacity: 0.3,
+  },
   keyboardAvoidingView: {
     flex: 1,
+    zIndex: 2,
   },
   header: {
+
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
-    paddingTop: 20,
-    paddingBottom: 40,
+    marginTop: -710,
+    paddingBottom: 45,
   },
   backButton: {
     padding: 4,
@@ -261,13 +335,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255, 255, 255, 0.3)',
   },
+  passwordContainer: {
+    position: 'relative',
+  },
+  passwordInput: {
+    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingRight: 60,
+    fontSize: 16,
+    color: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: '39%',
+    transform: [{ translateY: -12 }],
+    padding: 4,
+  },
   registerButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1779F3',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 40,
+    marginTop: 120,
+    marginBottom: 20,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -276,8 +371,8 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#1E3A8A',
+    fontWeight: '800',
+    color: '#FFFFFF',
   },
   loginContainer: {
     flexDirection: 'row',
@@ -286,13 +381,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   loginText: {
-    color: 'rgba(255, 255, 255, 0.8)',
-    fontSize: 16,
+    color: '#1779F3',
+    fontSize: 18,
   },
   loginLink: {
-    color: '#FFFFFF',
-    fontSize: 16,
-    fontWeight: '600',
+    color: '#1779F3',
+    fontSize: 18,
+    fontWeight: '700',
   },
 });
 

@@ -6,13 +6,15 @@ import {
   StyleSheet,
   StatusBar,
   TouchableOpacity,
+  Animated,
 } from 'react-native';
 import Text from '../components/Text';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BlueImg from '../../assets/Ellipse.svg'
+import ShopImg from '../../assets/Shoppingbag.png'
 import WelcomeImg from '../../assets/Welcome.png'
-import BlueBg from '../../assets/Ellipse.svg'
 import SplashGif from '../../assets/splash.gif'
 interface SplashScreenProps {
   onFinish?: () => Promise<void> | void;
@@ -23,6 +25,8 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
   const { t } = useTranslation();
   const { theme, isDark } = useTheme();
   const hasNavigated = useRef(false);
+  const slideAnim = useRef(new Animated.Value(0)).current;
+  const opacityAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -31,29 +35,42 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
       }
 
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 4000));
         
-        hasNavigated.current = true;
-        
-        if (typeof onFinish === 'function') {
-          const result = onFinish();
-          if (result instanceof Promise) {
-            await result;
+        Animated.parallel([
+          Animated.timing(slideAnim, {
+            toValue: 500,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+          Animated.timing(opacityAnim, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: true,
+          }),
+        ]).start(() => {
+          hasNavigated.current = true;
+          
+          if (typeof onFinish === 'function') {
+            const result = onFinish();
+            if (result instanceof Promise) {
+              result.catch(error => console.error('onFinish error:', error));
+            }
           }
-        }
+        });
       } catch (error) {
         console.error('Splash screen initialization error:', error);
         if (typeof onFinish === 'function') {
           const result = onFinish();
           if (result instanceof Promise) {
-            await result;
+            result.catch(error => console.error('onFinish error:', error));
           }
         }
       }
     };
 
     initializeApp();
-  }, [onFinish]);
+  }, [onFinish, slideAnim, opacityAnim]);
 
   return (
     <View style={[
@@ -63,35 +80,40 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish, navigation }) => 
         barStyle={isDark ? 'light-content' : 'dark-content'}
         backgroundColor={theme.background}
       />
+                  <Text style={styles.headerTitle}>Korean Shop</Text>
+      
+      <View style={styles.shopbag}>
+                <img style={styles.blueimg} src={BlueImg} alt="" />
+                <img style={styles.WelcomePhoto} src={WelcomeImg} alt="" />
+      </View>
 
-      <View style={styles.blueimg}>
-        <img src={BlueBg} alt="" />
-      <View style={styles.appNameContainer}>
-          <Text style={[
-            styles.appName
-          ]}>
-            {t('appName')}
-          </Text>
-        </View>
-      <View style={styles.loadingContainer}>
-        <Image source={WelcomeImg} style={styles.welcomeImg} />
-        </View>
-      <View style={styles.loadingContainer}>
+
+      <Animated.View style={[styles.loadingContainer, { transform: [{ translateY: slideAnim }], opacity: opacityAnim }]}>
         <Image source={SplashGif} style={styles.logo} />
-        </View>
-      </View>
-      </View>
+      </Animated.View>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   logo: {
-    width: 150,
-    height: 150,
+    width: 300,
+    height: 300,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    letterSpacing: 1,
+    backgroundColor: '#1779F3',
+    textAlign: 'center',
+    paddingTop: 120,
+  },
   loadingContainer:{
+    width: '100%',
+    height: 200,
     justifyContent: 'center', 
     alignItems: 'center', 
   },
@@ -111,8 +133,8 @@ const styles = StyleSheet.create({
     color: '#fff'
   },
   welcomeImg: {
-    width: 480,
-    height: 350,
+    width: 430,
+    height: 300,
     marginTop: -150
   },
   indicator: {
@@ -123,9 +145,15 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     letterSpacing: 0.5,
   },
+  shopbag:{
+    flex: 1
+  },
   blueimg:{
-    marginBottom: -150
-  }
+    marginBottom: -300
+  },
+  WelcomePhoto:{
+
+  },
 });
 
 export default SplashScreen;

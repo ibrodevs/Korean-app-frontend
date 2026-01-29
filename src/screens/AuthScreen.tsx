@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import {
   View,
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
   StatusBar,
+  Animated,
 } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Text from '../components/Text';
@@ -24,6 +25,16 @@ const AuthScreen: React.FC = () => {
   const { theme } = useTheme();
   const navigation = useNavigation<NavigationProp>();
 
+  const slideUpAnim = useRef(new Animated.Value(300)).current;
+
+  useEffect(() => {
+    Animated.timing(slideUpAnim, {
+      toValue: 0,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   const handleLogin = () => {
     navigation.navigate('Login');
   };
@@ -33,20 +44,9 @@ const AuthScreen: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
-    // TODO: Implement Google login
     console.log('Google login pressed');
   };
 
-  // Для отладки - кнопка очистки storage
-  const handleClearStorage = async () => {
-    try {
-      await AsyncStorage.clear();
-      console.log('Storage cleared!');
-      // Можно перезапустить приложение или показать алерт
-    } catch (error) {
-      console.error('Error clearing storage:', error);
-    }
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -58,12 +58,9 @@ const AuthScreen: React.FC = () => {
           <img style={styles.blueimg} src={BlueImg} alt="" />
           <img style={styles.WelcomePhoto} src={WelcomeImg} alt="" />
           </View>
-          
 
-        {/* Main Content */}
         <View style={styles.content}>
-          {/* Buttons Section */}
-          <View style={styles.buttonsContainer}>
+          <Animated.View style={[styles.buttonsContainer, { transform: [{ translateY: slideUpAnim }] }]}>
             <TouchableOpacity
               style={styles.loginButton}
               onPress={handleLogin}
@@ -80,18 +77,16 @@ const AuthScreen: React.FC = () => {
               <Text style={styles.registerButtonText}>Register</Text>
             </TouchableOpacity>
 
-            {/* Divider with Text */}
             <View style={styles.dividerSection}>
               <View style={styles.divider} />
               <Text style={styles.dividerText}>Or login with</Text>
               <View style={styles.divider} />
             </View>
 
-            {/* Social Login Placeholder */}
             <View style={styles.socialPlaceholder}>
               <View style={styles.socialLine} />
             </View>
-          </View>
+          </Animated.View>
         </View>
     </SafeAreaView>
   );
@@ -128,7 +123,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: '900',
     color: '#FFFFFF',
     letterSpacing: 1,
     backgroundColor: '#1779F3',
