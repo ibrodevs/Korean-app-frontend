@@ -18,6 +18,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../types/navigation';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BlueImg from '../../assets/Ellipse.svg'
+import Loginimg from '../../assets/Login.png'
 
 type NavigationProp = NativeStackNavigationProp<AuthStackParamList>;
 
@@ -30,9 +32,18 @@ const LoginScreen: React.FC = () => {
     password: '',
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const handleBack = () => {
+    navigation.goBack();
   };
 
   const handleLogin = async () => {
@@ -71,24 +82,16 @@ const LoginScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" />
-      <LinearGradient
-        colors={['#1E3A8A', '#1E40AF', '#1D4ED8']}
-        style={styles.gradient}
-      >
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={styles.keyboardAvoidingView}
-        >
-          {/* Header */}
+        ><View>
           <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.backButton}
-              onPress={() => navigation.goBack()}
-            >
-              <Ionicons name="arrow-back" size={24} color="white" />
-            </TouchableOpacity>
+          </View>
+          <View>
+          <img style={styles.blueimg} src={BlueImg} alt="" />
+          <img style={styles.loginimg} src={Loginimg} alt="" />
             <Text style={styles.headerTitle}>Login</Text>
-            <View style={{ width: 24 }} /> {/* Spacer for alignment */}
           </View>
 
           {/* Form Section */}
@@ -98,31 +101,36 @@ const LoginScreen: React.FC = () => {
               <Text style={styles.inputLabel}>email</Text>
               <TextInput
                 style={styles.input}
-                placeholder="yourmail@mail.com"
-                placeholderTextColor="rgba(255, 255, 255, 0.6)"
+                placeholder="yourgmail@gmail.com"
+                placeholderTextColor="#BDBDBD"
                 value={formData.email}
                 onChangeText={(value) => handleInputChange('email', value)}
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
-                selectionColor="#FFFFFF"
+                selectionColor="#BDBDBD"
               />
             </View>
 
             {/* Password Field */}
             <View style={styles.inputGroup}>
               <Text style={styles.inputLabel}>password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="your password"
-                placeholderTextColor="rgba(255, 255, 255, 0.6)"
-                value={formData.password}
-                onChangeText={(value) => handleInputChange('password', value)}
-                secureTextEntry={true}
-                autoCapitalize="none"
-                autoCorrect={false}
-                selectionColor="#FFFFFF"
-              />
+              <View style={styles.inputContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="your password"
+                  placeholderTextColor="#BDBDBD"
+                  value={formData.password}
+                  onChangeText={(value) => handleInputChange('password', value)}
+                  secureTextEntry={!isPasswordVisible}
+                  autoCapitalize="none"
+                  autoCorrect={false}
+                  selectionColor="#BDBDBD"
+                />
+                <TouchableOpacity onPress={togglePasswordVisibility} style={styles.eyeIcon}>
+                  <Ionicons name={isPasswordVisible ? "eye-off" : "eye"} size={24} color="#BDBDBD" />
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Forgot Password Link */}
@@ -152,8 +160,8 @@ const LoginScreen: React.FC = () => {
               </TouchableOpacity>
             </View>
           </View>
+          </View>
         </KeyboardAvoidingView>
-      </LinearGradient>
     </SafeAreaView>
   );
 };
@@ -161,28 +169,29 @@ const LoginScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1E3A8A',
   },
-  gradient: {
-    flex: 1,
-  },
-  keyboardAvoidingView: {
-    flex: 1,
-  },
-  header: {
+  header:{
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 24,
     paddingTop: 20,
     paddingBottom: 40,
+    backgroundColor: '#1779F3',
+    height: 80,
+  },
+  keyboardAvoidingView: {
+    flex: 1,
   },
   backButton: {
     padding: 4,
   },
   headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 38,
+    fontWeight: '700',
+    marginTop: -35,
+    marginBottom: 50,
+    marginLeft: 20,
     color: '#FFFFFF',
     letterSpacing: 1,
   },
@@ -197,36 +206,47 @@ const styles = StyleSheet.create({
   inputLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#FFFFFF',
+    color: '#333333',
     marginBottom: 8,
     textTransform: 'none',
     letterSpacing: 0.5,
   },
   input: {
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    backgroundColor: '#F2F2F2',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 16,
     fontSize: 16,
-    color: '#FFFFFF',
+    color: '#333333',
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
+    borderColor: '#F2F2F2',
+    paddingRight: 50,
+  },
+  inputContainer: {
+    position: 'relative',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 16,
+    top: '50%',
+    transform: [{ translateY: -12 }],
   },
   forgotPasswordContainer: {
     alignItems: 'flex-end',
-    marginBottom: 40,
+    marginBottom: 30,
   },
   forgotPasswordText: {
-    color: '#FFFFFF',
+    marginTop: -15,
+    color: '#1779F3',
     fontSize: 14,
     opacity: 0.8,
   },
   loginButton: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#1779F3',
     borderRadius: 8,
     paddingVertical: 16,
     alignItems: 'center',
-    marginBottom: 32,
+    marginBottom: 25,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
@@ -235,8 +255,8 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#1E3A8A',
+    fontWeight: '900',
+    color: '#FFFFFF',
   },
   registerContainer: {
     flexDirection: 'row',
@@ -246,14 +266,20 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   registerText: {
-    color: 'rgba(255, 255, 255, 0.8)',
+    color: '#1779F3',
     fontSize: 16,
   },
   registerLink: {
-    color: '#FFFFFF',
+    color: '#1779F3',
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
   },
+  loginimg:{
+    marginLeft: 30,
+    width: 430,
+    height: 365,
+    marginTop: -410
+  }
 });
 
 export default LoginScreen;
