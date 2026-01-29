@@ -50,7 +50,7 @@ const ProfileStackNavigator: React.FC = () => {
         name="EditProfile"
         component={EditProfileScreen}
         options={{
-          title: t('profile.editProfile'),
+          headerShown: false,
         }}
       />
       

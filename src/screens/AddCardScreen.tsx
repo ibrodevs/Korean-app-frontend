@@ -8,19 +8,23 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Alert,
+  Image,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Text from '../components/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigation } from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
+import BlueBg from '../../assets/Ellipse.svg';
 
 export default function AddCardScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const route = useRoute();
   const { theme } = useTheme();
+  const blueBgSource = typeof BlueBg === 'string' ? { uri: BlueBg } : BlueBg;
+
+  const onAdd = (route as any)?.params?.onAdd || null;
   
   const [formData, setFormData] = useState({
     cardHolder: '',
@@ -69,14 +73,39 @@ export default function AddCardScreen() {
 
   const handleSave = () => {
     if (validateForm()) {
-      Alert.alert('Success', 'Card added successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
+      const rawNumber = formData.cardNumber.replace(/\D/g, '');
+      const cardType = rawNumber.startsWith('4')
+        ? 'VISA'
+        : rawNumber.startsWith('5')
+          ? 'MASTERCARD'
+          : 'AMEX';
+
+      const newCard = {
+        id: Date.now().toString(),
+        cardHolder: formData.cardHolder.trim(),
+        cardNumber: formData.cardNumber,
+        cardNumberRaw: rawNumber,
+        expiryDate: formData.expiryDate,
+        cvv: formData.cvv,
+        type: cardType,
+      };
+
+      if (onAdd) {
+        onAdd(newCard);
+        navigation.goBack();
+      } else {
+        (navigation as any).dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'PaymentMethods', params: { newCard } }],
+          })
+        );
+      }
     }
   };
 
   const formatCardNumber = (text: string) => {
-    const cleaned = text.replace(/\s/g, '');
+    const cleaned = text.replace(/\D/g, '').slice(0, 16);
     const match = cleaned.match(/.{1,4}/g);
     return match ? match.join(' ') : cleaned;
   };
@@ -94,38 +123,28 @@ export default function AddCardScreen() {
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <StatusBar backgroundColor="#4A90E2" barStyle="light-content" />
-      
-      {/* Header with gradient background */}
-      <LinearGradient
-        colors={['#4A90E2', '#357ABD']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.headerGradient}
-      >
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Payment methods</Text>
-          <View style={styles.placeholder} />
-        </View>
+      <StatusBar backgroundColor="#1779F3" barStyle="light-content" />
 
-        {/* Wave bottom */}
-        <View style={styles.waveContainer}>
-          <View style={styles.wave} />
-        </View>
-      </LinearGradient>
+      <Image source={blueBgSource} style={styles.blueimg} resizeMode="cover" />
 
-      <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
-        <Text style={styles.sectionTitle}>Add Card</Text>
+      <View style={styles.header}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+        </Pressable>
+        <Text style={styles.headerTitle}>Payment methods</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <View style={[styles.sheet, { backgroundColor: theme.backgroundSecondary }]}>
+        <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
+          <Text style={[styles.sectionTitle, { color: theme.text }]}>Add Card</Text>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Card Holder</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Card Holder</Text>
           <TextInput
-            style={[styles.input, errors.cardHolder ? styles.inputError : null]}
+            style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cardHolder ? styles.inputError : null]}
             placeholder="Required"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textHint}
             value={formData.cardHolder}
             onChangeText={(text) => handleInputChange('cardHolder', text)}
             autoCapitalize="words"
@@ -136,17 +155,15 @@ export default function AddCardScreen() {
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Card Number</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Card Number</Text>
           <TextInput
-            style={[styles.input, errors.cardNumber ? styles.inputError : null]}
+            style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cardNumber ? styles.inputError : null]}
             placeholder="Required"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textHint}
             value={formData.cardNumber}
             onChangeText={(text) => {
               const formatted = formatCardNumber(text);
-              if (formatted.replace(/\s/g, '').length <= 16) {
-                handleInputChange('cardNumber', formatted);
-              }
+              handleInputChange('cardNumber', formatted);
             }}
             keyboardType="numeric"
             maxLength={19}
@@ -158,11 +175,11 @@ export default function AddCardScreen() {
 
         <View style={styles.row}>
           <View style={[styles.inputGroup, styles.halfWidth]}>
-            <Text style={styles.label}>Valid</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Valid</Text>
             <TextInput
-              style={[styles.input, errors.expiryDate ? styles.inputError : null]}
+              style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.expiryDate ? styles.inputError : null]}
               placeholder="Required"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={theme.textHint}
               value={formData.expiryDate}
               onChangeText={(text) => {
                 const formatted = formatExpiryDate(text);
@@ -177,11 +194,11 @@ export default function AddCardScreen() {
           </View>
 
           <View style={[styles.inputGroup, styles.halfWidth]}>
-            <Text style={styles.label}>CVV</Text>
+            <Text style={[styles.label, { color: theme.text }]}>CVV</Text>
             <TextInput
-              style={[styles.input, errors.cvv ? styles.inputError : null]}
+              style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cvv ? styles.inputError : null]}
               placeholder="Required"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={theme.textHint}
               value={formData.cvv}
               onChangeText={(text) => {
                 if (text.length <= 4) {
@@ -198,10 +215,11 @@ export default function AddCardScreen() {
           </View>
         </View>
 
-        <Pressable style={styles.saveButton} onPress={handleSave}>
-          <Text style={styles.saveButtonText}>Save Changes</Text>
-        </Pressable>
-      </ScrollView>
+          <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSave}>
+            <Text style={styles.saveButtonText}>Save Changes</Text>
+          </Pressable>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -211,17 +229,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
-  headerGradient: {
-    paddingTop: StatusBar.currentHeight || 0,
-    paddingBottom: 40,
-    position: 'relative',
+  blueimg: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 48,
+    paddingBottom: 16,
   },
   backButton: {
     width: 40,
@@ -235,37 +256,26 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
   },
+  sheet: {
+    flex: 1,
+    backgroundColor: '#F9FAFB',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 20,
+  },
   placeholder: {
     width: 40,
-  },
-  waveContainer: {
-    position: 'absolute',
-    bottom: -1,
-    left: 0,
-    right: 0,
-    height: 40,
-    overflow: 'hidden',
-  },
-  wave: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 40,
-    backgroundColor: '#F9FAFB',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
   },
   formContainer: {
     flex: 1,
     paddingHorizontal: 24,
+    paddingBottom: 24,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: '#1F2937',
-    marginBottom: 32,
-    marginTop: 24,
+    marginBottom: 24,
   },
   inputGroup: {
     marginBottom: 24,
@@ -277,10 +287,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
+    backgroundColor: '#F1F3FF',
+    borderRadius: 10,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 14,
     fontSize: 16,
     color: '#1F2937',
     borderWidth: 1,
@@ -303,12 +313,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   saveButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: '#1E78F2',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 40,
+    marginTop: 20,
+    marginBottom: 32,
   },
   saveButtonText: {
     fontSize: 16,

@@ -5,17 +5,38 @@ import AddCardScreen from '../../screens/AddCardScreen';
 import EditCardScreen from '../../screens/EditCardScreen';
 
 export type PaymentStackParamList = {
-  PaymentMethods: undefined;
+  PaymentMethods: {
+    newCard?: {
+      id: string;
+      cardHolder: string;
+      cardNumber: string;
+      cardNumberRaw: string;
+      expiryDate: string;
+      cvv: string;
+      type: 'VISA' | 'MASTERCARD' | 'AMEX';
+    };
+    updatedCard?: {
+      id: string;
+      cardHolder: string;
+      cardNumber: string;
+      cardNumberRaw: string;
+      expiryDate: string;
+      cvv: string;
+      type: 'VISA' | 'MASTERCARD' | 'AMEX';
+    };
+    deletedCardId?: string;
+  } | undefined;
   AddCard: undefined;
   EditCard: { 
     card: {
       id: string;
       cardHolder: string;
       cardNumber: string;
+      cardNumberRaw: string;
       expiryDate: string;
       cvv: string;
       type: 'VISA' | 'MASTERCARD' | 'AMEX';
-    }
+    };
   };
 };
 
