@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import BlueImg from '../../assets/blue2.svg'
 
 // Компоненты
 import InputField from '../components/auth/InputField';
@@ -32,11 +33,14 @@ const ForgotPasswordScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
   
   const [email, setEmail] = useState('');
+  const [verificationCode, setVerificationCode] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isCodeSent, setIsCodeSent] = useState(false);
+  const [canResend, setCanResend] = useState(false);
+  const [resendTimer, setResendTimer] = useState(60);
 
-  const handleSubmit = async () => {
+  const handleSendCode = async () => {
     const emailError = validateEmail(email);
     
     if (emailError) {
@@ -50,17 +54,10 @@ const ForgotPasswordScreen: React.FC = () => {
       const response = await authService.forgotPassword(email);
       
       if (response.success) {
-        setIsSubmitted(true);
-        Alert.alert(
-          'Success',
-          response.message,
-          [
-            {
-              text: 'OK',
-              onPress: () => navigation.goBack(),
-            },
-          ]
-        );
+        setIsCodeSent(true);
+        setCanResend(false);
+        setResendTimer(60);
+        Alert.alert('Success', 'Verification code sent to your email');
       } else {
         Alert.alert('Error', response.message);
       }
@@ -69,6 +66,40 @@ const ForgotPasswordScreen: React.FC = () => {
         t('auth.errors.networkError'),
         t('auth.errors.unknownError')
       );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendCode = async () => {
+    setCanResend(false);
+    setResendTimer(60);
+    await handleSendCode();
+  };
+
+  const handleAccept = async () => {
+    if (!verificationCode) {
+      setError('Please enter the verification code');
+      return;
+    }
+    
+    setIsLoading(true);
+    
+    try {
+      // Here you would verify the code with your backend
+      // For now, we'll simulate success
+      Alert.alert(
+        'Success',
+        'Password reset code verified successfully!',
+        [
+          {
+            text: 'OK',
+            onPress: () => navigation.navigate('Auth', { screen: 'Login' }),
+          },
+        ]
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Invalid verification code');
     } finally {
       setIsLoading(false);
     }
@@ -113,83 +144,124 @@ const ForgotPasswordScreen: React.FC = () => {
               { color: theme.textSecondary },
             ]}
           >
-            {isSubmitted
-              ? 'Check your email for password reset instructions'
-              : 'Enter your email to receive password reset instructions'
+            {isCodeSent
+              ? 'Enter the verification code sent to your email'
+              : 'Enter your email to receive a verification code'
             }
           </Text>
         </View>
 
-        {!isSubmitted ? (
-          <>
-            {/* Форма */}
-            <View style={tailwind('mb-8')}>
-              <InputField
-                label={t('auth.email')}
-                placeholder="your.email@example.com"
-                value={email}
-                onChangeText={(value: string) => {
-                  setEmail(value);
-                  setError('');
-                }}
-                error={error}
-                icon="mail-outline"
-                keyboardType="email-address"
-                autoCapitalize="none"
-                editable={!isLoading}
-              />
+        {/* Form */}
+        <View style={tailwind('mb-8')}>
+          {/* Email Field */}
+          <InputField
+            label="Email"
+            placeholder="your.email@example.com"
+            value={email}
+            onChangeText={(value: string) => {
+              setEmail(value);
+              setError('');
+            }}
+            error={!isCodeSent ? error : ''}
+            icon="mail-outline"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            editable={!isLoading && !isCodeSent}
+          />
 
-              {/* Кнопка отправки */}
+          {!isCodeSent ? (
+            /* Send Code Button */
+            <TouchableOpacity
+              style={[
+                tailwind('rounded-xl py-4 items-center mt-6'),
+                { backgroundColor: theme.primary },
+                isLoading && tailwind('opacity-70'),
+              ]}
+              onPress={handleSendCode}
+              disabled={isLoading}
+              activeOpacity={0.8}
+            >
+              <Text
+                style={[
+                  tailwind('text-lg font-semibold'),
+                  { color: '#FFFFFF' },
+                ]}
+              >
+                {isLoading ? 'Sending...' : 'Send a code'}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <>
+              {/* Verification Code Field */}
+              <View style={tailwind('mt-6')}>
+                <Text
+                  style={[
+                    tailwind('text-sm mb-2'),
+                    { color: theme.text },
+                  ]}
+                >
+                  Code from message
+                </Text>
+                <InputField
+                  label=""
+                  placeholder="Your code"
+                  value={verificationCode}
+                  onChangeText={(value: string) => {
+                    setVerificationCode(value);
+                    setError('');
+                  }}
+                  error={error}
+                  icon="lock-closed-outline"
+                  keyboardType="number-pad"
+                  autoCapitalize="none"
+                  editable={!isLoading}
+                  maxLength={6}
+                />
+              </View>
+
+              {/* Resend Code Button */}
               <TouchableOpacity
                 style={[
-                  tailwind('rounded-xl py-4 items-center mt-6'),
+                  tailwind('py-3 items-center mt-4'),
+                  !canResend && tailwind('opacity-50'),
+                ]}
+                onPress={handleResendCode}
+                disabled={!canResend || isLoading}
+                activeOpacity={0.8}
+              >
+                <Text
+                  style={[
+                    tailwind('text-base'),
+                    { color: theme.primary },
+                  ]}
+                >
+                  {canResend ? 'Resend the code' : `Resend in ${resendTimer}s`}
+                </Text>
+              </TouchableOpacity>
+
+              {/* Accept Button */}
+              <TouchableOpacity
+                style={[
+                  tailwind('rounded-xl py-4 items-center mt-8'),
                   { backgroundColor: theme.primary },
                   isLoading && tailwind('opacity-70'),
                 ]}
-                onPress={handleSubmit}
+                onPress={handleAccept}
                 disabled={isLoading}
                 activeOpacity={0.8}
               >
                 <Text
                   style={[
                     tailwind('text-lg font-semibold'),
-                    { color: theme.heading },
+                    { color: '#FFFFFF' },
                   ]}
                 >
-                  {isLoading ? '...' : 'Send Reset Instructions'}
+                  {isLoading ? 'Verifying...' : 'Accept'}
                 </Text>
               </TouchableOpacity>
-            </View>
-          </>
-        ) : (
-          <View style={tailwind('items-center py-10')}>
-            <Text
-              style={[
-                tailwind('text-lg text-center mb-6'),
-                { color: theme.text },
-              ]}
-            >
-              We've sent password reset instructions to your email address.
-            </Text>
-            <TouchableOpacity
-              style={[
-                tailwind('rounded-xl py-4 items-center px-8'),
-                { backgroundColor: theme.primary },
-              ]}
-              onPress={() => navigation.navigate('Auth', { screen: 'Login' })}
-              activeOpacity={0.8}
-            >
-              <Text
-                style={[
-                  tailwind('text-lg font-semibold'),
-                  { color: theme.heading },
-                ]}
-              >
-                Back to Login
-              </Text>
-            </TouchableOpacity>
-          </View>
-        )}
+            </>
+          )}
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );
