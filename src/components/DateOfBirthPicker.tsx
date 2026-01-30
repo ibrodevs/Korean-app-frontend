@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   View,
   StyleSheet,
@@ -28,8 +28,14 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
 }) => {
   const { theme, isDark } = useTheme();
   
-  // Генерируем массивы для выбора
-  const days = Array.from({ length: 31 }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  const getDaysInMonth = (monthName: string, yearValue: string) => {
+    const monthIndex = months.indexOf(monthName);
+    const yearNumber = parseInt(yearValue, 10);
+    if (monthIndex < 0 || Number.isNaN(yearNumber)) {
+      return 31;
+    }
+    return new Date(yearNumber, monthIndex + 1, 0).getDate();
+  };
   const months = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
@@ -47,6 +53,15 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
         year: parts[2]
       };
     }
+    if (dateString.includes('/')) {
+      const [day, month, year] = dateString.split('/');
+      const monthIndex = Math.max(0, Math.min(11, parseInt(month, 10) - 1));
+      return {
+        day: day.padStart(2, '0'),
+        month: months[monthIndex],
+        year
+      };
+    }
     return {
       day: '27',
       month: 'January', 
@@ -58,6 +73,19 @@ const DateOfBirthPicker: React.FC<DateOfBirthPickerProps> = ({
   const [selectedDay, setSelectedDay] = useState(initial.day);
   const [selectedMonth, setSelectedMonth] = useState(initial.month);
   const [selectedYear, setSelectedYear] = useState(initial.year);
+
+  const days = useMemo(() => {
+    const maxDays = getDaysInMonth(selectedMonth, selectedYear);
+    return Array.from({ length: maxDays }, (_, i) => (i + 1).toString().padStart(2, '0'));
+  }, [selectedMonth, selectedYear]);
+
+  useEffect(() => {
+    const maxDays = getDaysInMonth(selectedMonth, selectedYear);
+    const dayNumber = parseInt(selectedDay, 10);
+    if (dayNumber > maxDays) {
+      setSelectedDay(maxDays.toString().padStart(2, '0'));
+    }
+  }, [selectedMonth, selectedYear, selectedDay]);
 
   const handleUpdate = () => {
     const formattedDate = `${selectedDay} ${selectedMonth} ${selectedYear}`;

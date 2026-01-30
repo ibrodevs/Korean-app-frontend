@@ -4,15 +4,18 @@ import {
   ScrollView,
   StyleSheet,
   TouchableOpacity,
+  Modal,
   Image,
   Alert,
   SafeAreaView,
   StatusBar,
 } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from '../contexts/ThemeContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
+import { useActionSheet } from '@expo/react-native-action-sheet';
 import Text from '../components/Text';
 import DateOfBirthPicker from '../components/DateOfBirthPicker';
 
@@ -32,10 +35,10 @@ interface EditProfileScreenProps {
     };
   };
 }
-
 const EditProfileScreen: React.FC = () => {
   const { t } = useTranslation();
   const { theme, isDark } = useTheme();
+  const { showActionSheetWithOptions } = useActionSheet();
   const navigation = useNavigation();
   const route = useRoute();
   
@@ -55,9 +58,68 @@ const EditProfileScreen: React.FC = () => {
 
   const [profile, setProfile] = useState(initialProfile);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showGenderPicker, setShowGenderPicker] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
-    setProfile((prev: any) => ({ ...prev, [field]: value }));
+    setProfile((prev: any) => {
+      const updated = { ...prev, [field]: value };
+      onSave(updated);
+      return updated;
+    });
+  };
+
+  const handlePickImage = async () => {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission required', 'Please allow access to your photos.');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets?.length) {
+      handleInputChange('avatar', result.assets[0].uri);
+    }
+  };
+
+  const handleTakePhoto = async () => {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
+      Alert.alert('Permission required', 'Please allow access to your camera.');
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled && result.assets?.length) {
+      handleInputChange('avatar', result.assets[0].uri);
+    }
+  };
+
+  const handleAvatarActionSheet = () => {
+    const options = ['Gallery', 'Cancel'];
+    const cancelButtonIndex = 1;
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (selectedIndex) => {
+        if (selectedIndex === 0) {
+          handlePickImage();
+        }
+      }
+    );
   };
 
   const handleSave = () => {
@@ -77,14 +139,22 @@ const EditProfileScreen: React.FC = () => {
     return dateString;
   };
 
+  const genderOptions = ['Male', 'Female'];
+
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       
       {/* Header */}
       <View style={[styles.header, { backgroundColor: theme.background }]}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color={theme.text} />
+        <TouchableOpacity
+          onPress={() => {
+            onSave(profile);
+            navigation.goBack();
+          }}
+          style={styles.backButton}
+        >
+          <Ionicons name="arrow-back" size={30} color={theme.text} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, { color: theme.text }]}>Edit Profile</Text>
         <View style={{ width: 24 }} />
@@ -98,7 +168,10 @@ const EditProfileScreen: React.FC = () => {
               source={{ uri: profile.avatar }}
               style={styles.avatar}
             />
-            <TouchableOpacity style={[styles.editImageButton, { backgroundColor: theme.primary }]}>
+            <TouchableOpacity
+              style={[styles.editImageButton, { backgroundColor: theme.primary }]}
+              onPress={handleAvatarActionSheet}
+            >
               <Ionicons name="pencil" size={16} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
@@ -107,7 +180,7 @@ const EditProfileScreen: React.FC = () => {
         {/* Form Fields */}
         <View style={styles.formSection}>
           {/* Name Field */}
-          <View style={[styles.fieldContainer, { borderBottomColor: theme.border }]}>
+          <View style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <View style={styles.fieldContent}>
               <Ionicons name="person-outline" size={20} color={theme.textSecondary} />
               <Text style={[styles.fieldValue, { color: theme.text }]}>
@@ -118,7 +191,7 @@ const EditProfileScreen: React.FC = () => {
 
           {/* Date of Birth Field */}
           <TouchableOpacity
-            style={[styles.fieldContainer, { borderBottomColor: theme.border }]}
+            style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}
             onPress={() => setShowDatePicker(true)}
           >
             <View style={styles.fieldContent}>
@@ -130,7 +203,7 @@ const EditProfileScreen: React.FC = () => {
           </TouchableOpacity>
 
           {/* Email Field */}
-          <View style={[styles.fieldContainer, { borderBottomColor: theme.border }]}>
+          <View style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}>
             <View style={styles.fieldContent}>
               <Ionicons name="mail-outline" size={20} color={theme.textSecondary} />
               <Text style={[styles.fieldValue, { color: theme.text }]}>
@@ -140,15 +213,31 @@ const EditProfileScreen: React.FC = () => {
           </View>
 
           {/* Gender Field */}
-          <TouchableOpacity style={[styles.fieldContainer, { borderBottomColor: theme.border }]}>
-            <View style={[styles.fieldContent, { justifyContent: 'space-between' }]}>
-              <Text style={[styles.fieldLabel, { color: theme.textSecondary }]}>
-                Gender
-              </Text>
-              <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+          <TouchableOpacity
+            style={[styles.fieldContainer, { borderColor: theme.border, backgroundColor: theme.card }]}
+            onPress={() => setShowGenderPicker(true)}
+          >
+            <View style={styles.fieldRowBetween}>
+              <View style={styles.fieldContent}>
+                <Ionicons name="male-female-outline" size={20} color={theme.textSecondary} />
+                <Text style={[styles.fieldValue, { color: theme.text }]}>Gender</Text>
+              </View>
+              <View style={styles.genderValueRow}>
+                <Text style={[styles.genderValue, { color: theme.textSecondary }]}> 
+                  {profile.gender || 'Select'}
+                </Text>
+                <Ionicons name="chevron-forward" size={20} color={theme.textSecondary} />
+              </View>
             </View>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[styles.saveButton, { backgroundColor: theme.primary }]}
+          onPress={handleSave}
+        >
+          <Text style={styles.saveButtonText}>Save</Text>
+        </TouchableOpacity>
 
       </ScrollView>
 
@@ -159,6 +248,40 @@ const EditProfileScreen: React.FC = () => {
         onSelect={(date) => handleInputChange('birthDate', date)}
         initialDate={formatDisplayDate(profile.birthDate)}
       />
+
+      <Modal
+        visible={showGenderPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowGenderPicker(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={[styles.modalContent, { backgroundColor: theme.card }]}> 
+            <View style={styles.modalHeader}>
+              <Text style={[styles.modalTitle, { color: theme.text }]}>Gender</Text>
+              <TouchableOpacity onPress={() => setShowGenderPicker(false)}>
+                <Ionicons name="close" size={22} color={theme.text} />
+              </TouchableOpacity>
+            </View>
+
+            {genderOptions.map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={styles.modalOption}
+                onPress={() => {
+                  handleInputChange('gender', option);
+                  setShowGenderPicker(false);
+                }}
+              >
+                <Text style={[styles.modalOptionText, { color: theme.text }]}>{option}</Text>
+                {profile.gender === option && (
+                  <Ionicons name="checkmark" size={20} color={theme.primary} />
+                )}
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -177,9 +300,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     padding: 4,
+    marginTop: 8,
   },
   headerTitle: {
-    fontSize: 18,
+    textAlign: 'left',
+    marginLeft: 12,
+    marginTop: 6,
+    flex: 1,
+    fontSize: 20,
     fontWeight: '600',
   },
   scrollView: {
@@ -212,13 +340,35 @@ const styles = StyleSheet.create({
   formSection: {
     paddingHorizontal: 20,
   },
+  saveButton: {
+    marginHorizontal: 20,
+    marginTop: 8,
+    marginBottom: 24,
+    paddingVertical: 14,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 17,
+    fontWeight: '600',
+  },
   fieldContainer: {
-    paddingVertical: 20,
-    borderBottomWidth: 0.5,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderRadius: 14,
+    marginBottom: 16,
   },
   fieldContent: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  fieldRowBetween: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   fieldLabel: {
     fontSize: 17,
@@ -228,6 +378,45 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontWeight: '400',
     marginLeft: 15,
+  },
+  genderValueRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  genderValue: {
+    fontSize: 16,
+    marginRight: 8,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 30,
+    paddingTop: 16,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+  },
+  modalOptionText: {
+    fontSize: 17,
   },
 });
 

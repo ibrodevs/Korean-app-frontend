@@ -39,7 +39,10 @@ export type OrdersStackParamList = {
 // Profile Stack
 export type ProfileStackParamList = {
   ProfileMain: undefined;
-  EditProfile: undefined;
+  EditProfile: { 
+    profile: any; 
+    onSave: (updatedProfile: any) => void;
+  };
   Settings: NavigatorScreenParams<SettingsStackParamList>;
   PaymentMethods: undefined;
   Support: undefined;

@@ -9,18 +9,20 @@ import {
   Platform,
   ScrollView,
   Alert,
+  Image,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Text from '../components/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { CommonActions, useNavigation, useRoute } from '@react-navigation/native';
 import { useTheme } from '../contexts/ThemeContext';
+import BlueBg from '../../assets/Ellipse.svg';
 
 interface PaymentCard {
   id: string;
   cardHolder: string;
   cardNumber: string;
+  cardNumberRaw: string;
   expiryDate: string;
   cvv: string;
   type: 'VISA' | 'MASTERCARD' | 'AMEX';
@@ -31,20 +33,25 @@ export default function EditCardScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const { theme } = useTheme();
+  const blueBgSource = typeof BlueBg === 'string' ? { uri: BlueBg } : BlueBg;
   
   // Get card data from route params or use default
   const cardData = (route.params as { card?: PaymentCard })?.card || {
     id: '1',
     cardHolder: 'Romina',
     cardNumber: '•••• •••• •••• 1579',
+    cardNumberRaw: '4242424242421579',
     expiryDate: '12/28',
     cvv: '209',
     type: 'VISA' as const
   };
 
+  const onSave = (route.params as { onSave?: (card: PaymentCard) => void })?.onSave || null;
+  const onDelete = (route.params as { onDelete?: (cardId: string) => void })?.onDelete || null;
+
   const [formData, setFormData] = useState({
     cardHolder: cardData.cardHolder,
-    cardNumber: cardData.cardNumber,
+    cardNumber: cardData.cardNumberRaw,
     expiryDate: cardData.expiryDate,
     cvv: cardData.cvv,
   });
@@ -65,12 +72,16 @@ export default function EditCardScreen() {
       newErrors.cardHolder = 'Card holder name is required';
     }
     
-    if (!formData.cardNumber.replace(/\s/g, '').replace(/•/g, '')) {
+    if (!formData.cardNumber.replace(/\D/g, '')) {
       newErrors.cardNumber = 'Card number is required';
+    } else if (formData.cardNumber.replace(/\D/g, '').length < 16) {
+      newErrors.cardNumber = 'Card number must be 16 digits';
     }
     
     if (!formData.expiryDate) {
       newErrors.expiryDate = 'Expiry date is required';
+    } else if (!/^\d{2}\/\d{2}$/.test(formData.expiryDate)) {
+      newErrors.expiryDate = 'Format: MM/YY';
     }
     
     if (!formData.cvv) {
@@ -83,9 +94,26 @@ export default function EditCardScreen() {
 
   const handleSave = () => {
     if (validateForm()) {
-      Alert.alert('Success', 'Card updated successfully!', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
+      const rawNumber = formData.cardNumber.replace(/\D/g, '');
+      const updated: PaymentCard = {
+        ...cardData,
+        cardHolder: formData.cardHolder.trim(),
+        cardNumberRaw: rawNumber,
+        cardNumber: `•••• •••• •••• ${rawNumber.slice(-4)}`,
+        expiryDate: formData.expiryDate,
+        cvv: formData.cvv,
+      };
+      if (onSave) {
+        onSave(updated);
+        navigation.goBack();
+      } else {
+        (navigation as any).dispatch(
+          CommonActions.reset({
+            index: 0,
+            routes: [{ name: 'PaymentMethods', params: { updatedCard: updated } }],
+          })
+        );
+      }
     }
   };
 
@@ -99,13 +127,35 @@ export default function EditCardScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            Alert.alert('Success', 'Card deleted successfully!', [
-              { text: 'OK', onPress: () => navigation.goBack() }
-            ]);
+            if (onDelete) {
+              onDelete(cardData.id);
+              navigation.goBack();
+            } else {
+              (navigation as any).dispatch(
+                CommonActions.reset({
+                  index: 0,
+                  routes: [{ name: 'PaymentMethods', params: { deletedCardId: cardData.id } }],
+                })
+              );
+            }
           }
         }
       ]
     );
+  };
+
+  const formatCardNumber = (text: string) => {
+    const cleaned = text.replace(/\D/g, '').slice(0, 16);
+    const match = cleaned.match(/.{1,4}/g);
+    return match ? match.join(' ') : cleaned;
+  };
+
+  const formatExpiryDate = (text: string) => {
+    const cleaned = text.replace(/\D/g, '');
+    if (cleaned.length >= 2) {
+      return cleaned.substring(0, 2) + '/' + cleaned.substring(2, 4);
+    }
+    return cleaned;
   };
 
   return (
@@ -113,43 +163,33 @@ export default function EditCardScreen() {
       style={[styles.container, { backgroundColor: theme.background }]}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
-      <StatusBar backgroundColor="#4A90E2" barStyle="light-content" />
-      
-      {/* Header with gradient background */}
-      <LinearGradient
-        colors={['#4A90E2', '#357ABD']}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.headerGradient}
-      >
-        <View style={styles.header}>
-          <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
-          </Pressable>
-          <Text style={styles.headerTitle}>Payment methods</Text>
-          <View style={styles.placeholder} />
-        </View>
+      <StatusBar backgroundColor="#1779F3" barStyle="light-content" />
 
-        {/* Wave bottom */}
-        <View style={styles.waveContainer}>
-          <View style={styles.wave} />
-        </View>
-      </LinearGradient>
+      <Image source={blueBgSource} style={styles.blueimg} resizeMode="cover" />
 
-      <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Edit Card</Text>
-          <Pressable onPress={handleDelete} style={styles.deleteButton}>
-            <Ionicons name="trash-outline" size={20} color="#EF4444" />
-          </Pressable>
-        </View>
+      <View style={styles.header}>
+        <Pressable onPress={() => navigation.goBack()} style={styles.backButton}>
+          <Ionicons name="chevron-back" size={24} color="#FFFFFF" />
+        </Pressable>
+        <Text style={styles.headerTitle}>Payment methods</Text>
+        <View style={styles.placeholder} />
+      </View>
+
+      <View style={[styles.sheet, { backgroundColor: theme.backgroundSecondary }]}>
+        <ScrollView style={styles.formContainer} showsVerticalScrollIndicator={false}>
+          <View style={styles.sectionHeader}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>Edit Card</Text>
+            <Pressable onPress={handleDelete} style={styles.deleteButton}>
+              <Ionicons name="trash-outline" size={20} color="#EF4444" />
+            </Pressable>
+          </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Card Holder</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Card Holder</Text>
           <TextInput
-            style={[styles.input, errors.cardHolder ? styles.inputError : null]}
+            style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cardHolder ? styles.inputError : null]}
             placeholder="Required"
-            placeholderTextColor="#9CA3AF"
+            placeholderTextColor={theme.textHint}
             value={formData.cardHolder}
             onChangeText={(text) => handleInputChange('cardHolder', text)}
             autoCapitalize="words"
@@ -160,14 +200,18 @@ export default function EditCardScreen() {
         </View>
 
         <View style={styles.inputGroup}>
-          <Text style={styles.label}>Card Number</Text>
+          <Text style={[styles.label, { color: theme.text }]}>Card Number</Text>
           <TextInput
-            style={[styles.input, errors.cardNumber ? styles.inputError : null]}
+            style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cardNumber ? styles.inputError : null]}
             placeholder="Required"
-            placeholderTextColor="#9CA3AF"
-            value={formData.cardNumber}
-            onChangeText={(text) => handleInputChange('cardNumber', text)}
+            placeholderTextColor={theme.textHint}
+            value={formatCardNumber(formData.cardNumber)}
+            onChangeText={(text) => {
+              const cleaned = text.replace(/\D/g, '').slice(0, 16);
+              handleInputChange('cardNumber', cleaned);
+            }}
             keyboardType="numeric"
+            maxLength={19}
           />
           {errors.cardNumber && (
             <Text style={styles.errorText}>{errors.cardNumber}</Text>
@@ -176,13 +220,13 @@ export default function EditCardScreen() {
 
         <View style={styles.row}>
           <View style={[styles.inputGroup, styles.halfWidth]}>
-            <Text style={styles.label}>Valid</Text>
+            <Text style={[styles.label, { color: theme.text }]}>Valid</Text>
             <TextInput
-              style={[styles.input, errors.expiryDate ? styles.inputError : null]}
+              style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.expiryDate ? styles.inputError : null]}
               placeholder="Required"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={theme.textHint}
               value={formData.expiryDate}
-              onChangeText={(text) => handleInputChange('expiryDate', text)}
+              onChangeText={(text) => handleInputChange('expiryDate', formatExpiryDate(text))}
               keyboardType="numeric"
               maxLength={5}
             />
@@ -192,11 +236,11 @@ export default function EditCardScreen() {
           </View>
 
           <View style={[styles.inputGroup, styles.halfWidth]}>
-            <Text style={styles.label}>CVV</Text>
+            <Text style={[styles.label, { color: theme.text }]}>CVV</Text>
             <TextInput
-              style={[styles.input, errors.cvv ? styles.inputError : null]}
+              style={[styles.input, { backgroundColor: theme.card, color: theme.text }, errors.cvv ? styles.inputError : null]}
               placeholder="Required"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={theme.textHint}
               value={formData.cvv}
               onChangeText={(text) => {
                 if (text.length <= 4) {
@@ -212,10 +256,11 @@ export default function EditCardScreen() {
           </View>
         </View>
 
-        <Pressable style={styles.saveButton} onPress={handleSave}>
+        <Pressable style={[styles.saveButton, { backgroundColor: theme.primary }]} onPress={handleSave}>
           <Text style={styles.saveButtonText}>Save Changes</Text>
         </Pressable>
-      </ScrollView>
+        </ScrollView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -225,17 +270,20 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#F9FAFB',
   },
-  headerGradient: {
-    paddingTop: StatusBar.currentHeight || 0,
-    paddingBottom: 40,
-    position: 'relative',
+  blueimg: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: 48,
+    paddingBottom: 16,
   },
   backButton: {
     width: 40,
@@ -252,23 +300,12 @@ const styles = StyleSheet.create({
   placeholder: {
     width: 40,
   },
-  waveContainer: {
-    position: 'absolute',
-    bottom: -1,
-    left: 0,
-    right: 0,
-    height: 40,
-    overflow: 'hidden',
-  },
-  wave: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    height: 40,
+  sheet: {
+    flex: 1,
     backgroundColor: '#F9FAFB',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingTop: 20,
   },
   formContainer: {
     flex: 1,
@@ -282,7 +319,7 @@ const styles = StyleSheet.create({
     marginTop: 24,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: '#1F2937',
   },
@@ -299,10 +336,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   input: {
-    backgroundColor: '#F3F4F6',
-    borderRadius: 12,
+    backgroundColor: '#F1F3FF',
+    borderRadius: 10,
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingVertical: 14,
     fontSize: 16,
     color: '#1F2937',
     borderWidth: 1,
@@ -325,12 +362,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   saveButton: {
-    backgroundColor: '#4A90E2',
+    backgroundColor: '#1E78F2',
     borderRadius: 12,
     paddingVertical: 16,
     alignItems: 'center',
-    marginTop: 32,
-    marginBottom: 40,
+    marginTop: 20,
+    marginBottom: 32,
   },
   saveButtonText: {
     fontSize: 16,

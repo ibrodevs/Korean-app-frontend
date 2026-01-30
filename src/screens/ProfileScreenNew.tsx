@@ -8,7 +8,6 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import Text from '../components/Text';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
@@ -16,8 +15,18 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useCurrency, CurrencyType } from '../contexts/CurrencyContext';
 import { ProfileStackParamList } from '../types/navigation';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import BlueBg from '../../assets/Ellipse.svg';
 
 type ProfileScreenProps = NativeStackScreenProps<ProfileStackParamList, 'ProfileMain'>;
+
+type ProfileData = {
+  id: string;
+  avatar: string;
+  fullName: string;
+  email: string;
+  birthDate?: string;
+  gender?: string;
+};
 
 export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const { t } = useTranslation();
@@ -26,9 +35,21 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
   const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);
   const [showThemeDropdown, setShowThemeDropdown] = useState(false);
 
+  const [profile, setProfile] = useState<ProfileData>({
+    id: '1',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face',
+    fullName: 'Albert Flores',
+    email: 'albertflores@mail.com',
+    birthDate: '01/01/1988',
+    gender: 'Male',
+  });
+
   const handleEditProfile = () => {
     console.log('Edit Profile pressed');
-    navigation.navigate('EditProfile');
+    navigation.navigate('EditProfile', {
+      profile,
+      onSave: (updatedProfile: ProfileData) => setProfile(updatedProfile),
+    });
   };
 
   const handleSettings = () => {
@@ -62,53 +83,66 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
     setShowThemeDropdown(false);
   };
 
+  const blueBgSource = typeof BlueBg === 'string' ? { uri: BlueBg } : BlueBg;
+
   return (
     <TouchableWithoutFeedback onPress={closeAllDropdowns}>
-      <View style={[styles.container, { backgroundColor: theme.background }]}>
-        <StatusBar backgroundColor="#4A90E2" barStyle="light-content" />
-      
-        {/* Header with gradient background */}
-        <LinearGradient
-          colors={['#4A90E2', '#357ABD']}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.headerGradient}
-        >
+      <View style={[styles.container]}>
+        <StatusBar barStyle="light-content" />
+        <Image source={blueBgSource} style={styles.blueimg} resizeMode="cover" />
+
+        {/* Header like screenshot */}
+        <View style={styles.header}>
           <Text style={styles.headerTitle}>{t('profile.title')}</Text>
-          
+
           {/* User Profile Section */}
           <View style={styles.profileSection}>
             <View style={styles.avatarContainer}>
               <Image
                 source={{
-                  uri: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face'
+                  uri: profile.avatar,
                 }}
                 style={styles.avatar}
               />
             </View>
-            
-            <Text style={styles.userName}>Albert Flores</Text>
-            
+
+            <Text style={styles.userName}>{profile.fullName}</Text>
+
             <View style={styles.emailContainer}>
-              <Text style={styles.userEmail}>albertflores@mail.com</Text>
+              <Text style={styles.userEmail}>{profile.email}</Text>
               <Ionicons name="checkmark-circle" size={20} color="#10B981" style={styles.verifiedIcon} />
             </View>
-            
-            <Pressable style={styles.editButton} onPress={handleEditProfile}>
-              <Text style={styles.editButtonText}>{t('profile.editProfile')}</Text>
-              <Ionicons name="chevron-down" size={16} color="#6B7280" />
+
+            <Pressable
+              style={[
+                styles.editButton,
+                {
+                  backgroundColor: isDark ? 'rgba(45, 55, 72, 0.95)' : 'rgba(255, 255, 255, 0.95)',
+                  borderColor: 'transparent',
+                },
+              ]}
+              onPress={handleEditProfile}
+            >
+              <Text
+                style={[
+                  styles.editButtonText,
+                  { color: isDark ? '#E5E7EB' : '#6B7280' },
+                ]}
+              >
+                {t('profile.editProfile')}
+              </Text>
+              <Ionicons name="chevron-down" size={16} color={isDark ? '#E5E7EB' : '#6B7280'} />
             </Pressable>
           </View>
-          
-          {/* Wave bottom */}
+
           <View style={styles.waveContainer}>
-            <View style={[styles.wave, { backgroundColor: theme.background }]} />
+            <View style={styles.wave} />
           </View>
-        </LinearGradient>
+        </View>
 
         {/* Settings Section */}
         <ScrollView 
-          style={[styles.settingsContainer, { backgroundColor: theme.background }]} 
+          style={styles.settingsContainer}
           showsVerticalScrollIndicator={false}
           onScrollBeginDrag={closeAllDropdowns}
           scrollEventThrottle={16}
@@ -116,8 +150,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Currency Setting */}
           <View style={[styles.dropdownContainer, showCurrencyDropdown && styles.activeDropdownContainer]}>
             <View style={[styles.glassRow, {
-              backgroundColor: isDark ? 'rgba(45, 55, 72, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-              borderColor: isDark ? 'rgba(74, 85, 104, 0.5)' : 'rgba(226, 232, 240, 0.5)',
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
             }]}>
               <Pressable 
                 style={styles.settingRowContent}
@@ -129,8 +163,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               >
                 <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.currency')}</Text>
                 <View style={[styles.dropdown, { 
-                  backgroundColor: isDark ? '#2D3748' : '#FFFFFF', 
-                  borderColor: isDark ? '#4A5568' : '#E2E8F0'
+                  backgroundColor: 'transparent',
+                  borderColor: 'transparent'
                 }]}>
                   <Text style={[styles.dropdownText, { color: isDark ? '#FFFFFF' : '#2D3748' }]}>{currency}</Text>
                   <Ionicons 
@@ -180,8 +214,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           {/* Theme Setting */}
           <View style={[styles.dropdownContainer, showThemeDropdown && styles.activeDropdownContainer]}>
             <View style={[styles.glassRow, {
-              backgroundColor: isDark ? 'rgba(45, 55, 72, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-              borderColor: isDark ? 'rgba(74, 85, 104, 0.5)' : 'rgba(226, 232, 240, 0.5)',
+              backgroundColor: 'transparent',
+              borderColor: 'transparent',
             }]}>
               <Pressable 
                 style={styles.settingRowContent}
@@ -193,8 +227,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
               >
                 <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.theme')}</Text>
                 <View style={[styles.dropdown, { 
-                  backgroundColor: isDark ? '#2D3748' : '#FFFFFF', 
-                  borderColor: isDark ? '#4A5568' : '#E2E8F0'
+                  backgroundColor: 'transparent',
+                  borderColor: 'transparent'
                 }]}>
                   <Text style={[styles.dropdownText, { color: isDark ? '#FFFFFF' : '#2D3748' }]}>{isDark ? t('profile.dark') : t('profile.light')}</Text>
                   <Ionicons 
@@ -244,8 +278,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           
           {/* Settings */}
           <View style={[styles.glassRow, {
-            backgroundColor: isDark ? 'rgba(45, 55, 72, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            borderColor: isDark ? 'rgba(74, 85, 104, 0.5)' : 'rgba(226, 232, 240, 0.5)',
+            backgroundColor: 'transparent',
+            borderColor: 'transparent',
           }]}>
             <Pressable style={styles.settingRowContent} onPress={handleSettings}>
               <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.settings')}</Text>
@@ -256,8 +290,8 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
           
           {/* Payment Methods */}
           <View style={[styles.glassRow, {
-            backgroundColor: isDark ? 'rgba(45, 55, 72, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-            borderColor: isDark ? 'rgba(74, 85, 104, 0.5)' : 'rgba(226, 232, 240, 0.5)',
+            backgroundColor: 'transparent',
+            borderColor: 'transparent',
           }]}>
             <Pressable style={styles.settingRowContent} onPress={handlePaymentMethods}>
               <Text style={[styles.settingLabel, { color: isDark ? '#FFFFFF' : '#1A202C' }]}>{t('profile.paymentMethods')}</Text>
@@ -273,31 +307,41 @@ export default function ProfileScreen({ navigation }: ProfileScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
   },
-  headerGradient: {
-    paddingTop: StatusBar.currentHeight || 0,
-    paddingBottom: 60,
+  blueimg:{
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    marginBottom: 400,
+  },
+  header: {
+    backgroundColor: 'transparent',
+    paddingTop: 64,
+    paddingBottom: 72,
     position: 'relative',
+    overflow: 'hidden',
   },
   headerTitle: {
-    fontSize: 28,
+    fontSize: 34,
     fontWeight: '700',
     color: '#FFFFFF',
+    letterSpacing: 0.5,
     textAlign: 'left',
-    marginTop: 16,
     marginLeft: 24,
+    marginBottom: 28,
   },
   profileSection: {
     alignItems: 'center',
     paddingHorizontal: 24,
-    marginTop: 32,
+    marginTop: 0,
   },
   avatarContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#EAF2FF',
     padding: 4,
     marginBottom: 16,
     shadowColor: '#000',
@@ -332,18 +376,15 @@ const styles = StyleSheet.create({
   },
   editButton: {
     backgroundColor: '#FFFFFF',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 200,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    minWidth: 230,
+    borderWidth: 0,
+    borderColor: 'transparent',
   },
   editButtonText: {
     fontSize: 16,
@@ -356,42 +397,43 @@ const styles = StyleSheet.create({
     bottom: -1,
     left: 0,
     right: 0,
-    height: 60,
+    height: 70,
     overflow: 'hidden',
   },
   wave: {
     position: 'absolute',
     bottom: 0,
-    left: 0,
-    right: 0,
-    height: 60,
-    backgroundColor: '#F9FAFB',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
+    left: -40,
+    right: -40,
+    height: 120,
+    backgroundColor: 'transparent',
+    borderTopLeftRadius: 180,
+    borderTopRightRadius: 180,
   },
   settingsContainer: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: 'transparent',
     paddingHorizontal: 24,
-    paddingTop: 32,    zIndex: 1,  },
+    paddingTop: 12,
+    zIndex: 1,
+  },
   glassRow: {
-    borderRadius: 16,
-    borderWidth: 1,
+    borderRadius: 12,
+    borderWidth: 0,
     marginVertical: 8,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.12,
-    shadowRadius: 24,
-    elevation: 12,
-    backdropFilter: 'blur(20px)',
+    shadowColor: 'transparent',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0,
+    shadowRadius: 0,
+    elevation: 0,
   },
   settingRowContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 4,
     backgroundColor: 'transparent',
   },
   settingRow: {
@@ -403,19 +445,19 @@ const styles = StyleSheet.create({
 
   settingLabel: {
     fontSize: 18,
-    fontWeight: '500',
-    color: '#1F2937',
+    fontWeight: '600',
+    color: '#111827',
   },
   dropdown: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderWidth: 1,
-    borderColor: '#E5E7EB',
-    minWidth: 100,
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderWidth: 0,
+    borderColor: 'transparent',
+    minWidth: 96,
   },
   dropdownText: {
     fontSize: 16,
@@ -478,7 +520,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     zIndex: 1,
     elevation: 1,
-    marginBottom: 16,
+    marginBottom: 8,
   },
   activeDropdownContainer: {
     zIndex: 1000,
